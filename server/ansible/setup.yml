@@ -1,0 +1,38 @@
+---
+- hosts: all
+  gather_facts: False
+  tasks:
+    - name: install python
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      become: yes
+
+# This is actually wrong
+# - name: Install Go
+#   hosts: server
+#   become: yes
+#   roles: 
+#     - ansible-go
+
+- name: Install Nginx
+  hosts: server
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: ensure nginx is at the latest version
+      apt: name=nginx state=latest
+    - name: setup nginx conf
+      template:
+        src: nginx.conf.tpl
+        dest: /etc/nginx/nginx.conf
+    - name: restart nginx
+      service:
+        name=nginx
+        state=restarted
+
+# - name: Install Tanxz
+#   hosts: server
+#   user: ubuntu
+#   become: yes
+#   tasks:
+#     - name: copy the main build file over to the server
+

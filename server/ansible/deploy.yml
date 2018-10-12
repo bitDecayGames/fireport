@@ -1,0 +1,74 @@
+---
+- name: Deploy Signal Flow server web app
+  hosts: server
+  user: mwingfield
+  vars:
+    appVersion: "2.0.0"
+    folderName: "channelpathserver-{{ appVersion }}"
+    zipFile: "{{ folderName }}.zip"
+  tasks:
+    - name: Copy latest signal flow server zip file to server
+      copy:
+        src: "../target/universal/{{ zipFile }}"
+        dest: "~/{{ zipFile }}"
+
+    - name: Get running processes
+      shell: "ps -ef | grep -v grep | grep -w scala | awk '{print $2}'"
+      register: running_processes
+
+    - name: Kill running processes
+      shell: "kill {{ item }}"
+      with_items: "{{ running_processes.stdout_lines }}"
+      become: yes
+
+    - wait_for:
+        path: "/proc/{{ item }}/status"
+        state: absent
+      with_items: "{{ running_processes.stdout_lines }}"
+      ignore_errors: yes
+      register: killed_processes
+
+    - name: Force kill stuck processes
+      shell: "kill -9 {{ item }}"
+      with_items: "{{ killed_processes.results | select('failed') | map(attribute='item') | list }}"
+      become: yes
+
+    - name: Remove sim link
+      file:
+        path: /opt/channelpathserver
+        state: absent
+      become: yes
+
+    - name: Remove old /opt folder if exists
+      file:
+        path: "/opt/{{ folderName }}"
+        state: absent
+      become: yes
+
+    - name: Unzip current zip to opt
+      unarchive:
+        src: "{{ zipFile }}"
+        dest: "/opt/"
+        remote_src: yes
+      become: yes
+
+    - name: Create symbolic link to folder
+      file:
+        src: "/opt/{{ folderName }}"
+        dest: /opt/channelpathserver
+        state: link
+      become: yes
+
+#    - name: Start process
+#      command: "./run-prod.sh"
+#      become: yes
+#
+#    - name: Check process health
+#      uri:
+#          url: "https://localhost/health"
+#          status_code: 200
+#      register: result
+#      until: result.status == 200
+#      retries: 3
+#      delay: 10
+
