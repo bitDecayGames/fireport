@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/bitdecaygames/fireport/server/routes"
+
 	"github.com/gorilla/mux"
 )
 
@@ -16,7 +18,8 @@ const (
 func main() {
 	bind := fmt.Sprintf(":%v", port)
 	r := mux.NewRouter()
-	r.HandleFunc("/", simpleHandler)
+
+	routes.RegisterAll(r)
 
 	fmt.Printf("Starting server on %v", bind)
 	err := http.ListenAndServe(bind, r)
