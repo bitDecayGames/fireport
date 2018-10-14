@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/bitdecaygames/fireport/server/routes"
+	"github.com/bitdecaygames/fireport/server/services"
 
-	"github.com/gorilla/mux"
+	"github.com/bitdecaygames/fireport/server/routing"
 )
 
 const (
@@ -16,16 +14,8 @@ const (
 )
 
 func main() {
-	bind := fmt.Sprintf(":%v", port)
-	r := mux.NewRouter()
-
-	routes.RegisterAll(r)
-
-	fmt.Printf("Starting server on %v", bind)
-	err := http.ListenAndServe(bind, r)
-	if err != nil {
-		log.Panic(err)
-	}
+	svcs := &services.MasterList{}
+	routing.ServeGame(port, svcs)
 }
 
 func simpleHandler(w http.ResponseWriter, r *http.Request) {
