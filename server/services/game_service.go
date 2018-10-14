@@ -8,8 +8,8 @@ import (
 
 // GameService is responsible for managing our lobby list
 type GameService interface {
-	CreateGame() *Game
-	GetActiveGame() []*Game
+	CreateGame(lobby *Lobby) *Game
+	GetActiveGame(gameId uuid.UUID) (*Game, error)
 }
 
 // Game is a group of players in a game
@@ -24,23 +24,23 @@ type GameServiceImpl struct {
 	activeGames []*Game
 }
 
-// CreateGame creates a new Game and returns it
-func (g *GameServiceImpl) CreateGame() *Game {
+// CreateGame creates a new Game from the lobby information and returns it
+func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	newGame := &Game{
-		ID: uuid.NewV4(),
+		Name:    lobby.Name,
+		ID:      lobby.ID,
+		Players: lobby.Players,
 	}
 	g.activeGames = append(g.activeGames, newGame)
 	return newGame
 }
 
-// GetGame returns a the active Game for a player
-func (g *GameServiceImpl) GetActiveGame(playerName string) (*Game, error) {
+// GetGame returns a the active Game for an ID
+func (g *GameServiceImpl) GetActiveGame(gameId uuid.UUID) (*Game, error) {
 	for _, game := range g.activeGames {
-		for _, player := range game.Players {
-			if player == playerName {
-				return game, nil
-			}
+		if game.ID == gameId {
+			return game, nil
 		}
 	}
-	return nil, fmt.Errorf("WE FUCKED, please reconnect.")
+	return nil, fmt.Errorf("Please reconnect, game was dropped or ended.")
 }

@@ -15,6 +15,7 @@ func startTestServer() (int, *services.MasterList) {
 
 	svcs := &services.MasterList{
 		Lobby: &services.LobbyServiceImpl{},
+		Game:  &services.GameServiceImpl{},
 	}
 
 	go serveInternal(listener, svcs)

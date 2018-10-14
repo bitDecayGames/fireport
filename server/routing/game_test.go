@@ -1,45 +1,48 @@
 package routing
 
 import (
-	"bytes"
-	"fmt"
-	"io/ioutil"
-	"net"
-	"net/http"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/services"
+	"github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGameAPI(t *testing.T) {
-	listener, err := net.Listen("tcp", ":0")
-	if err != nil {
-		panic(err)
+func LobbyCreationHelper(name string)*services.Lobby{
+	return &services.Lobby{
+		Name:    name,
+		ID:      uuid.NewV4(),
+		Players: []string{"Player1"+name, "Player2"+name, "Player3"+name},
 	}
-	port := listener.Addr().(*net.TCPAddr).Port
+}
+func TestGetActiveGame(t *testing.T) {	
+	_, svcs := startTestServer()
 
-	svcs := &services.MasterList{
-		Game: &services.GameServiceImpl{},
-	}
+	lobbyOne := LobbyCreationHelper("FirstLobby")
+	lobbyTwo := LobbyCreationHelper("SecondLobby")
+	lobbyThree := LobbyCreationHelper("ThirdLobby")
 
-	go serveInternal(listener, svcs)
+	svcs.Game.CreateGame(lobbyOne)
+	svcs.Game.CreateGame(lobbyTwo)
+	svcs.Game.CreateGame(lobbyThree)
 
-	games := svcs.Game.GetActiveGame()
-	assert.Len(t, games, 0)
+	retrievedGame1,_:= svcs.Game.GetActiveGame(lobbyOne.ID)
+	retrievedGame2,_:= svcs.Game.GetActiveGame(lobbyTwo.ID)
+	retrievedGame3,_:= svcs.Game.GetActiveGame(lobbyThree.ID)
 
-	r, err := http.Post(fmt.Sprintf("http://127.0.0.1:%v%v", port, gameRoute), "application/json", bytes.NewBuffer([]byte("{}")))
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	assert.Equal(t, "200 OK", r.Status)
+	assert.Equal(t, retrievedGame1.ID, lobbyOne.ID)
+	assert.Equal(t, retrievedGame2.ID, lobbyTwo.ID)
+	assert.Equal(t, retrievedGame3.ID, lobbyThree.ID)
+}
 
-	body, err := ioutil.ReadAll(r.Body)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
+func TestCreateGame(t *testing.T) {	
+	_, svcs := startTestServer()
 
-	games = svcs.Game.GetActiveGame()
-	assert.Len(t, games, 1)
-	assert.Equal(t, games[0].ID.String(), string(body))
+	lobbyOne := LobbyCreationHelper("FirstLobby")
+
+	game := svcs.Game.CreateGame(lobbyOne)
+
+	assert.Equal(t, game.Name, lobbyOne.Name)
+	assert.Equal(t, game.ID, lobbyOne.ID)
+	assert.Equal(t, game.Players, lobbyOne.Players)
 }
