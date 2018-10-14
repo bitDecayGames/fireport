@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/bitdecaygames/fireport/server/services"
 
 	"github.com/bitdecaygames/fireport/server/routing"
 )
@@ -13,9 +14,8 @@ const (
 )
 
 func main() {
-	bind := fmt.Sprintf(":%v", port)
-
-	routing.ServeGame(bind)
+	svcs := &services.MasterList{}
+	routing.ServeGame(port, svcs)
 }
 
 func simpleHandler(w http.ResponseWriter, r *http.Request) {

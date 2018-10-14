@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/bitdecaygames/fireport/server/services"
 	"github.com/gorilla/mux"
 )
 
@@ -13,8 +14,10 @@ const (
 )
 
 // RegisterAll will register all needed routes on the given router
-func RegisterAll(r *mux.Router) {
-	lobby := &LobbyRoutes{}
+func RegisterAll(r *mux.Router, svcs *services.MasterList) {
+	lobby := &LobbyRoutes{
+		Service: svcs.Lobby,
+	}
 	lobby.AddRoutes(r)
 
 	game := &GameRoutes{}
