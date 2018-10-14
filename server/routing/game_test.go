@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// LobbyCreationHelper creates a lobby with the passed in name and 3 players in the lobby's Players slice
 func LobbyCreationHelper(name string)*services.Lobby{
 	return &services.Lobby{
 		Name:    name,
@@ -15,6 +16,8 @@ func LobbyCreationHelper(name string)*services.Lobby{
 		Players: []string{"Player1"+name, "Player2"+name, "Player3"+name},
 	}
 }
+
+// TestGetActiveGame built to test the GetActiveGame function from the game
 func TestGetActiveGame(t *testing.T) {	
 	_, svcs := startTestServer()
 
@@ -35,14 +38,15 @@ func TestGetActiveGame(t *testing.T) {
 	assert.Equal(t, retrievedGame3.ID, lobbyThree.ID)
 }
 
+// TestCreateGame built to test the CreateGame function from the game
 func TestCreateGame(t *testing.T) {	
 	_, svcs := startTestServer()
 
-	lobbyOne := LobbyCreationHelper("FirstLobby")
+	testLobby := LobbyCreationHelper("testLobby")
 
-	game := svcs.Game.CreateGame(lobbyOne)
+	game := svcs.Game.CreateGame(testLobby)
 
-	assert.Equal(t, game.Name, lobbyOne.Name)
-	assert.Equal(t, game.ID, lobbyOne.ID)
-	assert.Equal(t, game.Players, lobbyOne.Players)
+	assert.Equal(t, game.Name, testLobby.Name)
+	assert.Equal(t, game.ID, testLobby.ID)
+	assert.Equal(t, game.Players, testLobby.Players)
 }
