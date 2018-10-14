@@ -23,7 +23,8 @@ func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 }
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
-	lr.Service.CreateLobby()
+	lobby := lr.Service.CreateLobby()
+	w.Write([]byte(lobby.ID.String()))
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {

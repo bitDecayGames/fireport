@@ -3,6 +3,7 @@ package routing
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"testing"
@@ -12,19 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type LobbyTestSvc struct {
-	createCalls int
-}
-
-func (l *LobbyTestSvc) CreateLobby() services.Lobby {
-	l.createCalls++
-	return services.Lobby{}
-}
-
-func (l *LobbyTestSvc) GetLobbies() []services.Lobby {
-	return nil
-}
-
 func TestLobbyAPI(t *testing.T) {
 	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
@@ -32,17 +20,27 @@ func TestLobbyAPI(t *testing.T) {
 	}
 	port := listener.Addr().(*net.TCPAddr).Port
 
-	testSvc := &LobbyTestSvc{}
 	svcs := &services.MasterList{
-		Lobby: testSvc,
+		Lobby: &services.LobbyServiceImpl{},
 	}
 
 	go serveInternal(listener, svcs)
+
+	lobbies := svcs.Lobby.GetLobbies()
+	assert.Len(t, lobbies, 0)
 
 	r, err := http.Post(fmt.Sprintf("http://127.0.0.1:%v%v", port, lobbyRoute), "application/json", bytes.NewBuffer([]byte("{}")))
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, "200 OK", r.Status)
-	assert.Equal(t, 1, testSvc.createCalls)
+
+	body, err := ioutil.ReadAll(r.Body)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies = svcs.Lobby.GetLobbies()
+	assert.Len(t, lobbies, 1)
+	assert.Equal(t, lobbies[0].ID.String(), string(body))
 }
