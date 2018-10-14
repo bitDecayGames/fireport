@@ -1,6 +1,8 @@
 package routing
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/bitdecaygames/fireport/server/services"
@@ -18,8 +20,8 @@ type LobbyRoutes struct {
 // AddRoutes will add all lobby routes to the given router
 func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 	r.HandleFunc(lobbyRoute, lr.lobbyCreateHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/join", lr.lobbyJoinHandler).Methods("PUT")
-	r.HandleFunc(lobbyRoute+"/{lobbyName}/start", lr.lobbyStartHandler).Methods("PUT")
+	r.HandleFunc(lobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
+	r.HandleFunc(lobbyRoute+"/{lobbyID}/start", lr.lobbyStartHandler).Methods("PUT")
 }
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +30,22 @@ func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
-	panic("Not yet implemented")
+	vars := mux.Vars(r)
+	lobbyID := vars["lobbyID"]
+
+	playerName, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, lobby := range lr.Service.GetLobbies() {
+		if lobby.ID.String() == lobbyID {
+			lobby.Players = append(lobby.Players, string(playerName))
+			return
+		}
+	}
+
+	http.Error(w, fmt.Sprintf("No lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 }
 
 func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request) {
