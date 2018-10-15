@@ -16,7 +16,7 @@ const (
 // RegisterAll will register all needed routes on the given router
 func RegisterAll(r *mux.Router, svcs *services.MasterList) {
 	lobby := &LobbyRoutes{
-		Service: svcs.Lobby,
+		Services: svcs,
 	}
 	lobby.AddRoutes(r)
 

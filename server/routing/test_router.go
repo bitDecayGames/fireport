@@ -13,10 +13,7 @@ func startTestServer() (int, *services.MasterList) {
 	}
 	port := listener.Addr().(*net.TCPAddr).Port
 
-	svcs := &services.MasterList{
-		Lobby: &services.LobbyServiceImpl{},
-		Game:  &services.GameServiceImpl{},
-	}
+	svcs := services.NewMasterList()
 
 	go serveInternal(listener, svcs)
 	return port, svcs

@@ -5,3 +5,11 @@ type MasterList struct {
 	Lobby LobbyService
 	Game  GameService
 }
+
+// NewMasterList will return a new instance of all core services
+func NewMasterList() *MasterList {
+	return &MasterList{
+		Lobby: NewLobbyService(),
+		Game:  &GameServiceImpl{},
+	}
+}

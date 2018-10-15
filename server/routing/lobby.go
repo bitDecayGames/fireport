@@ -14,7 +14,7 @@ const lobbyRoute = apiv1 + "/lobby"
 
 // LobbyRoutes contains information about routes specific to lobby interaction
 type LobbyRoutes struct {
-	Service services.LobbyService
+	Services *services.MasterList
 }
 
 // AddRoutes will add all lobby routes to the given router
@@ -25,7 +25,7 @@ func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 }
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
-	lobby := lr.Service.CreateLobby()
+	lobby := lr.Services.Lobby.CreateLobby()
 	w.Write([]byte(lobby.ID.String()))
 }
 
@@ -38,16 +38,24 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	for _, lobby := range lr.Service.GetLobbies() {
+	for _, lobby := range lr.Services.Lobby.GetLobbies() {
 		if lobby.ID.String() == lobbyID {
 			lobby.Players = append(lobby.Players, string(playerName))
 			return
 		}
 	}
 
-	http.Error(w, fmt.Sprintf("No lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 }
 
 func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request) {
-	panic("Not yet implemented")
+	vars := mux.Vars(r)
+	lobbyID := vars["lobbyID"]
+
+	_, found := lr.Services.Lobby.GetLobby(lobbyID)
+	if !found {
+		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	}
+
+	lr.Services.Lobby.Close(lobbyID)
 }
