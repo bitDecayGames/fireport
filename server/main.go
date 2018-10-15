@@ -14,7 +14,7 @@ const (
 )
 
 func main() {
-	svcs := &services.MasterList{}
+	svcs := services.NewMasterList()
 	routing.ServeGame(port, svcs)
 }
 
