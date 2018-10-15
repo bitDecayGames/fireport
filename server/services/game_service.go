@@ -9,7 +9,7 @@ import (
 // GameService is responsible for managing our lobby list
 type GameService interface {
 	CreateGame(lobby *Lobby) *Game
-	GetActiveGame(gameId uuid.UUID) (*Game, error)
+	GetActiveGame(gameID uuid.UUID) (*Game, error)
 }
 
 // Game is a group of players in a game
@@ -35,12 +35,12 @@ func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	return newGame
 }
 
-// GetGame returns a the active Game for an ID
-func (g *GameServiceImpl) GetActiveGame(gameId uuid.UUID) (*Game, error) {
+// GetActiveGame returns a the active Game for an ID or an error if the game is not found
+func (g *GameServiceImpl) GetActiveGame(gameID uuid.UUID) (*Game, error) {
 	for _, game := range g.activeGames {
-		if game.ID == gameId {
+		if game.ID == gameID {
 			return game, nil
 		}
 	}
-	return nil, fmt.Errorf("Please reconnect, game was dropped or ended.")
+	return nil, fmt.Errorf("no game found with uuid '%v'", gameID.String())
 }
