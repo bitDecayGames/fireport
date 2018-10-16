@@ -1,0 +1,26 @@
+@startuml
+cloud {
+    [Internet] #Yellow
+}
+Internet --> Game
+Internet --> Lobby
+node "Fireport Server" {
+    Lobby -- [REST Server]
+    Game -- [REST Server]
+    
+
+    [REST Server] --> [Communication Layer]
+
+
+    package "Services" {
+        [Communication Layer] --> [LobbyService]
+        [Communication Layer] --> [GameService]
+        [Communication Layer] --> Internet
+        [PubSub] -up-> Internet
+    }
+
+    package "Game Logic" {
+        [GameService] -- [Core logic]
+    }
+}
+@enduml
