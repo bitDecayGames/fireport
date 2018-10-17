@@ -6,13 +6,6 @@
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       become: yes
 
-# This is actually wrong
-# - name: Install Go
-#   hosts: server
-#   become: yes
-#   roles: 
-#     - ansible-go
-
 - name: Install Nginx
   hosts: server
   user: ubuntu
@@ -28,11 +21,4 @@
       service:
         name=nginx
         state=restarted
-
-# - name: Install Tanxz
-#   hosts: server
-#   user: ubuntu
-#   become: yes
-#   tasks:
-#     - name: copy the main build file over to the server
 
