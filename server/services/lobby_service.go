@@ -13,7 +13,7 @@ type LobbyService interface {
 // Lobby is a group of players waiting to start a game
 type Lobby struct {
 	Name    string
-	ID      uuid.UUID
+	Id      uuid.UUID
 	Players []string
 }
 
@@ -32,16 +32,16 @@ func NewLobbyService() *LobbyServiceImpl {
 // CreateLobby creates a new lobby and returns it
 func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	newLobby := &Lobby{
-		ID: uuid.NewV4(),
+		Id: uuid.NewV4(),
 	}
 
-	l.activeLobbies[newLobby.ID.String()] = newLobby
+	l.activeLobbies[newLobby.Id.String()] = newLobby
 	return newLobby
 }
 
 // GetLobby returns a map of lobbies currently active
-func (l *LobbyServiceImpl) GetLobby(lobbyID string) (*Lobby, bool) {
-	lobby, ok := l.activeLobbies[lobbyID]
+func (l *LobbyServiceImpl) GetLobby(lobbyId string) (*Lobby, bool) {
+	lobby, ok := l.activeLobbies[lobbyId]
 	return lobby, ok
 }
 
@@ -50,7 +50,7 @@ func (l *LobbyServiceImpl) GetLobbies() map[string]*Lobby {
 	return l.activeLobbies
 }
 
-// Close closes the lobby with the provided ID. If no such lobby
+// Close closes the lobby with the provided Id. If no such lobby
 // exists, this function does nothing
 func (l *LobbyServiceImpl) Close(lobbyID string) {
 	delete(l.activeLobbies, lobbyID)

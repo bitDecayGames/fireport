@@ -2,8 +2,9 @@ package services
 
 import (
 	"fmt"
+	"github.com/bitdecaygames/fireport/server/rules"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 )
 
 // GameService is responsible for managing our active games
@@ -17,6 +18,7 @@ type Game struct {
 	Name    string
 	ID      uuid.UUID
 	Players []string
+	Rules   []rules.GameRule
 }
 
 // GameServiceImpl is a concrete service
@@ -28,14 +30,15 @@ type GameServiceImpl struct {
 func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	newGame := &Game{
 		Name:    lobby.Name,
-		ID:      lobby.ID,
+		ID:      lobby.Id,
 		Players: lobby.Players,
+		Rules:   rules.DefaultGameRules,
 	}
 	g.activeGames = append(g.activeGames, newGame)
 	return newGame
 }
 
-// GetActiveGame returns a the active Game for an ID or an error if the game is not found
+// GetActiveGame returns a the active Game for an Id or an error if the game is not found
 func (g *GameServiceImpl) GetActiveGame(gameID uuid.UUID) (*Game, error) {
 	for _, game := range g.activeGames {
 		if game.ID == gameID {

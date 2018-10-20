@@ -26,7 +26,7 @@ func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
 	lobby := lr.Services.Lobby.CreateLobby()
-	w.Write([]byte(lobby.ID.String()))
+	w.Write([]byte(lobby.Id.String()))
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request)
 
 	lobby, found := lr.Services.Lobby.GetLobby(lobbyID)
 	if !found {
-		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+		http.Error(w, fmt.Sprintf("no lobby found with Id '%v'", lobbyID), http.StatusNotFound)
 	}
 
 	lr.Services.Lobby.Close(lobbyID)
