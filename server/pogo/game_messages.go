@@ -7,7 +7,7 @@ import (
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
-	GameID uuid.UUID
+	GameId uuid.UUID
 }
 
 // TurnTimeoutMsg contains information for when a player's turn has timed out
@@ -24,25 +24,19 @@ type GameTimeoutMsg struct {
 // TurnResultMsg contains information on game state changes that occurred
 // in the latest turn
 type TurnResultMsg struct {
-	GameID        uuid.UUID
+	GameId        uuid.UUID
 	PreviousState GameState
 	CurrentState  GameState
-	Actions       []PlayerAction
-	PlayerOptions []PlayerAction
+	Animations    []AnimationAction
 }
 
-// GameState is an all-containing set of information for the state of a
-// game at a given point in time
-type GameState struct {
-	TurnsTaken int
-	// TODO: Fill out the rest of the state
+// GameInputMsg is sent by the user to tell the server which card the user is selecting
+type GameInputMsg struct {
+	CardId int // this should maybe just be a query parameter or something simple
+	Owner  int // this should come from the authentication layer
 }
 
-type GameInput struct {
-	CardId int
-	Owner  int
-}
-
+// GameResultSummaryMsg is sent out to each player when the game has been won
 type GameResultSummaryMsg struct {
 	Winner string
 	// TODO: attach stats and other summary information

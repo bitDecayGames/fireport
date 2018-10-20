@@ -24,8 +24,8 @@ func (c *Card) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	return nextState, nil
 }
 
-// Build a Card object with a GameInput object
-func GameInputToCard(input *pogo.GameInput) (*Card, error) {
+// Build a Card object with a GameInputMsg object
+func GameInputToCard(input *pogo.GameInputMsg) (*Card, error) {
 	switch input.CardId {
 	case 0:
 		return skipTurnCard(input.Owner), nil

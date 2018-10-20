@@ -7,7 +7,7 @@ import (
 
 // CoreService is a stateless service that generates new game states given a set of inputs
 type CoreService interface {
-	StepGame(currentState *pogo.GameState, inputs []pogo.GameInput) (*pogo.GameState, error)
+	StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error)
 }
 
 // CoreServiceImpl is a concrete service
@@ -15,7 +15,7 @@ type CoreServiceImpl struct {
 }
 
 // CreateGame creates a new Game from the lobby information and returns it
-func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInput) (*pogo.GameState, error) {
+func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
 	var nextState = currentState
 	for _, input := range inputs {
 		card, err := actions.GameInputToCard(&input)

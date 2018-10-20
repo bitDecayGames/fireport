@@ -114,5 +114,5 @@ func TestBadLobbyRequest(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Contains(t, string(body), "no lobby found with ID 'no-such-lobby'")
+	assert.Contains(t, string(body), "no lobby found with Id 'no-such-lobby'")
 }

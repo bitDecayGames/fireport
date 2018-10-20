@@ -12,8 +12,8 @@ func TestIncrementTurn(t *testing.T) {
 	coreSvc := &CoreServiceImpl{}
 
 	curState := &pogo.GameState{}
-	nextState, err := coreSvc.StepGame(curState, []pogo.GameInput{pogo.GameInput{CardId: 0, Owner: 0}})
+	nextState, err := coreSvc.StepGame(curState, []pogo.GameInputMsg{pogo.GameInputMsg{CardId: 0, Owner: 0}})
 
 	assert.Nil(t, err)
-	assert.Equal(t, curState.TurnsTaken+1, nextState.TurnsTaken)
+	assert.Equal(t, curState.Turn+1, nextState.Turn)
 }
