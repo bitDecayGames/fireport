@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/bitdecaygames/fireport/server/services"
 
 	"github.com/bitdecaygames/fireport/server/routing"
@@ -16,8 +14,4 @@ const (
 func main() {
 	svcs := services.NewMasterList()
 	routing.ServeGame(port, svcs)
-}
-
-func simpleHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Gorilla!\n"))
 }

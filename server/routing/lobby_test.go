@@ -30,7 +30,6 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	lobbies = svcs.Lobby.GetLobbies()
 	assert.Len(t, lobbies, 1)
 
 	var lobbyID string
@@ -63,9 +62,8 @@ func TestLobbyAPI(t *testing.T) {
 	}
 	assert.Equal(t, "200 OK", r.Status)
 
-	lobbies = svcs.Lobby.GetLobbies()
 	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
-		t.Fatal("no lobbies")
+		t.Fatal("expected 1 player in game lobby")
 	}
 	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
 
@@ -84,7 +82,6 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, "200 OK", r.Status)
-	lobbies = svcs.Lobby.GetLobbies()
 	if !assert.Len(t, lobbies, 0) {
 		t.Fatal("expected lobby to be closed after game starts")
 	}

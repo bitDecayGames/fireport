@@ -38,24 +38,25 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	for _, lobby := range lr.Services.Lobby.GetLobbies() {
-		if lobby.ID.String() == lobbyID {
-			lobby.Players = append(lobby.Players, string(playerName))
-			return
-		}
+	lobby, ok := lr.Services.Lobby.GetLobbies()[lobbyID]
+	if !ok {
+		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+		return
 	}
 
-	http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	lobby.Players = append(lobby.Players, string(playerName))
+	return
 }
 
 func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
 
-	_, found := lr.Services.Lobby.GetLobby(lobbyID)
+	lobby, found := lr.Services.Lobby.GetLobby(lobbyID)
 	if !found {
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
 	lr.Services.Lobby.Close(lobbyID)
+	lr.Services.Game.CreateGame(lobby)
 }

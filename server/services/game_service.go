@@ -6,7 +6,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// GameService is responsible for managing our lobby list
+// GameService is responsible for managing our active games
 type GameService interface {
 	CreateGame(lobby *Lobby) *Game
 	GetActiveGame(gameID uuid.UUID) (*Game, error)

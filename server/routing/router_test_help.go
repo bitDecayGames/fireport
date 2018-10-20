@@ -11,6 +11,7 @@ func startTestServer() (int, *services.MasterList) {
 	if err != nil {
 		panic(err)
 	}
+
 	port := listener.Addr().(*net.TCPAddr).Port
 
 	svcs := services.NewMasterList()
