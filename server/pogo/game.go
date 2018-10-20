@@ -38,6 +38,11 @@ type GameState struct {
 	// TODO: Fill out the rest of the state
 }
 
+type GameInput struct {
+	CardId int
+	Owner  int
+}
+
 type GameResultSummaryMsg struct {
 	Winner string
 	// TODO: attach stats and other summary information
