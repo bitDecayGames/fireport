@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/bitdecaygames/fireport/server/services"
-
 	"github.com/gorilla/mux"
 )
 
@@ -52,10 +51,12 @@ func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
 
-	_, found := lr.Services.Lobby.GetLobby(lobbyID)
+	lobby, found := lr.Services.Lobby.GetLobby(lobbyID)
 	if !found {
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
+
+	lr.Services.Game.CreateGame(lobby)
 
 	lr.Services.Lobby.Close(lobbyID)
 }

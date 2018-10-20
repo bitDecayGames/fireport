@@ -18,22 +18,9 @@ type GameRoutes struct {
 
 // AddRoutes will add all game routes to the given router
 func (gr *GameRoutes) AddRoutes(r *mux.Router) {
-	r.HandleFunc(gameRoute, gr.gameCreateHandler).Methods("POST")
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}/cards", gr.submitCardsHandler).Methods("PUT")
 	r.HandleFunc(gameRoute+"/{gameName}/tick", gr.getCurrentTickHandler).Methods("GET")
 	r.HandleFunc(gameRoute+"/{gameName}/tick/{tick}/player/{playerName}", gr.getGameStateHandler).Methods("GET")
-}
-
-func (gr *GameRoutes) gameCreateHandler(w http.ResponseWriter, r *http.Request) {
-	panic("Not yet implemented")
-	// decoder := json.NewDecoder(r.Body)
-	// var t string
-	// err := decoder.Decode(&t)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// game := gr.Service.CreateGame(t)
-	// w.Write([]byte(game.ID.String()))
 }
 
 // submitCardsHandler handles a player request to submit cards for the given tick
