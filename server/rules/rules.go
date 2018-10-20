@@ -18,6 +18,7 @@ var DefaultGameRules = []GameRule{
 	&IdCounterMustOnlyMoveForwardRule{},
 	&BoardWidthAndHeightMustRemainConstantRule{},
 	&NumberOfBoardSpacesCannotChangeRule{},
+	&NumberOfBoardSpacesMustEqualWidthAndHeightRule{},
 	&BoardSpaceIdsCannotBeChangedRule{},
 	&PlayerIdsCannotBeChangedRule{},
 	&NumberOfPlayersCannotChangeRule{},
@@ -103,6 +104,16 @@ type NumberOfBoardSpacesCannotChangeRule struct{}
 func (r *NumberOfBoardSpacesCannotChangeRule) Apply(a *pogo.GameState, b *pogo.GameState) error {
 	if len(a.BoardSpaces) != len(b.BoardSpaces) {
 		return fmt.Errorf("number of board spaces changed from %v to %v", len(a.BoardSpaces), len(b.BoardSpaces))
+	} else {
+		return nil
+	}
+}
+
+type NumberOfBoardSpacesMustEqualWidthAndHeightRule struct{}
+
+func (r *NumberOfBoardSpacesMustEqualWidthAndHeightRule) Apply(a *pogo.GameState, b *pogo.GameState) error {
+	if a.BoardWidth * a.BoardHeight != len(b.BoardSpaces) {
+		return fmt.Errorf("expected %v board spaces and instead got %v", b.BoardWidth * b.BoardHeight, len(b.BoardSpaces))
 	} else {
 		return nil
 	}
