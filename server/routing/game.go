@@ -3,6 +3,7 @@ package routing
 import (
 	"net/http"
 
+	"github.com/bitdecaygames/fireport/server/services"
 	"github.com/gorilla/mux"
 )
 
@@ -12,6 +13,7 @@ const (
 
 // GameRoutes contains information about routes specific to game interaction
 type GameRoutes struct {
+	Service services.GameService
 }
 
 // AddRoutes will add all game routes to the given router

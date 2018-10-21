@@ -16,13 +16,13 @@ func LobbyCreationHelper(name string) *Lobby {
 	}
 }
 
-// TestGetActiveGame built to test the GetActiveGame function from the game
+// TestGetActiveGame built to test the GetActiveGame function from the game service
 func TestGetActiveGame(t *testing.T) {
 	gameSvc := &GameServiceImpl{}
 
-	lobbyOne := LobbyCreationHelper("FirstLobby")
-	lobbyTwo := LobbyCreationHelper("SecondLobby")
-	lobbyThree := LobbyCreationHelper("ThirdLobby")
+	lobbyOne := LobbyCreationHelper("lobbyOne")
+	lobbyTwo := LobbyCreationHelper("lobbyTwo")
+	lobbyThree := LobbyCreationHelper("lobbyThree")
 
 	gameSvc.CreateGame(lobbyOne)
 	gameSvc.CreateGame(lobbyTwo)
@@ -37,7 +37,7 @@ func TestGetActiveGame(t *testing.T) {
 	assert.Equal(t, retrievedGame3.ID, lobbyThree.Id)
 }
 
-// TestCreateGame built to test the CreateGame function from the game
+// TestCreateGame built to test the CreateGame function from the game service
 func TestCreateGame(t *testing.T) {
 	gameSvc := &GameServiceImpl{}
 
