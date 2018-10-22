@@ -36,5 +36,5 @@ func GameInputToCard(input *pogo.GameInputMsg) (*Card, error) {
 
 // Builds the skip turn card, just a test card to figure out how these all work together
 func skipTurnCard(owner int) *Card {
-	return &Card{Id: 0, Owner: owner, Actions: []Action{&IncrementTurnAction{Owner: owner}}}
+	return &Card{Id: 0, Owner: owner, Actions: []Action{&IncrementTurnAction{}}}
 }

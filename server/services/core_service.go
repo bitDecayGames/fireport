@@ -28,7 +28,14 @@ func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.G
 		}
 		nextState = nxt
 	}
-	// TODO: MW each step of the game should Apply the IncrementTurnAction
+	// each step of the game should Apply the DefaultTurnActions list
+	for _, defaultTurnAction := range actions.DefaultTurnActions {
+		nxt, err := defaultTurnAction.Apply(nextState)
+		if err != nil {
+			return nextState, err
+		}
+		nextState = nxt
+	}
 	// TODO: MW there needs to be a way to track what actions have been successfully applied each step
 	return nextState, nil
 }

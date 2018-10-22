@@ -12,8 +12,9 @@ func TestIncrementTurn(t *testing.T) {
 	coreSvc := &CoreServiceImpl{}
 
 	curState := &pogo.GameState{}
+	// this will actually increment the turn by 2 because of the DefaultTurnActions list being applied at the end
 	nextState, err := coreSvc.StepGame(curState, []pogo.GameInputMsg{pogo.GameInputMsg{CardId: 0, Owner: 0}})
 
 	assert.Nil(t, err)
-	assert.Equal(t, curState.Turn+1, nextState.Turn)
+	assert.Equal(t, curState.Turn+2, nextState.Turn)
 }

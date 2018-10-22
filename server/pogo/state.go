@@ -15,9 +15,66 @@ type GameState struct {
 	BoardSpaces []BoardSpace // defines each space on the board reading from top left to bottom right
 }
 
+// GetNewId increments the IdCounter on this game state and returns the last IdCounter
 func (s *GameState) GetNewId() int {
 	s.IdCounter = s.IdCounter + 1
-	return s.IdCounter + 1
+	return s.IdCounter - 1
+}
+
+// DeepCopy returns a deep copy of this game state
+func (s *GameState) DeepCopy() *GameState {
+	// TODO: MW I really hate that this is manual like this... Is there no library out there that does deep dynamic copying?
+	cp := &GameState{
+		Turn:        s.Turn,
+		Created:     s.Created,
+		Updated:     s.Updated,
+		IdCounter:   s.IdCounter,
+		BoardWidth:  s.BoardWidth,
+		BoardHeight: s.BoardHeight,
+	}
+	for _, player := range s.Players {
+		cpP := &PlayerState{
+			Id:       player.Id,
+			Name:     player.Name,
+			Location: player.Location,
+			Facing:   player.Facing,
+			Hand:     deepCopyListOfCards(player.Hand),
+			Deck:     deepCopyListOfCards(player.Deck),
+			Discard:  deepCopyListOfCards(player.Discard),
+		}
+		cp.Players = append(cp.Players, *cpP)
+	}
+	for _, space := range s.BoardSpaces {
+		cpS := &BoardSpace{
+			Id:        space.Id,
+			SpaceType: space.SpaceType,
+			State:     space.State,
+		}
+		cp.BoardSpaces = append(cp.BoardSpaces, *cpS)
+	}
+	return cp
+}
+
+func deepCopyListOfCards(cards []CardState) []CardState {
+	var cp []CardState
+	for _, card := range cards {
+		cpC := &CardState{
+			Id:       card.Id,
+			CardType: card.CardType,
+		}
+		cp = append(cp, *cpC)
+	}
+	return cp
+}
+
+// GetPlayer returns the player with the given id or nil if they do not exist
+func (s *GameState) GetPlayer(id int) *PlayerState {
+	for i, player := range s.Players {
+		if player.Id == id {
+			return &s.Players[i]
+		}
+	}
+	return nil
 }
 
 // PlayerState contains all of the information about a given player, their hand, their discard, everything
@@ -28,6 +85,7 @@ type PlayerState struct {
 	Discard  []CardState // the cards that have been played or discarded
 	Deck     []CardState // the cards still in the deck
 	Location int         // the id of the board space this player is occupying
+	Facing   int         // the direction the player is facing 0, 1, 2, 3 for Up, Right, Down, Left
 	// TODO: MW there could be more here like how much health the player has, if that is something we want
 }
 
