@@ -8,15 +8,16 @@ node "Fireport Server" {
     Lobby -- [REST Server]
     Game -- [REST Server]
     
-
-    [REST Server] --> [Communication Layer]
-
+    package "Communication Layer" {
+        [REST Server] --> [Routing]
+        [PubSub] -up-> Internet
+        [Routing] -left-> [PubSub]
+    }
 
     package "Services" {
-        [Communication Layer] --> [LobbyService]
-        [Communication Layer] --> [GameService]
-        [Communication Layer] --> Internet
-        [PubSub] -up-> Internet
+        [Routing] --> [LobbyService]
+        [Routing] --> [GameService]
+        [Routing] --> Internet
     }
 
     package "Game Logic" {

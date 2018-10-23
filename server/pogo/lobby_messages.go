@@ -4,8 +4,8 @@ package pogo
 type LobbyCreateMsg struct {
 }
 
-// LobbyUpdateMsg contains any important information for a client to update the
-// lobby
-type LobbyUpdateMsg struct {
-	Players []string
+// LobbyMsg contains a snapshot of a server lobby for a client
+type LobbyMsg struct {
+	ID      string   `json:"id"`
+	Players []string `json:"players"`
 }

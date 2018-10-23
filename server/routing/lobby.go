@@ -1,15 +1,19 @@
 package routing
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/bitdecaygames/fireport/server/pogo"
 
 	"github.com/bitdecaygames/fireport/server/services"
 	"github.com/gorilla/mux"
 )
 
-const lobbyRoute = apiv1 + "/lobby"
+// LobbyRoute is the api route for all lobby interactions
+const LobbyRoute = APIv1 + "/lobby"
 
 // LobbyRoutes contains information about routes specific to lobby interaction
 type LobbyRoutes struct {
@@ -18,9 +22,9 @@ type LobbyRoutes struct {
 
 // AddRoutes will add all lobby routes to the given router
 func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
-	r.HandleFunc(lobbyRoute, lr.lobbyCreateHandler).Methods("POST")
-	r.HandleFunc(lobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
-	r.HandleFunc(lobbyRoute+"/{lobbyID}/start", lr.lobbyStartHandler).Methods("PUT")
+	r.HandleFunc(LobbyRoute, lr.lobbyCreateHandler).Methods("POST")
+	r.HandleFunc(LobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
+	r.HandleFunc(LobbyRoute+"/{lobbyID}/start", lr.lobbyStartHandler).Methods("PUT")
 }
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +48,26 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	lobby.Players = append(lobby.Players, string(playerName))
+
+	msg := pogo.LobbyMsg{
+		ID:      lobby.Id.String(),
+		Players: lobby.Players,
+	}
+
+	bytes, err := json.Marshal(msg)
+	if err != nil {
+		http.Error(w, "failed to build lobby message", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte(bytes))
+
+	// tell all pubsubbers
+	for id, conn := range lobby.ActiveConnections {
+		err = conn.WriteJSON(msg)
+		fmt.Printf("Failed to tell player %v about lobby update: %v\n", id, err)
+	}
+
 	return
 }
 
