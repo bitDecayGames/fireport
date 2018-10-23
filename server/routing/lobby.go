@@ -56,7 +56,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 
 	bytes, err := json.Marshal(msg)
 	if err != nil {
-		http.Error(w, "faileD to build lobby message", http.StatusInternalServerError)
+		http.Error(w, "failed to build lobby message", http.StatusInternalServerError)
 		return
 	}
 
@@ -65,7 +65,9 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	// tell all pubsubbers
 	for id, conn := range lobby.ActiveConnections {
 		err = conn.WriteJSON(msg)
-		fmt.Printf("Failed to tell player %v about lobby update: %v\n", id, err)
+		if err != nil {
+			fmt.Printf("Failed to tell player %v about lobby update: %v\n", id, err)
+		}
 	}
 
 	return
