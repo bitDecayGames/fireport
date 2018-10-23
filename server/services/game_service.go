@@ -30,7 +30,7 @@ type GameServiceImpl struct {
 func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	newGame := &Game{
 		Name:    lobby.Name,
-		ID:      lobby.Id,
+		ID:      lobby.ID,
 		Players: lobby.Players,
 		Rules:   rules.DefaultGameRules,
 	}
@@ -38,7 +38,7 @@ func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	return newGame
 }
 
-// GetActiveGame returns a the active Game for an Id or an error if the game is not found
+// GetActiveGame returns a the active Game for an ID or an error if the game is not found
 func (g *GameServiceImpl) GetActiveGame(gameID uuid.UUID) (*Game, error) {
 	for _, game := range g.activeGames {
 		if game.ID == gameID {

@@ -11,7 +11,7 @@ import (
 func LobbyCreationHelper(name string) *Lobby {
 	return &Lobby{
 		Name:    name,
-		Id:      uuid.NewV4(),
+		ID:      uuid.NewV4(),
 		Players: []string{"Player1" + name, "Player2" + name, "Player3" + name},
 	}
 }
@@ -28,13 +28,13 @@ func TestGetActiveGame(t *testing.T) {
 	gameSvc.CreateGame(lobbyTwo)
 	gameSvc.CreateGame(lobbyThree)
 
-	retrievedGame1, _ := gameSvc.GetActiveGame(lobbyOne.Id)
-	retrievedGame2, _ := gameSvc.GetActiveGame(lobbyTwo.Id)
-	retrievedGame3, _ := gameSvc.GetActiveGame(lobbyThree.Id)
+	retrievedGame1, _ := gameSvc.GetActiveGame(lobbyOne.ID)
+	retrievedGame2, _ := gameSvc.GetActiveGame(lobbyTwo.ID)
+	retrievedGame3, _ := gameSvc.GetActiveGame(lobbyThree.ID)
 
-	assert.Equal(t, retrievedGame1.ID, lobbyOne.Id)
-	assert.Equal(t, retrievedGame2.ID, lobbyTwo.Id)
-	assert.Equal(t, retrievedGame3.ID, lobbyThree.Id)
+	assert.Equal(t, retrievedGame1.ID, lobbyOne.ID)
+	assert.Equal(t, retrievedGame2.ID, lobbyTwo.ID)
+	assert.Equal(t, retrievedGame3.ID, lobbyThree.ID)
 }
 
 // TestCreateGame built to test the CreateGame function from the game service
@@ -46,6 +46,6 @@ func TestCreateGame(t *testing.T) {
 	game := gameSvc.CreateGame(testLobby)
 
 	assert.Equal(t, game.Name, testLobby.Name)
-	assert.Equal(t, game.ID, testLobby.Id)
+	assert.Equal(t, game.ID, testLobby.ID)
 	assert.Equal(t, game.Players, testLobby.Players)
 }

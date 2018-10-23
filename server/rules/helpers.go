@@ -5,10 +5,10 @@ import (
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
-func doesPlayerHaveCardId(p *pogo.PlayerState, id int) bool {
+func doesPlayerHaveCardID(p *pogo.PlayerState, id int) bool {
 	var allPlayerCards = collectAllPlayersCards(p)
 	for _, card := range allPlayerCards {
-		if card.Id == id {
+		if card.ID == id {
 			return true
 		}
 	}
@@ -20,24 +20,24 @@ func collectAllPlayersCards(p *pogo.PlayerState) []pogo.CardState {
 }
 
 func collectAllGameStateIds(g *pogo.GameState) []idTracker {
-	var ids []idTracker = nil
+	var ids []idTracker
 
 	for _, player := range g.Players {
-		ids = append(ids, idTracker{Id:player.Id, Name:"player"})
+		ids = append(ids, idTracker{ID: player.ID, Name: "player"})
 
 		for _, card := range player.Hand {
-			ids = append(ids, idTracker{Id:card.Id, Name:fmt.Sprintf("player %v hand", player.Id)})
+			ids = append(ids, idTracker{ID: card.ID, Name: fmt.Sprintf("player %v hand", player.ID)})
 		}
 	}
 
 	for _, space := range g.BoardSpaces {
-		ids = append(ids, idTracker{Id:space.Id, Name:"board space"})
+		ids = append(ids, idTracker{ID: space.ID, Name: "board space"})
 	}
 
 	return ids
 }
 
 type idTracker struct {
-	Id int
+	ID   int
 	Name string
 }

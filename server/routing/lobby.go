@@ -29,7 +29,7 @@ func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
 	lobby := lr.Services.Lobby.CreateLobby()
-	w.Write([]byte(lobby.Id.String()))
+	w.Write([]byte(lobby.ID.String()))
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,13 +50,13 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	lobby.Players = append(lobby.Players, string(playerName))
 
 	msg := pogo.LobbyMsg{
-		ID:      lobby.Id.String(),
+		ID:      lobby.ID.String(),
 		Players: lobby.Players,
 	}
 
 	bytes, err := json.Marshal(msg)
 	if err != nil {
-		http.Error(w, "failed to build lobby message", http.StatusInternalServerError)
+		http.Error(w, "faileD to build lobby message", http.StatusInternalServerError)
 		return
 	}
 
@@ -77,7 +77,7 @@ func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request)
 
 	lobby, found := lr.Services.Lobby.GetLobby(lobbyID)
 	if !found {
-		http.Error(w, fmt.Sprintf("no lobby found with Id '%v'", lobbyID), http.StatusNotFound)
+		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
 	lr.Services.Game.CreateGame(lobby)

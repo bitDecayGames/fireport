@@ -14,7 +14,7 @@ type CoreService interface {
 type CoreServiceImpl struct {
 }
 
-// CreateGame creates a new Game from the lobby information and returns it
+// StepGame moves the game state forward using a list of inputs
 func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
 	var nextState = currentState
 	for _, input := range inputs {
