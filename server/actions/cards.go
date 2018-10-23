@@ -5,12 +5,14 @@ import (
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
+// Card defines the list of actions for a given card
 type Card struct {
-	Id      int
+	ID      int
 	Owner   int
 	Actions []Action
 }
 
+// Apply apply the list of actions from this card to the game state
 func (c *Card) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	// TODO: MW this method should validate that the card being played is in the owners hand
 	var nextState *pogo.GameState = currentState
@@ -24,17 +26,17 @@ func (c *Card) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	return nextState, nil
 }
 
-// Build a Card object with a GameInputMsg object
+// GameInputToCard Build a Card object with a GameInputMsg object
 func GameInputToCard(input *pogo.GameInputMsg) (*Card, error) {
-	switch input.CardId {
+	switch input.CardID {
 	case 0:
 		return skipTurnCard(input.Owner), nil
 	default:
-		return nil, fmt.Errorf("no card found with the id '%v'", string(input.CardId))
+		return nil, fmt.Errorf("no card found with the id '%v'", string(input.CardID))
 	}
 }
 
 // Builds the skip turn card, just a test card to figure out how these all work together
 func skipTurnCard(owner int) *Card {
-	return &Card{Id: 0, Owner: owner, Actions: []Action{&IncrementTurnAction{}}}
+	return &Card{ID: 0, Owner: owner, Actions: []Action{&IncrementTurnAction{}}}
 }

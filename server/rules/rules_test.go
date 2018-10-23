@@ -11,66 +11,66 @@ func getTestStates() (*pogo.GameState, *pogo.GameState) {
 		Turn:        0,
 		Created:     1000,
 		Updated:     2000,
-		IdCounter:   300,
+		IDCounter:   300,
 		BoardWidth:  2,
 		BoardHeight: 2,
 		BoardSpaces: []pogo.BoardSpace{
-			{Id: 0, SpaceType: 0, State: 0},
-			{Id: 1, SpaceType: 0, State: 0},
-			{Id: 2, SpaceType: 0, State: 0},
-			{Id: 3, SpaceType: 0, State: 0},
+			{ID: 0, SpaceType: 0, State: 0},
+			{ID: 1, SpaceType: 0, State: 0},
+			{ID: 2, SpaceType: 0, State: 0},
+			{ID: 3, SpaceType: 0, State: 0},
 		},
 		Players: []pogo.PlayerState{
 			{
-				Id:       100,
+				ID:       100,
 				Name:     "PlayerOne",
 				Location: 0,
 				Hand: []pogo.CardState{
-					{Id: 101, CardType: 0},
-					{Id: 102, CardType: 0},
-					{Id: 103, CardType: 0},
-					{Id: 104, CardType: 0},
-					{Id: 105, CardType: 0},
+					{ID: 101, CardType: 0},
+					{ID: 102, CardType: 0},
+					{ID: 103, CardType: 0},
+					{ID: 104, CardType: 0},
+					{ID: 105, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 106, CardType: 0},
-					{Id: 107, CardType: 0},
-					{Id: 108, CardType: 0},
-					{Id: 109, CardType: 0},
-					{Id: 110, CardType: 0},
+					{ID: 106, CardType: 0},
+					{ID: 107, CardType: 0},
+					{ID: 108, CardType: 0},
+					{ID: 109, CardType: 0},
+					{ID: 110, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 111, CardType: 0},
-					{Id: 112, CardType: 0},
-					{Id: 113, CardType: 0},
-					{Id: 114, CardType: 0},
-					{Id: 115, CardType: 0},
+					{ID: 111, CardType: 0},
+					{ID: 112, CardType: 0},
+					{ID: 113, CardType: 0},
+					{ID: 114, CardType: 0},
+					{ID: 115, CardType: 0},
 				},
 			},
 			{
-				Id:       200,
+				ID:       200,
 				Name:     "PlayerTwo",
 				Location: 3,
 				Hand: []pogo.CardState{
-					{Id: 201, CardType: 0},
-					{Id: 202, CardType: 0},
-					{Id: 203, CardType: 0},
-					{Id: 204, CardType: 0},
-					{Id: 205, CardType: 0},
+					{ID: 201, CardType: 0},
+					{ID: 202, CardType: 0},
+					{ID: 203, CardType: 0},
+					{ID: 204, CardType: 0},
+					{ID: 205, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 206, CardType: 0},
-					{Id: 207, CardType: 0},
-					{Id: 208, CardType: 0},
-					{Id: 209, CardType: 0},
-					{Id: 210, CardType: 0},
+					{ID: 206, CardType: 0},
+					{ID: 207, CardType: 0},
+					{ID: 208, CardType: 0},
+					{ID: 209, CardType: 0},
+					{ID: 210, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 211, CardType: 0},
-					{Id: 212, CardType: 0},
-					{Id: 213, CardType: 0},
-					{Id: 214, CardType: 0},
-					{Id: 215, CardType: 0},
+					{ID: 211, CardType: 0},
+					{ID: 212, CardType: 0},
+					{ID: 213, CardType: 0},
+					{ID: 214, CardType: 0},
+					{ID: 215, CardType: 0},
 				},
 			},
 		},
@@ -78,66 +78,66 @@ func getTestStates() (*pogo.GameState, *pogo.GameState) {
 		Turn:        0,
 		Created:     1000,
 		Updated:     2000,
-		IdCounter:   300,
+		IDCounter:   300,
 		BoardWidth:  2,
 		BoardHeight: 2,
 		BoardSpaces: []pogo.BoardSpace{
-			{Id: 0, SpaceType: 0, State: 0},
-			{Id: 1, SpaceType: 0, State: 0},
-			{Id: 2, SpaceType: 0, State: 0},
-			{Id: 3, SpaceType: 0, State: 0},
+			{ID: 0, SpaceType: 0, State: 0},
+			{ID: 1, SpaceType: 0, State: 0},
+			{ID: 2, SpaceType: 0, State: 0},
+			{ID: 3, SpaceType: 0, State: 0},
 		},
 		Players: []pogo.PlayerState{
 			{
-				Id:       100,
+				ID:       100,
 				Name:     "PlayerOne",
 				Location: 0,
 				Hand: []pogo.CardState{
-					{Id: 101, CardType: 0},
-					{Id: 102, CardType: 0},
-					{Id: 103, CardType: 0},
-					{Id: 104, CardType: 0},
-					{Id: 105, CardType: 0},
+					{ID: 101, CardType: 0},
+					{ID: 102, CardType: 0},
+					{ID: 103, CardType: 0},
+					{ID: 104, CardType: 0},
+					{ID: 105, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 106, CardType: 0},
-					{Id: 107, CardType: 0},
-					{Id: 108, CardType: 0},
-					{Id: 109, CardType: 0},
-					{Id: 110, CardType: 0},
+					{ID: 106, CardType: 0},
+					{ID: 107, CardType: 0},
+					{ID: 108, CardType: 0},
+					{ID: 109, CardType: 0},
+					{ID: 110, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 111, CardType: 0},
-					{Id: 112, CardType: 0},
-					{Id: 113, CardType: 0},
-					{Id: 114, CardType: 0},
-					{Id: 115, CardType: 0},
+					{ID: 111, CardType: 0},
+					{ID: 112, CardType: 0},
+					{ID: 113, CardType: 0},
+					{ID: 114, CardType: 0},
+					{ID: 115, CardType: 0},
 				},
 			},
 			{
-				Id:       200,
+				ID:       200,
 				Name:     "PlayerTwo",
 				Location: 3,
 				Hand: []pogo.CardState{
-					{Id: 201, CardType: 0},
-					{Id: 202, CardType: 0},
-					{Id: 203, CardType: 0},
-					{Id: 204, CardType: 0},
-					{Id: 205, CardType: 0},
+					{ID: 201, CardType: 0},
+					{ID: 202, CardType: 0},
+					{ID: 203, CardType: 0},
+					{ID: 204, CardType: 0},
+					{ID: 205, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 206, CardType: 0},
-					{Id: 207, CardType: 0},
-					{Id: 208, CardType: 0},
-					{Id: 209, CardType: 0},
-					{Id: 210, CardType: 0},
+					{ID: 206, CardType: 0},
+					{ID: 207, CardType: 0},
+					{ID: 208, CardType: 0},
+					{ID: 209, CardType: 0},
+					{ID: 210, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 211, CardType: 0},
-					{Id: 212, CardType: 0},
-					{Id: 213, CardType: 0},
-					{Id: 214, CardType: 0},
-					{Id: 215, CardType: 0},
+					{ID: 211, CardType: 0},
+					{ID: 212, CardType: 0},
+					{ID: 213, CardType: 0},
+					{ID: 214, CardType: 0},
+					{ID: 215, CardType: 0},
 				},
 			},
 		},
@@ -186,16 +186,16 @@ func TestUpdatedMustAlwaysMoveForwardRule(t *testing.T) {
 
 func TestIdCounterMustOnlyMoveForwardRule(t *testing.T) {
 	var a, b = getTestStates()
-	var rule = &IdCounterMustOnlyMoveForwardRule{}
+	var rule = &IDCounterMustOnlyMoveForwardRule{}
 
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.IdCounter = b.IdCounter + 1
+	b.IDCounter = b.IDCounter + 1
 	err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.IdCounter = b.IdCounter - 10
+	b.IDCounter = b.IDCounter - 10
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -224,7 +224,7 @@ func TestNumberOfBoardSpacesCannotChangeRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.BoardSpaces = append(b.BoardSpaces, pogo.BoardSpace{Id: 3000})
+	b.BoardSpaces = append(b.BoardSpaces, pogo.BoardSpace{ID: 3000})
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -248,7 +248,7 @@ func TestBoardSpaceIdsCannotBeChangedRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.BoardSpaces[0].Id = 3000
+	b.BoardSpaces[0].ID = 3000
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -260,7 +260,7 @@ func TestPlayerIdsCannotBeChangedRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.Players[0].Id = 3000
+	b.Players[0].ID = 3000
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -272,7 +272,7 @@ func TestNumberOfPlayersCannotChangeRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.Players = append(b.Players, pogo.PlayerState{Id: 3000})
+	b.Players = append(b.Players, pogo.PlayerState{ID: 3000})
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -284,7 +284,7 @@ func TestCardIdsCannotBeChangedRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.Players[0].Hand[0].Id = 3000
+	b.Players[0].Hand[0].ID = 3000
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -308,7 +308,7 @@ func TestNumberOfPlayerCardsCannotChangeRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.Players[0].Hand = append(b.Players[0].Hand, pogo.CardState{Id: 3000})
+	b.Players[0].Hand = append(b.Players[0].Hand, pogo.CardState{ID: 3000})
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }
@@ -358,7 +358,7 @@ func TestAllIdsMustBeUniqueRule(t *testing.T) {
 	var err = rule.Apply(a, b)
 	assert.NoError(t, err)
 
-	b.Players[0].Hand[0].Id = b.Players[1].Id
+	b.Players[0].Hand[0].ID = b.Players[1].ID
 	err = rule.Apply(a, b)
 	assert.Error(t, err)
 }

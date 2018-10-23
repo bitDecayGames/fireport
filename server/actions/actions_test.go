@@ -11,66 +11,66 @@ func getTestState() *pogo.GameState {
 		Turn:        0,
 		Created:     1000,
 		Updated:     2000,
-		IdCounter:   300,
+		IDCounter:   300,
 		BoardWidth:  2,
 		BoardHeight: 2,
 		BoardSpaces: []pogo.BoardSpace{
-			{Id: 0, SpaceType: 0, State: 0},
-			{Id: 1, SpaceType: 0, State: 0},
-			{Id: 2, SpaceType: 0, State: 0},
-			{Id: 3, SpaceType: 0, State: 0},
+			{ID: 0, SpaceType: 0, State: 0},
+			{ID: 1, SpaceType: 0, State: 0},
+			{ID: 2, SpaceType: 0, State: 0},
+			{ID: 3, SpaceType: 0, State: 0},
 		},
 		Players: []pogo.PlayerState{
 			{
-				Id:       100,
+				ID:       100,
 				Name:     "PlayerOne",
 				Location: 0,
 				Hand: []pogo.CardState{
-					{Id: 101, CardType: 0},
-					{Id: 102, CardType: 0},
-					{Id: 103, CardType: 0},
-					{Id: 104, CardType: 0},
-					{Id: 105, CardType: 0},
+					{ID: 101, CardType: 0},
+					{ID: 102, CardType: 0},
+					{ID: 103, CardType: 0},
+					{ID: 104, CardType: 0},
+					{ID: 105, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 106, CardType: 0},
-					{Id: 107, CardType: 0},
-					{Id: 108, CardType: 0},
-					{Id: 109, CardType: 0},
-					{Id: 110, CardType: 0},
+					{ID: 106, CardType: 0},
+					{ID: 107, CardType: 0},
+					{ID: 108, CardType: 0},
+					{ID: 109, CardType: 0},
+					{ID: 110, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 111, CardType: 0},
-					{Id: 112, CardType: 0},
-					{Id: 113, CardType: 0},
-					{Id: 114, CardType: 0},
-					{Id: 115, CardType: 0},
+					{ID: 111, CardType: 0},
+					{ID: 112, CardType: 0},
+					{ID: 113, CardType: 0},
+					{ID: 114, CardType: 0},
+					{ID: 115, CardType: 0},
 				},
 			},
 			{
-				Id:       200,
+				ID:       200,
 				Name:     "PlayerTwo",
 				Location: 3,
 				Hand: []pogo.CardState{
-					{Id: 201, CardType: 0},
-					{Id: 202, CardType: 0},
-					{Id: 203, CardType: 0},
-					{Id: 204, CardType: 0},
-					{Id: 205, CardType: 0},
+					{ID: 201, CardType: 0},
+					{ID: 202, CardType: 0},
+					{ID: 203, CardType: 0},
+					{ID: 204, CardType: 0},
+					{ID: 205, CardType: 0},
 				},
 				Deck: []pogo.CardState{
-					{Id: 206, CardType: 0},
-					{Id: 207, CardType: 0},
-					{Id: 208, CardType: 0},
-					{Id: 209, CardType: 0},
-					{Id: 210, CardType: 0},
+					{ID: 206, CardType: 0},
+					{ID: 207, CardType: 0},
+					{ID: 208, CardType: 0},
+					{ID: 209, CardType: 0},
+					{ID: 210, CardType: 0},
 				},
 				Discard: []pogo.CardState{
-					{Id: 211, CardType: 0},
-					{Id: 212, CardType: 0},
-					{Id: 213, CardType: 0},
-					{Id: 214, CardType: 0},
-					{Id: 215, CardType: 0},
+					{ID: 211, CardType: 0},
+					{ID: 212, CardType: 0},
+					{ID: 213, CardType: 0},
+					{ID: 214, CardType: 0},
+					{ID: 215, CardType: 0},
 				},
 			},
 		},
@@ -97,7 +97,7 @@ func TestSyncLastUpdatedAction(t *testing.T) {
 
 func TestTurnClockwise90Action(t *testing.T) {
 	var a = getTestState()
-	var action = &TurnClockwise90Action{Owner: a.Players[0].Id}
+	var action = &TurnClockwise90Action{Owner: a.Players[0].ID}
 
 	var b, err = action.Apply(a)
 	assert.NoError(t, err)
@@ -106,7 +106,7 @@ func TestTurnClockwise90Action(t *testing.T) {
 
 func TestTurnCounterClockwise90Action(t *testing.T) {
 	var a = getTestState()
-	var action = &TurnCounterClockwise90Action{Owner: a.Players[0].Id}
+	var action = &TurnCounterClockwise90Action{Owner: a.Players[0].ID}
 
 	var b, err = action.Apply(a)
 	assert.NoError(t, err)
