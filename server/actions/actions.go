@@ -1,77 +1,45 @@
 package actions
 
 import (
-	"fmt"
 	"github.com/bitdecaygames/fireport/server/pogo"
-	"time"
 )
 
 // Action the smallest unit of modification to be made to a game state object
 type Action interface {
 	Apply(currentState *pogo.GameState) (*pogo.GameState, error)
+	GetGroup() int
+	SetGroup(group int)
+	GetPlayed() bool
+	SetPlayed(played bool)
 }
 
-// DefaultTurnActions the list of default actions that will be applied at the end of every turn
-var DefaultTurnActions = []Action{
-	&IncrementTurnAction{},
-	&SyncLastUpdatedAction{},
+
+// ActionTracker adds some helper methods and values to every action
+type ActionTracker struct {
+	Group  int
+	Played bool
 }
 
-// IncrementTurnAction increases the Turn by 1
-type IncrementTurnAction struct{}
-
-// Apply apply this action
-func (a *IncrementTurnAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
-	nextState := currentState.DeepCopy()
-	nextState.Turn = nextState.Turn + 1
-	return nextState, nil
+// GetGroup returns the group order that this action is a part of
+func (a *ActionTracker) GetGroup() int {
+	return a.Group
 }
 
-// SyncLastUpdatedAction sets the Updated to the current epoch time
-type SyncLastUpdatedAction struct{}
-
-// Apply apply this action
-func (a *SyncLastUpdatedAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
-	nextState := currentState.DeepCopy()
-	nextState.Updated = time.Now().Unix() // seconds since epoch
-	return nextState, nil
+// SetGroup sets the group order that this action is a part of
+func (a *ActionTracker) SetGroup(group int) {
+	a.Group = group
 }
 
-// TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
-type TurnClockwise90Action struct {
-	Owner int
+// GetPlayed true if this card has been played
+func (a *ActionTracker) GetPlayed() bool {
+	return a.Played
 }
 
-// Apply apply this action
-func (a *TurnClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
-	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
-	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
-	}
-	player.Facing = player.Facing + 1
-	if player.Facing > 3 {
-		player.Facing = 0
-	}
-	return nextState, nil
+// SetPlayed set to true if this card has been played
+func (a *ActionTracker) SetPlayed(played bool) {
+	a.Played = played
 }
 
-// TurnCounterClockwise90Action rotate the Owner of this action by 90 degrees counter-clockwise
-type TurnCounterClockwise90Action struct {
-	Owner int
-}
 
-// Apply apply this action
-func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
-	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
-	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
-	}
-	player.Facing = player.Facing - 1
-	if player.Facing < 0 {
-		player.Facing = 3
-	}
 
-	return nextState, nil
-}
+
