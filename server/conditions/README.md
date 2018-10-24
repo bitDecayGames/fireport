@@ -136,3 +136,23 @@ Or
 +C+A+
 ++D++
 ```
+
+## Example: Two Players Move But Do NOT Collide
+
+When there are two players:
+
+```
++++
++A+
++B+
++++
+```
+
+Player A (facing down) plays a `Move Forward` and player B (facing right) plays a `Move Forward` card.  So their states are now:
+
+```
++++
++++
++AB
++++
+```

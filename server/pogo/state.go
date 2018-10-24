@@ -85,7 +85,7 @@ type PlayerState struct {
 	Discard  []CardState // the cards that have been played or discarded
 	Deck     []CardState // the cards still in the deck
 	Location int         // the id of the board space this player is occupying
-	Facing   int         // the direction the player is facing 0, 1, 2, 3 for Up, Right, Down, Left
+	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	// TODO: MW there could be more here like how much health the player has, if that is something we want
 }
 
