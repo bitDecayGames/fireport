@@ -31,11 +31,6 @@ func (s *Subscriber) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	lobbyID := vars["lobbyID"]
 	playerID := vars["playerID"]
 
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to upgrade connection to websocket: '%v'", err), http.StatusInternalServerError)
-		return
-	}
 	lobby, ok := s.Services.Lobby.GetLobby(lobbyID)
 	if !ok {
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
@@ -51,6 +46,12 @@ func (s *Subscriber) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if !ok {
 		http.Error(w, fmt.Sprintf("player '%v' not found in lobby", playerID), http.StatusNotFound)
+		return
+	}
+
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to upgrade connection to websocket: '%v'", err), http.StatusInternalServerError)
 		return
 	}
 
