@@ -19,7 +19,7 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Len(t, lobbies, 0)
 
 	// Create our lobby
-	r, err := http.Post(fmt.Sprintf("http://127.0.0.1:%v%v", port, lobbyRoute), "application/json", bytes.NewBuffer([]byte("{}")))
+	r, err := http.Post(fmt.Sprintf("http://127.0.0.1:%v%v", port, LobbyRoute), "application/json", bytes.NewBuffer([]byte("{}")))
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
@@ -49,7 +49,7 @@ func TestLobbyAPI(t *testing.T) {
 	// Join our lobby
 	req, err := http.NewRequest(
 		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, lobbyRoute, lobbyID),
+		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, LobbyRoute, lobbyID),
 		bytes.NewBuffer([]byte("TestPlayer1")),
 	)
 	if !assert.Nil(t, err) {
@@ -70,7 +70,7 @@ func TestLobbyAPI(t *testing.T) {
 	// Create game from our lobby
 	req, err = http.NewRequest(
 		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/start", port, lobbyRoute, lobbyID),
+		fmt.Sprintf("http://127.0.0.1:%v%v/%v/start", port, LobbyRoute, lobbyID),
 		bytes.NewBuffer([]byte("{}")),
 	)
 	if !assert.Nil(t, err) {
@@ -93,7 +93,7 @@ func TestBadLobbyRequest(t *testing.T) {
 	// Join our lobby
 	req, err := http.NewRequest(
 		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, lobbyRoute, "no-such-lobby"),
+		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, LobbyRoute, "no-such-lobby"),
 		bytes.NewBuffer([]byte("TestPlayer1")),
 	)
 	if !assert.Nil(t, err) {

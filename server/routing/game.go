@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	gameRoute = apiv1 + "/game"
+	gameRoute = APIv1 + "/game"
 )
 
 // GameRoutes contains information about routes specific to game interaction

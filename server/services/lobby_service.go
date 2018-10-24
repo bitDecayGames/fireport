@@ -1,6 +1,8 @@
 package services
 
-import uuid "github.com/satori/go.uuid"
+import (
+	uuid "github.com/satori/go.uuid"
+)
 
 // LobbyService is responsible for managing our lobby list
 type LobbyService interface {
@@ -10,11 +12,18 @@ type LobbyService interface {
 	GetLobbies() map[string]*Lobby
 }
 
+// PlayerConnection is a general connection that allows messages to be sent
+type PlayerConnection interface {
+	WriteJSON(interface{}) error
+	Close() error
+}
+
 // Lobby is a group of players waiting to start a game
 type Lobby struct {
-	Name    string
-	ID      uuid.UUID
-	Players []string
+	Name              string
+	ID                uuid.UUID
+	Players           []string
+	ActiveConnections map[string]PlayerConnection
 }
 
 // LobbyServiceImpl is a concrete service
@@ -32,7 +41,8 @@ func NewLobbyService() *LobbyServiceImpl {
 // CreateLobby creates a new lobby and returns it
 func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	newLobby := &Lobby{
-		ID: uuid.NewV4(),
+		ID:                uuid.NewV4(),
+		ActiveConnections: make(map[string]PlayerConnection),
 	}
 
 	l.activeLobbies[newLobby.ID.String()] = newLobby
