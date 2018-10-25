@@ -8,8 +8,8 @@ import (
 )
 
 // LobbyCreationHelper creates a lobby with the passed in name and 3 players in the lobby's Players slice
-func LobbyCreationHelper(name string) *Lobby {
-	return &Lobby{
+func LobbyCreationHelper(name string) Lobby {
+	return Lobby{
 		Name:    name,
 		ID:      uuid.NewV4(),
 		Players: []string{"Player1" + name, "Player2" + name, "Player3" + name},

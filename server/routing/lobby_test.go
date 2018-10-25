@@ -15,7 +15,7 @@ import (
 func TestLobbyAPI(t *testing.T) {
 	port, svcs := startTestServer()
 
-	lobbies := svcs.Lobby.GetLobbies()
+	lobbies := svcs.Lobby.GetLobbiesSnapshot()
 	assert.Len(t, lobbies, 0)
 
 	// Create our lobby
@@ -30,13 +30,14 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	assert.Len(t, lobbies, 1)
 
 	var lobbyID string
 	var lobby *services.Lobby
 	for id, l := range lobbies {
 		lobbyID = id
-		lobby = l
+		lobby = &l
 		break
 	}
 	if lobby == nil {
@@ -62,6 +63,7 @@ func TestLobbyAPI(t *testing.T) {
 	}
 	assert.Equal(t, "200 OK", r.Status)
 
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
 		t.Fatal("expected 1 player in game lobby")
 	}
@@ -81,7 +83,13 @@ func TestLobbyAPI(t *testing.T) {
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
-	assert.Equal(t, "200 OK", r.Status)
+	if !assert.Equal(t, "200 OK", r.Status) {
+		body, _ := ioutil.ReadAll(r.Body)
+		t.Logf("Expected lobby: %v", lobbyID)
+		t.Fatalf("Body from error message: %v", string(body))
+	}
+
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies, 0) {
 		t.Fatal("expected lobby to be closed after game starts")
 	}

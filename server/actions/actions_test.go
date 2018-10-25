@@ -1,9 +1,10 @@
 package actions
 
 import (
+	"testing"
+
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func getTestState() *pogo.GameState {
