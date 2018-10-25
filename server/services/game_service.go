@@ -2,8 +2,8 @@ package services
 
 import (
 	"fmt"
-	"github.com/bitdecaygames/fireport/server/rules"
 
+	"github.com/bitdecaygames/fireport/server/rules"
 	"github.com/satori/go.uuid"
 )
 
@@ -15,10 +15,11 @@ type GameService interface {
 
 // Game is a group of players in a game
 type Game struct {
-	Name    string
-	ID      uuid.UUID
-	Players []string
-	Rules   []rules.GameRule
+	Name              string
+	ID                uuid.UUID
+	Players           []string
+	Rules             []rules.GameRule
+	ActiveConnections map[string]PlayerConnection
 }
 
 // GameServiceImpl is a concrete service
@@ -29,10 +30,11 @@ type GameServiceImpl struct {
 // CreateGame creates a new Game from the lobby information and returns it
 func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
 	newGame := &Game{
-		Name:    lobby.Name,
-		ID:      lobby.ID,
-		Players: lobby.Players,
-		Rules:   rules.DefaultGameRules,
+		Name:              lobby.Name,
+		ID:                lobby.ID,
+		Players:           lobby.Players,
+		Rules:             rules.DefaultGameRules,
+		ActiveConnections: lobby.ActiveConnections,
 	}
 	g.activeGames = append(g.activeGames, newGame)
 	return newGame
