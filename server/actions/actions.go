@@ -13,7 +13,6 @@ type Action interface {
 	SetPlayed(played bool)
 }
 
-
 // ActionTracker adds some helper methods and values to every action
 type ActionTracker struct {
 	Group  int
@@ -39,7 +38,3 @@ func (a *ActionTracker) GetPlayed() bool {
 func (a *ActionTracker) SetPlayed(played bool) {
 	a.Played = played
 }
-
-
-
-

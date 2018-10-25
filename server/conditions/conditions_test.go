@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-func getTestState(width int, height int, players []pogo.PlayerState)*pogo.GameState {
+func getTestState(width int, height int, players []pogo.PlayerState) *pogo.GameState {
 	var boardSpaces []pogo.BoardSpace
-	for i := 0; i < width * height; i++ {
+	for i := 0; i < width*height; i++ {
 		boardSpaces = append(boardSpaces, pogo.BoardSpace{ID: 0, SpaceType: 0, State: 0})
 	}
 	return &pogo.GameState{
@@ -20,7 +20,7 @@ func getTestState(width int, height int, players []pogo.PlayerState)*pogo.GameSt
 		BoardWidth:  width,
 		BoardHeight: height,
 		BoardSpaces: boardSpaces,
-		Players: players,
+		Players:     players,
 	}
 }
 
@@ -29,11 +29,11 @@ func getTestState(width int, height int, players []pogo.PlayerState)*pogo.GameSt
 +A+
 +B+
 +++
- */
+*/
 func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 	var gameState = getTestState(3, 4, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:4, Facing:2},
-		{ID:200,Name:"B",Location:7, Facing:1},
+		{ID: 100, Name: "A", Location: 4, Facing: 2},
+		{ID: 200, Name: "B", Location: 7, Facing: 1},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Move Forward
@@ -45,11 +45,11 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	+++
-	+++
-	+AB
-	+++
-	 */
+		+++
+		+++
+		+AB
+		+++
+	*/
 	assert.Equal(t, 7, nextState.Players[0].Location)
 	assert.Equal(t, 2, nextState.Players[0].Facing)
 	assert.Equal(t, 8, nextState.Players[1].Location)
@@ -59,11 +59,11 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 /*
 ++++
 +AB+
- */
+*/
 func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 	var gameState = getTestState(4, 2, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:5, Facing:0},
-		{ID:200,Name:"B",Location:6, Facing:0},
+		{ID: 100, Name: "A", Location: 5, Facing: 0},
+		{ID: 200, Name: "B", Location: 6, Facing: 0},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Right
@@ -75,9 +75,9 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	+AB+
-	++++
-	 */
+		+AB+
+		++++
+	*/
 	assert.Equal(t, 1, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
 	assert.Equal(t, 2, nextState.Players[1].Location)
@@ -88,12 +88,12 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 +C++
 ++++
 +AB+
- */
+*/
 func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 	var gameState = getTestState(4, 3, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:9, Facing:0},
-		{ID:200,Name:"B",Location:10, Facing:0},
-		{ID:300,Name:"C",Location:1, Facing:2},
+		{ID: 100, Name: "A", Location: 9, Facing: 0},
+		{ID: 200, Name: "B", Location: 10, Facing: 0},
+		{ID: 300, Name: "C", Location: 1, Facing: 2},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Left
@@ -106,10 +106,10 @@ func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	+C++
-	+B++
-	A+++
-	 */
+		+C++
+		+B++
+		A+++
+	*/
 	assert.Equal(t, 8, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 5, nextState.Players[1].Location)
@@ -122,12 +122,12 @@ func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 C+++
 ++++
 +AB+
- */
+*/
 func TestOneCollisionCausesAnother(t *testing.T) {
 	var gameState = getTestState(4, 3, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:9, Facing:0},
-		{ID:200,Name:"B",Location:10, Facing:0},
-		{ID:300,Name:"C",Location:0, Facing:2},
+		{ID: 100, Name: "A", Location: 9, Facing: 0},
+		{ID: 200, Name: "B", Location: 10, Facing: 0},
+		{ID: 300, Name: "C", Location: 0, Facing: 2},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Left
@@ -140,10 +140,10 @@ func TestOneCollisionCausesAnother(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	++++
-	CAB+
-	++++
-	 */
+		++++
+		CAB+
+		++++
+	*/
 	assert.Equal(t, 5, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 6, nextState.Players[1].Location)
@@ -156,13 +156,13 @@ func TestOneCollisionCausesAnother(t *testing.T) {
 ++C++
 +D+B+
 ++A++
- */
+*/
 func TestTurningTanksCollide(t *testing.T) {
 	var gameState = getTestState(5, 3, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:12, Facing:0},
-		{ID:200,Name:"B",Location:8, Facing:3},
-		{ID:300,Name:"C",Location:2, Facing:2},
-		{ID:400,Name:"D",Location:6, Facing:1},
+		{ID: 100, Name: "A", Location: 12, Facing: 0},
+		{ID: 200, Name: "B", Location: 8, Facing: 3},
+		{ID: 300, Name: "C", Location: 2, Facing: 2},
+		{ID: 400, Name: "D", Location: 6, Facing: 1},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Right
@@ -176,10 +176,10 @@ func TestTurningTanksCollide(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	+C+B+
-	+++++
-	+D+A+
-	 */
+		+C+B+
+		+++++
+		+D+A+
+	*/
 	assert.Equal(t, 13, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
 	assert.Equal(t, 3, nextState.Players[1].Location)
@@ -195,11 +195,11 @@ func TestTurningTanksCollide(t *testing.T) {
 ++++
 ++++
 ++A+
- */
+*/
 func TestRotatingAndMovementPartI(t *testing.T) {
 	var gameState = getTestState(4, 4, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:14, Facing:0},
-		{ID:200,Name:"B",Location:1, Facing:2},
+		{ID: 100, Name: "A", Location: 14, Facing: 0},
+		{ID: 200, Name: "B", Location: 1, Facing: 2},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Left
@@ -211,11 +211,11 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	++++
-	+B++
-	++A+
-	++++
-	 */
+		++++
+		+B++
+		++A+
+		++++
+	*/
 	assert.Equal(t, 10, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 5, nextState.Players[1].Location)
@@ -227,11 +227,11 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 ++++
 ++++
 ++A+
- */
+*/
 func TestRotatingAndMovementPartII(t *testing.T) {
 	var gameState = getTestState(4, 4, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:14, Facing:0},
-		{ID:200,Name:"B",Location:2, Facing:2},
+		{ID: 100, Name: "A", Location: 14, Facing: 0},
+		{ID: 200, Name: "B", Location: 2, Facing: 2},
 	})
 	var inputs = []pogo.GameInputMsg{
 		// A Turn Left
@@ -243,11 +243,11 @@ func TestRotatingAndMovementPartII(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	++++
-	++++
-	+A++
-	++B+
-	 */
+		++++
+		++++
+		+A++
+		++B+
+	*/
 	assert.Equal(t, 9, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 14, nextState.Players[1].Location)
