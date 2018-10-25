@@ -191,22 +191,19 @@ func TestTurningTanksCollide(t *testing.T) {
 }
 
 /*
-++C++
-+D+B+
-++A++
++B++
+++++
+++++
+++A+
  */
-func TestTurningTanksDoNotCollide(t *testing.T) {
-	var gameState = getTestState(5, 3, []pogo.PlayerState{
-		{ID:100,Name:"A",Location:12, Facing:0},
-		{ID:200,Name:"B",Location:8, Facing:3},
-		{ID:300,Name:"C",Location:2, Facing:2},
-		{ID:400,Name:"D",Location:6, Facing:1},
+func TestRotatingAndMovementPartI(t *testing.T) {
+	var gameState = getTestState(4, 4, []pogo.PlayerState{
+		{ID:100,Name:"A",Location:14, Facing:0},
+		{ID:200,Name:"B",Location:1, Facing:2},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Right
-		// B Turn Right
-		// C Turn Right
-		// D Turn Right
+		// A Turn Left
+		// B Move Forward x3
 	} // TODO: fill out these inputs
 	var core = &services.CoreServiceImpl{}
 
@@ -214,16 +211,45 @@ func TestTurningTanksDoNotCollide(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
-	++B++
-	+C+A+
-	++D++
+	++++
+	+B++
+	++A+
+	++++
 	 */
-	assert.Equal(t, 8, nextState.Players[0].Location)
-	assert.Equal(t, 1, nextState.Players[0].Facing)
-	assert.Equal(t, 2, nextState.Players[1].Location)
-	assert.Equal(t, 0, nextState.Players[1].Facing)
-	assert.Equal(t, 6, nextState.Players[2].Location)
-	assert.Equal(t, 3, nextState.Players[2].Facing)
-	assert.Equal(t, 12, nextState.Players[3].Location)
-	assert.Equal(t, 2, nextState.Players[3].Facing)
+	assert.Equal(t, 10, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+	assert.Equal(t, 5, nextState.Players[1].Location)
+	assert.Equal(t, 2, nextState.Players[1].Facing)
+}
+
+/*
+++B+
+++++
+++++
+++A+
+ */
+func TestRotatingAndMovementPartII(t *testing.T) {
+	var gameState = getTestState(4, 4, []pogo.PlayerState{
+		{ID:100,Name:"A",Location:14, Facing:0},
+		{ID:200,Name:"B",Location:2, Facing:2},
+	})
+	var inputs = []pogo.GameInputMsg{
+		// A Turn Left
+		// B Move Forward x3
+	} // TODO: fill out these inputs
+	var core = &services.CoreServiceImpl{}
+
+	var nextState, err = core.StepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+	++++
+	++++
+	+A++
+	++B+
+	 */
+	assert.Equal(t, 9, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+	assert.Equal(t, 14, nextState.Players[1].Location)
+	assert.Equal(t, 2, nextState.Players[1].Facing)
 }
