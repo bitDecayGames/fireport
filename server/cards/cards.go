@@ -8,9 +8,10 @@ import (
 
 // Card defines the list of actions for a given card
 type Card struct {
-	ID      int
-	Owner   int
-	Actions []actions.Action
+	ID       int
+	CardType pogo.CardType
+	Owner    int
+	Actions  []actions.Action
 }
 
 // Apply apply the list of actions from this card to the game state
@@ -48,25 +49,25 @@ func GameInputToCard(cardID int, playerID int, cardType pogo.CardType) (*Card, e
 
 // Builds the skip turn card, just a test card to figure out how these all work together
 func skipTurnCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.IncrementTurnAction{}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.SkipTurn, Actions: []actions.Action{&actions.IncrementTurnAction{}}}
 }
 
 func moveForwardOneCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveForwardOne, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}}}
 }
 
 func moveForwardTwoCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveForwardTwo, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
 }
 
 func moveForwardThreeCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveForwardThree, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
 }
 
 func turnRightCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.TurnClockwise90Action{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.TurnRight, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.TurnClockwise90Action{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
 }
 
 func turnLeftCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.TurnCounterClockwise90Action{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.TurnLeft, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.TurnCounterClockwise90Action{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
 }

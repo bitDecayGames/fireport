@@ -2,7 +2,7 @@ package services
 
 import (
 	"github.com/bitdecaygames/fireport/server/actions"
-	"github.com/bitdecaygames/fireport/server/cards"
+	"github.com/bitdecaygames/fireport/server/conditions"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -17,17 +17,11 @@ type CoreServiceImpl struct {
 
 // StepGame moves the game state forward using a list of inputs
 func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
-	var nextState = currentState
-	for _, input := range inputs {
-		card, err := cards.GameInputToCard(input.CardID, input.Owner, nextState.GetCardType(input.CardID))
-		if err != nil {
-			return nextState, err
-		}
-		nxt, err := card.Apply(nextState)
-		if err != nil {
-			return nextState, err
-		}
-		nextState = nxt
+	var nextState, err = conditions.ProcessConditions(currentState, inputs, []conditions.Condition{
+		&conditions.SpaceCollisionCondition{},
+	})
+	if err != nil {
+		return nextState, err
 	}
 	// each step of the game should Apply the DefaultTurnActions list
 	for _, defaultTurnAction := range actions.DefaultTurnActions {
