@@ -9,7 +9,7 @@ import (
 
 // GameService is responsible for managing our active games
 type GameService interface {
-	CreateGame(lobby *Lobby) *Game
+	CreateGame(lobby Lobby) *Game
 	GetActiveGame(gameID uuid.UUID) (*Game, error)
 }
 
@@ -20,6 +20,7 @@ type Game struct {
 	Players           []string
 	Rules             []rules.GameRule
 	ActiveConnections map[string]PlayerConnection
+	InputRules        []rules.InputRule
 }
 
 // GameServiceImpl is a concrete service
@@ -28,13 +29,14 @@ type GameServiceImpl struct {
 }
 
 // CreateGame creates a new Game from the lobby information and returns it
-func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
+func (g *GameServiceImpl) CreateGame(lobby Lobby) *Game {
 	newGame := &Game{
 		Name:              lobby.Name,
 		ID:                lobby.ID,
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
 		ActiveConnections: lobby.ActiveConnections,
+		InputRules:        rules.DefaultInputRules,
 	}
 	g.activeGames = append(g.activeGames, newGame)
 	return newGame

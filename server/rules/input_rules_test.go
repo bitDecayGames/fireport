@@ -1,10 +1,9 @@
-package actions
+package rules
 
 import (
-	"testing"
-
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func getTestState() *pogo.GameState {
@@ -78,38 +77,46 @@ func getTestState() *pogo.GameState {
 	}
 }
 
-func TestIncrementTurnAction(t *testing.T) {
-	var a = getTestState()
-	var action = &IncrementTurnAction{}
+func TestMinNumberOfInputsRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MinNumberOfInputsRule{NumberOfInputs: 1}
 
-	var b, err = action.Apply(a)
+	var err = rule.Apply(gameState, &gameState.Players[0], nil)
+	assert.Error(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{}})
 	assert.NoError(t, err)
-	assert.Equal(t, a.Turn+1, b.Turn)
 }
 
-func TestSyncLastUpdatedAction(t *testing.T) {
-	var a = getTestState()
-	var action = &SyncLastUpdatedAction{}
+func TestMaxNumberOfInputsRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MaxNumberOfInputsRule{NumberOfInputs: 1}
 
-	var b, err = action.Apply(a)
+	var err = rule.Apply(gameState, &gameState.Players[0], nil)
 	assert.NoError(t, err)
-	assert.True(t, a.Updated < b.Updated)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{}, {}})
+	assert.Error(t, err)
 }
 
-func TestTurnClockwise90Action(t *testing.T) {
-	var a = getTestState()
-	var action = &TurnClockwise90Action{Owner: a.Players[0].ID}
+func TestMustHaveCardInHandToPlayRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MustHaveCardInHandToPlayRule{}
 
-	var b, err = action.Apply(a)
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{CardID: 7}})
+	assert.Error(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{CardID: 101}})
 	assert.NoError(t, err)
-	assert.Equal(t, a.Players[0].Facing+1, b.Players[0].Facing)
 }
 
-func TestTurnCounterClockwise90Action(t *testing.T) {
-	var a = getTestState()
-	var action = &TurnCounterClockwise90Action{Owner: a.Players[0].ID}
+func TestMaxNumberOfSwapsRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MaxNumberOfSwapsRule{NumberOfSwaps: 1}
 
-	var b, err = action.Apply(a)
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Swap: 1}, {Swap: 1}})
+	assert.Error(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Swap: 1}, {CardID: 101}})
 	assert.NoError(t, err)
-	assert.Equal(t, 3, b.Players[0].Facing)
 }
