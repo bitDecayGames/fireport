@@ -109,10 +109,17 @@ func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 	/*
 		+C++
 		+B++
+<<<<<<< HEAD
 		+A++
 	*/
 	assert.Equal(t, 9, nextState.Players[0].Location)
 	assert.Equal(t, 0, nextState.Players[0].Facing)
+=======
+		A+++
+	*/
+	assert.Equal(t, 8, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+>>>>>>> 2bdf1365c7f5cb20eda42fd196a167789d6e6d6b
 	assert.Equal(t, 5, nextState.Players[1].Location)
 	assert.Equal(t, 3, nextState.Players[1].Facing)
 	assert.Equal(t, 1, nextState.Players[2].Location)
@@ -177,6 +184,7 @@ func TestTurningTanksCollide(t *testing.T) {
 	assert.NoError(t, err)
 
 	/*
+<<<<<<< HEAD
 		++C++
 		+D+B+
 		++A++
@@ -189,6 +197,20 @@ func TestTurningTanksCollide(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[2].Facing)
 	assert.Equal(t, 6, nextState.Players[3].Location)
 	assert.Equal(t, 1, nextState.Players[3].Facing)
+=======
+		+C+B+
+		+++++
+		+D+A+
+	*/
+	assert.Equal(t, 13, nextState.Players[0].Location)
+	assert.Equal(t, 1, nextState.Players[0].Facing)
+	assert.Equal(t, 3, nextState.Players[1].Location)
+	assert.Equal(t, 0, nextState.Players[1].Facing)
+	assert.Equal(t, 1, nextState.Players[2].Location)
+	assert.Equal(t, 3, nextState.Players[2].Facing)
+	assert.Equal(t, 11, nextState.Players[3].Location)
+	assert.Equal(t, 2, nextState.Players[3].Facing)
+>>>>>>> 2bdf1365c7f5cb20eda42fd196a167789d6e6d6b
 }
 
 /*
