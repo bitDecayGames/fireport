@@ -10,5 +10,6 @@ type EdgeCollisionCondition struct{}
 
 // Apply applies the condition to the game state
 func (c *EdgeCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action) error {
+
 	return nil
 }

@@ -14,6 +14,8 @@ type Condition interface {
 
 // ProcessConditions with a GameState, Inputs, and Conditions, generate the necessary and valid list of actions to get to the next state
 func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg, conditions []Condition) (*pogo.GameState, error) {
+	// TODO: clean up all of the printf statements
+	//fmt.Printf("processing conditions with %v inputs and %v conditions\n", len(inputs), len(conditions))
 	var nextState = currentState
 	// group all of the inputs based on the order value they have
 	var inputGroupsMap = make(map[int][]pogo.GameInputMsg)
@@ -25,9 +27,11 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		order = append(order, key)
 	}
 	sort.Ints(order)
-	for ord := range order {
+	//fmt.Printf("found %v input groups %v\n", len(order), inputGroupsMap)
+	for _, ord := range order {
 		// these are all the inputs with order N
 		var inputGroup = inputGroupsMap[ord]
+		//fmt.Printf("found %v inputs in group %v\n", len(inputGroup), inputGroup)
 		var cardGroup []cards.Card
 		for _, input := range inputGroup {
 			card, err := cards.GameInputToCard(input.CardID, input.Owner, nextState.GetCardType(input.CardID))
@@ -36,7 +40,7 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 			}
 			cardGroup = append(cardGroup, *card)
 		}
-
+		//fmt.Printf("found %v cards in card group %v\n", len(cardGroup), cardGroup)
 		// try to group cards by type so that movement cards don't happen in parallel with attack cards
 		var cardTypeGroupsMap = make(map[int][]cards.Card)
 		for _, card := range cardGroup {
@@ -47,6 +51,8 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		for cardTypeGroupKey := range cardTypeGroupsMap {
 			cardTypeGroupKeysOrder = append(cardTypeGroupKeysOrder, cardTypeGroupKey)
 		}
+		sort.Ints(cardTypeGroupKeysOrder)
+		//fmt.Printf("found %v types of cards in card type group %v\n", len(cardTypeGroupKeysOrder), cardTypeGroupsMap)
 		for _, cardTypeGroupKeyOrder := range cardTypeGroupKeysOrder {
 			// these cards are now grouped by type
 			var cardTypeGroup = cardTypeGroupsMap[cardTypeGroupKeyOrder]
@@ -69,8 +75,10 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 					}
 				}
 			}
+			//fmt.Printf("processing %v action groups\n", len(actionGroups))
 			// loop through each action group and check it against every condition
 			for _, actionGroup := range actionGroups {
+				//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
 				for _, cond := range conditions {
 					// this is the step that actually checks each condition
 					var condErr = cond.Apply(nextState, actionGroup)
@@ -90,4 +98,12 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		}
 	}
 	return nextState, nil
+}
+
+type playerTracker struct {
+	PlayerA     *pogo.PlayerState
+	PlayerB     *pogo.PlayerState
+	ActionIndex int
+	Moved       bool
+	Collided    bool
 }

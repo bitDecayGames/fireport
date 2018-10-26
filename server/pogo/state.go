@@ -108,6 +108,7 @@ type PlayerState struct {
 	Deck     []CardState // the cards still in the deck
 	Location int         // the index of the board space the player is on
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
+	Health   int         // the current hitpoints of this player
 	// TODO: MW there could be more here like how much health the player has, if that is something we want
 }
 

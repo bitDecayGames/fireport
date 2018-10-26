@@ -8,7 +8,6 @@ import (
 // MoveForwardAction move this player forward one space
 type MoveForwardAction struct {
 	Owner int
-	*ActionTracker
 }
 
 // Apply apply this action
@@ -37,10 +36,14 @@ func (a *MoveForwardAction) Apply(currentState *pogo.GameState) (*pogo.GameState
 	return nextState, nil
 }
 
+// GetOwner get the owner of this action
+func (a *MoveForwardAction) GetOwner() int {
+	return a.Owner
+}
+
 // TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
 type TurnClockwise90Action struct {
 	Owner int
-	*ActionTracker
 }
 
 // Apply apply this action
@@ -57,10 +60,14 @@ func (a *TurnClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameS
 	return nextState, nil
 }
 
+// GetOwner get the owner of this action
+func (a *TurnClockwise90Action) GetOwner() int {
+	return a.Owner
+}
+
 // TurnCounterClockwise90Action rotate the Owner of this action by 90 degrees counter-clockwise
 type TurnCounterClockwise90Action struct {
 	Owner int
-	*ActionTracker
 }
 
 // Apply apply this action
@@ -76,4 +83,9 @@ func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pog
 	}
 
 	return nextState, nil
+}
+
+// GetOwner get the owner of this action
+func (a *TurnCounterClockwise90Action) GetOwner() int {
+	return a.Owner
 }
