@@ -5,6 +5,38 @@ import (
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
+// MoveForwardAction move this player forward one space
+type MoveForwardAction struct {
+	Owner int
+	*ActionTracker
+}
+
+// Apply apply this action
+func (a *MoveForwardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	player := nextState.GetPlayer(a.Owner)
+	if player == nil {
+		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+	}
+	switch player.Facing {
+	case 0: // going north
+		player.Location = player.Location - nextState.BoardWidth
+		break
+	case 1: // going east
+		player.Location = player.Location + 1
+		break
+	case 2: // going south
+		player.Location = player.Location + nextState.BoardWidth
+		break
+	case 3: // going west
+		player.Location = player.Location - 1
+		break
+	default:
+		return nextState, fmt.Errorf("player %v with unknown facing %v", player.ID, player.Facing)
+	}
+	return nextState, nil
+}
+
 // TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
 type TurnClockwise90Action struct {
 	Owner int

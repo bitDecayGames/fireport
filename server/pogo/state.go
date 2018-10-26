@@ -77,6 +77,28 @@ func (s *GameState) GetPlayer(id int) *PlayerState {
 	return nil
 }
 
+// GetCardType returns the type of the card with the matching id
+func (s *GameState) GetCardType(id int) CardType {
+	for _, player := range s.Players {
+		for _, card := range player.Hand {
+			if card.ID == id {
+				return card.CardType
+			}
+		}
+		for _, card := range player.Deck {
+			if card.ID == id {
+				return card.CardType
+			}
+		}
+		for _, card := range player.Discard {
+			if card.ID == id {
+				return card.CardType
+			}
+		}
+	}
+	return Unknown
+}
+
 // PlayerState contains all of the information about a given player, their hand, their discard, everything
 type PlayerState struct {
 	ID       int         // unique id for this player in this game
@@ -84,7 +106,7 @@ type PlayerState struct {
 	Hand     []CardState // the cards currently available to the player
 	Discard  []CardState // the cards that have been played or discarded
 	Deck     []CardState // the cards still in the deck
-	Location int         // the id of the board space this player is occupying
+	Location int         // the index of the board space the player is on
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	// TODO: MW there could be more here like how much health the player has, if that is something we want
 }
@@ -99,8 +121,8 @@ type AnimationAction struct {
 
 // CardState defines a single and specific instance of a card in the game
 type CardState struct {
-	ID       int // the unique id that denotes this specific card
-	CardType int // the type of card
+	ID       int      // the unique id that denotes this specific card
+	CardType CardType // the type of card
 }
 
 // BoardSpace defines a single and specific instance of a space on the board

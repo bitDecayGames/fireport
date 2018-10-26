@@ -33,13 +33,13 @@ func getTestState(width int, height int, players []pogo.PlayerState) *pogo.GameS
 */
 func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 	var gameState = getTestState(3, 4, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 4, Facing: 2},
-		{ID: 200, Name: "B", Location: 7, Facing: 1},
+		{ID: 100, Name: "A", Location: 4, Facing: 2, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.MoveForwardOne}}},
+		{ID: 200, Name: "B", Location: 7, Facing: 1, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.MoveForwardOne}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Move Forward
-		// B Move Forward
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
+		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -63,13 +63,13 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 */
 func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 	var gameState = getTestState(4, 2, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 5, Facing: 0},
-		{ID: 200, Name: "B", Location: 6, Facing: 0},
+		{ID: 100, Name: "A", Location: 5, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnRight}}},
+		{ID: 200, Name: "B", Location: 6, Facing: 0, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.TurnLeft}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Right
-		// B Turn Left
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Right
+		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -92,15 +92,15 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 */
 func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 	var gameState = getTestState(4, 3, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 9, Facing: 0},
-		{ID: 200, Name: "B", Location: 10, Facing: 0},
-		{ID: 300, Name: "C", Location: 1, Facing: 2},
+		{ID: 100, Name: "A", Location: 9, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+		{ID: 200, Name: "B", Location: 10, Facing: 0, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.TurnLeft}}},
+		{ID: 300, Name: "C", Location: 1, Facing: 2, Hand: []pogo.CardState{{ID: 1002, CardType: pogo.MoveForwardOne}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Left
-		// B Turn Left
-		// C Move Forward
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
+		{CardID: 1002, Owner: 300, Order: 1}, // C Move Forward
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -126,15 +126,15 @@ C+++
 */
 func TestOneCollisionCausesAnother(t *testing.T) {
 	var gameState = getTestState(4, 3, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 9, Facing: 0},
-		{ID: 200, Name: "B", Location: 10, Facing: 0},
-		{ID: 300, Name: "C", Location: 0, Facing: 2},
+		{ID: 100, Name: "A", Location: 9, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+		{ID: 200, Name: "B", Location: 10, Facing: 0, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.TurnLeft}}},
+		{ID: 300, Name: "C", Location: 0, Facing: 2, Hand: []pogo.CardState{{ID: 1002, CardType: pogo.TurnLeft}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Left
-		// B Turn Left
-		// C Turn Left
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
+		{CardID: 1002, Owner: 300, Order: 1}, // C Turn Left
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -160,17 +160,17 @@ func TestOneCollisionCausesAnother(t *testing.T) {
 */
 func TestTurningTanksCollide(t *testing.T) {
 	var gameState = getTestState(5, 3, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 12, Facing: 0},
-		{ID: 200, Name: "B", Location: 8, Facing: 3},
-		{ID: 300, Name: "C", Location: 2, Facing: 2},
-		{ID: 400, Name: "D", Location: 6, Facing: 1},
+		{ID: 100, Name: "A", Location: 12, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnRight}}},
+		{ID: 200, Name: "B", Location: 8, Facing: 3, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.TurnRight}}},
+		{ID: 300, Name: "C", Location: 2, Facing: 2, Hand: []pogo.CardState{{ID: 1002, CardType: pogo.TurnRight}}},
+		{ID: 400, Name: "D", Location: 6, Facing: 1, Hand: []pogo.CardState{{ID: 1003, CardType: pogo.TurnRight}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Right
-		// B Turn Right
-		// C Turn Right
-		// D Turn Right
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Right
+		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Right
+		{CardID: 1002, Owner: 300, Order: 1}, // C Turn Right
+		{CardID: 1003, Owner: 400, Order: 1}, // D Turn Right
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -199,13 +199,13 @@ func TestTurningTanksCollide(t *testing.T) {
 */
 func TestRotatingAndMovementPartI(t *testing.T) {
 	var gameState = getTestState(4, 4, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 14, Facing: 0},
-		{ID: 200, Name: "B", Location: 1, Facing: 2},
+		{ID: 100, Name: "A", Location: 14, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+		{ID: 200, Name: "B", Location: 1, Facing: 2, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.MoveForwardThree}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Left
-		// B Move Forward x3
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward x3
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)
@@ -231,13 +231,13 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 */
 func TestRotatingAndMovementPartII(t *testing.T) {
 	var gameState = getTestState(4, 4, []pogo.PlayerState{
-		{ID: 100, Name: "A", Location: 14, Facing: 0},
-		{ID: 200, Name: "B", Location: 2, Facing: 2},
+		{ID: 100, Name: "A", Location: 14, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+		{ID: 200, Name: "B", Location: 2, Facing: 2, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.MoveForwardThree}}},
 	})
 	var inputs = []pogo.GameInputMsg{
-		// A Turn Left
-		// B Move Forward x3
-	} // TODO: fill out these inputs
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward x3
+	}
 	var core = &services.CoreServiceImpl{}
 
 	var nextState, err = core.StepGame(gameState, inputs)

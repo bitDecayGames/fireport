@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/bitdecaygames/fireport/server/actions"
+	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -18,7 +19,7 @@ type CoreServiceImpl struct {
 func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
 	var nextState = currentState
 	for _, input := range inputs {
-		card, err := actions.GameInputToCard(&input)
+		card, err := cards.GameInputToCard(input.CardID, input.Owner, nextState.GetCardType(input.CardID))
 		if err != nil {
 			return nextState, err
 		}
