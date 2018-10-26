@@ -19,6 +19,7 @@ type CoreServiceImpl struct {
 func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
 	var nextState, err = conditions.ProcessConditions(currentState, inputs, []conditions.Condition{
 		&conditions.SpaceCollisionCondition{},
+		&conditions.EdgeCollisionCondition{},
 	})
 	if err != nil {
 		return nextState, err
