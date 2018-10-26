@@ -24,7 +24,7 @@ type LobbyRoutes struct {
 func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 	r.HandleFunc(LobbyRoute, lr.lobbyCreateHandler).Methods("POST")
 	r.HandleFunc(LobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
-	r.HandleFunc(LobbyRoute+"/{lobbyID}/start", lr.lobbyStartHandler).Methods("PUT")
+	r.HandleFunc(LobbyRoute+"/{lobbyID}/start", lr.lobbyStartGameHandler).Methods("PUT")
 }
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,13 +41,11 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	lobby, ok := lr.Services.Lobby.GetLobbies()[lobbyID]
-	if !ok {
-		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	lobby, err := lr.Services.Lobby.JoinLobby(lobbyID, string(playerName))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-
-	lobby.Players = append(lobby.Players, string(playerName))
 
 	msg := pogo.LobbyMsg{
 		ID:      lobby.ID.String(),
@@ -73,17 +71,14 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	return
 }
 
-func (lr *LobbyRoutes) lobbyStartHandler(w http.ResponseWriter, r *http.Request) {
+func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
 
-	lobby, found := lr.Services.Lobby.GetLobby(lobbyID)
+	lobby, found := lr.Services.Lobby.Close(lobbyID)
 	if !found {
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
-	lr.Services.Game.CreateGame(lobby)
-
-	lr.Services.Lobby.Close(lobbyID)
 	lr.Services.Game.CreateGame(lobby)
 }

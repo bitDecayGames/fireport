@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+
 	"github.com/bitdecaygames/fireport/server/rules"
 
 	"github.com/satori/go.uuid"
@@ -9,7 +10,7 @@ import (
 
 // GameService is responsible for managing our active games
 type GameService interface {
-	CreateGame(lobby *Lobby) *Game
+	CreateGame(lobby Lobby) *Game
 	GetActiveGame(gameID uuid.UUID) (*Game, error)
 }
 
@@ -28,7 +29,7 @@ type GameServiceImpl struct {
 }
 
 // CreateGame creates a new Game from the lobby information and returns it
-func (g *GameServiceImpl) CreateGame(lobby *Lobby) *Game {
+func (g *GameServiceImpl) CreateGame(lobby Lobby) *Game {
 	newGame := &Game{
 		Name:       lobby.Name,
 		ID:         lobby.ID,
