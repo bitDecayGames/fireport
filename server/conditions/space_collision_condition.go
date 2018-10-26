@@ -36,13 +36,14 @@ func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup [
 		}
 	}
 	for i := range trackers {
-		for _, playerB := range futureState.Players {
-			if trackers[i].PlayerA.ID == playerB.ID {
-				trackers[i].PlayerB = &playerB
+		for playerBIndex := range futureState.Players {
+			if trackers[i].PlayerA.ID == futureState.Players[playerBIndex].ID {
+				trackers[i].PlayerB = &futureState.Players[playerBIndex]
 				break
 			}
 		}
 	}
+	var dirty = false
 	for i := range trackers {
 		for playerBIndex := range futureState.Players {
 			if trackers[i].PlayerB.ID != futureState.Players[playerBIndex].ID && trackers[i].PlayerB.Location == futureState.Players[playerBIndex].Location {
@@ -55,7 +56,12 @@ func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup [
 		if trackers[i].Moved && trackers[i].Collided && trackers[i].ActionIndex >= 0 {
 			fmt.Printf("player %v %v was seen as in a space collision due to action %v\n", i, trackers[i].PlayerB.ID, trackers[i].ActionIndex)
 			actionGroup[trackers[i].ActionIndex] = &actions.BumpDamageSelfAction{Owner: trackers[i].PlayerB.ID}
+			dirty = true
 		}
+	}
+	fmt.Println("")
+	if dirty {
+		return c.Apply(gameState, actionGroup)
 	}
 
 	return nil

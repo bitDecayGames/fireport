@@ -95,7 +95,7 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 B++
 +++
 */
-func TestTwoPlayersSimpleCollide(t *testing.T) {
+func TestTwoPlayersSimpleSpaceCollide(t *testing.T) {
 	var gameState = getTestState(3, 4, []pogo.PlayerState{
 		{ID: 100, Name: "A", Location: 4, Facing: 2, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.MoveForwardOne}}},
 		{ID: 200, Name: "B", Location: 6, Facing: 1, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.MoveForwardOne}}},
@@ -118,6 +118,36 @@ func TestTwoPlayersSimpleCollide(t *testing.T) {
 	assert.Equal(t, 4, nextState.Players[0].Location)
 	assert.Equal(t, 2, nextState.Players[0].Facing)
 	assert.Equal(t, 6, nextState.Players[1].Location)
+	assert.Equal(t, 1, nextState.Players[1].Facing)
+}
+
+/*
+++++
++BA+
+++++
+*/
+func TestTwoPlayersSimpleEdgeCollide(t *testing.T) {
+	var gameState = getTestState(4, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 6, Facing: 3, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.MoveForwardOne}}},
+		{ID: 200, Name: "B", Location: 5, Facing: 1, Hand: []pogo.CardState{{ID: 1001, CardType: pogo.MoveForwardOne}}},
+	})
+	var inputs = []pogo.GameInputMsg{
+		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
+		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
+	}
+	var core = &services.CoreServiceImpl{}
+
+	var nextState, err = core.StepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		++++
+		+BA+
+		++++
+	*/
+	assert.Equal(t, 6, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+	assert.Equal(t, 5, nextState.Players[1].Location)
 	assert.Equal(t, 1, nextState.Players[1].Facing)
 }
 
@@ -277,13 +307,13 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 
 	/*
 		++++
-		+B++
-		++A+
 		++++
+		+A++
+		+B++
 	*/
-	assert.Equal(t, 10, nextState.Players[0].Location)
+	assert.Equal(t, 9, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
-	assert.Equal(t, 5, nextState.Players[1].Location)
+	assert.Equal(t, 13, nextState.Players[1].Location)
 	assert.Equal(t, 2, nextState.Players[1].Facing)
 }
 
@@ -310,11 +340,11 @@ func TestRotatingAndMovementPartII(t *testing.T) {
 	/*
 		++++
 		++++
-		+A++
-		++B+
+		+AB+
+		++++
 	*/
 	assert.Equal(t, 9, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
-	assert.Equal(t, 14, nextState.Players[1].Location)
+	assert.Equal(t, 10, nextState.Players[1].Location)
 	assert.Equal(t, 2, nextState.Players[1].Facing)
 }
