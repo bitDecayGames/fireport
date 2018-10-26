@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"sync"
 
 	uuid "github.com/satori/go.uuid"
@@ -12,7 +13,8 @@ type LobbyModFunc = func(*Lobby)
 // LobbyService is responsible for managing our lobby list
 type LobbyService interface {
 	CreateLobby() *Lobby
-	IfLobbyExists(string, LobbyModFunc) (Lobby, bool)
+	JoinLobby(string, string) (Lobby, error)
+	RegisterConnection(string, string, PlayerConnection) error
 	Close(string) (Lobby, bool)
 	GetLobbiesSnapshot() map[string]Lobby
 }
@@ -59,6 +61,41 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 
 	l.activeLobbies[newLobby.ID.String()] = newLobby
 	return newLobby
+}
+
+// JoinLobby will add the player to the lobby, if it exists, or an error
+func (l *LobbyServiceImpl) JoinLobby(lobbyID string, playerID string) (Lobby, error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	lobby, ok := l.activeLobbies[lobbyID]
+	if !ok {
+		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)
+	}
+
+	lobby.Players = append(lobby.Players, playerID)
+	return *lobby, nil
+}
+
+// RegisterConnection adds a connection the given lobby and returns true if it exists, or an error
+// otherwise
+func (l *LobbyServiceImpl) RegisterConnection(lobbyID string, playerID string, c PlayerConnection) error {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	lobby, ok := l.activeLobbies[lobbyID]
+	if !ok {
+		return fmt.Errorf("no lobby found with ID '%v'", lobbyID)
+	}
+
+	for _, player := range lobby.Players {
+		if playerID == player {
+			lobby.ActiveConnections[playerID] = c
+			return nil
+		}
+	}
+
+	return fmt.Errorf("no player found with ID '%v'", playerID)
 }
 
 // IfLobbyExists calls the given function if the lobby is found, returning a copy of the

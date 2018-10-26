@@ -41,11 +41,9 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		panic(err)
 	}
 
-	lobby, ok := lr.Services.Lobby.IfLobbyExists(lobbyID, func(l *services.Lobby) {
-		l.Players = append(l.Players, string(playerName))
-	})
-	if !ok {
-		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	lobby, err := lr.Services.Lobby.JoinLobby(lobbyID, string(playerName))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
