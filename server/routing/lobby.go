@@ -81,7 +81,8 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	msg := pogo.GameStartMsg{
-		Msg:      "The game IS STARTING!!!",
+		GameID:	lobby.ID.String(),
+		Msg:      "The game is starting.",
 		Players: lobby.Players,
 	}
 

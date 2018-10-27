@@ -7,7 +7,8 @@ import (
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
-	Msg     string   `json:"ALERT!"`
+	GameID  string   `json:"gameID"`
+	Msg     string   `json:"message"`
 	Players []string `json:"players"`
 }
 
