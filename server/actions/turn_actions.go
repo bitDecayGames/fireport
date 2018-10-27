@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"github.com/bitdecaygames/fireport/server/pogo"
+	"math/rand"
 	"time"
 )
 
@@ -65,5 +66,82 @@ func (a *DrawCardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, e
 
 // GetOwner get the owner of this action
 func (a *DrawCardAction) GetOwner() int {
+	return a.Owner
+}
+
+// ResetDiscardPileAction put all of the cards from a player's discard onto the bottom of their deck
+type ResetDiscardPileAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *ResetDiscardPileAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	for i := range nextState.Players {
+		if nextState.Players[i].ID == a.Owner {
+			nextState.Players[i].Deck = append(nextState.Players[i].Discard, nextState.Players[i].Deck...)
+			nextState.Players[i].Discard = nextState.Players[i].Discard[:0]
+			return nextState, nil
+		}
+	}
+	return nextState, fmt.Errorf("failed to find player %v", a.Owner)
+}
+
+// GetOwner get the owner of this action
+func (a *ResetDiscardPileAction) GetOwner() int {
+	return a.Owner
+}
+
+func shuffle(cards []pogo.CardState) []pogo.CardState {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	ret := make([]pogo.CardState, len(cards))
+	perm := r.Perm(len(cards))
+	for i, randIndex := range perm {
+		ret[i] = cards[randIndex]
+	}
+	return ret
+}
+
+// ShuffleDeckAction randomly shuffle a player's deck
+type ShuffleDeckAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *ShuffleDeckAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	for i := range nextState.Players {
+		if nextState.Players[i].ID == a.Owner {
+			nextState.Players[i].Deck = shuffle(nextState.Players[i].Deck)
+			return nextState, nil
+		}
+	}
+	return nextState, fmt.Errorf("failed to find player %v", a.Owner)
+}
+
+// GetOwner get the owner of this action
+func (a *ShuffleDeckAction) GetOwner() int {
+	return a.Owner
+}
+
+// ShuffleDiscardAction randomly shuffle a player's discard
+type ShuffleDiscardAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *ShuffleDiscardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	for i := range nextState.Players {
+		if nextState.Players[i].ID == a.Owner {
+			nextState.Players[i].Discard = shuffle(nextState.Players[i].Discard)
+			return nextState, nil
+		}
+	}
+	return nextState, fmt.Errorf("failed to find player %v", a.Owner)
+}
+
+// GetOwner get the owner of this action
+func (a *ShuffleDiscardAction) GetOwner() int {
 	return a.Owner
 }

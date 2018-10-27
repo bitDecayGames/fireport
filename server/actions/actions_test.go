@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -121,6 +122,76 @@ func TestDrawCardAction(t *testing.T) {
 	assert.NoError(t, err)
 	b, err = action.Apply(b)
 	assert.Error(t, err)
+}
+
+func TestResetDiscardPileAction(t *testing.T) {
+	var a = getTestState()
+	var action = &ResetDiscardPileAction{}
+
+	var b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.Owner = 100
+
+	b, err = action.Apply(a)
+	assert.NoError(t, err)
+
+	assert.True(t, len(b.Players[0].Deck) > len(a.Players[0].Deck))
+	assert.True(t, len(b.Players[0].Discard) < len(a.Players[0].Discard))
+	assert.Equal(t, 10, len(b.Players[0].Deck))
+	assert.Equal(t, 0, len(b.Players[0].Discard))
+	assert.Equal(t, a.Players[0].Deck[len(a.Players[0].Deck)-1].ID, b.Players[0].Deck[len(b.Players[0].Deck)-1].ID)
+	assert.NotEqual(t, a.Players[0].Deck[0].ID, b.Players[0].Deck[0].ID)
+}
+
+func TestShuffleDeckAction(t *testing.T) {
+	var a = getTestState()
+	var action = &ShuffleDeckAction{}
+
+	var b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.Owner = 100
+
+	b, err = action.Apply(a)
+	assert.NoError(t, err)
+
+	assert.Equal(t, len(a.Players[0].Deck), len(b.Players[0].Deck))
+	for _, cardA := range a.Players[0].Deck {
+		var found = false
+		for _, cardB := range b.Players[0].Deck {
+			if cardB.ID == cardA.ID {
+				found = true
+				break
+			}
+		}
+		assert.True(t, found, fmt.Sprintf("could not find card %v in next deck state", cardA.ID))
+	}
+}
+
+func TestShuffleDiscardAction(t *testing.T) {
+	var a = getTestState()
+	var action = &ShuffleDiscardAction{}
+
+	var b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.Owner = 100
+
+	b, err = action.Apply(a)
+	assert.NoError(t, err)
+
+	assert.Equal(t, len(a.Players[0].Discard), len(b.Players[0].Discard))
+	for _, cardA := range a.Players[0].Discard {
+		var found = false
+		for _, cardB := range b.Players[0].Discard {
+			if cardB.ID == cardA.ID {
+				found = true
+				break
+			}
+		}
+		assert.True(t, found, fmt.Sprintf("could not find card %v in next discard state", cardA.ID))
+	}
 }
 
 func TestTurnClockwise90Action(t *testing.T) {
