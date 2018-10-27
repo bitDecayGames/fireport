@@ -2,11 +2,11 @@ package conditions
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
+	"github.com/pkg/errors"
 )
 
 // Condition checks each ActionGroup for a specific condition and modifies that ActionGroup if necessary
@@ -28,34 +28,27 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 
 	for ord, inputGroup := range turnGrouped {
 		fmt.Printf("Handling all inputs with order %v\n", ord)
-		var cardGroup []cards.Card
-		for _, input := range inputGroup {
-			card, err := cards.GameInputToCard(input.CardID, input.Owner, nextState.GetCardType(input.CardID))
-			if err != nil {
-				return nextState, err
-			}
-			cardGroup = append(cardGroup, *card)
+
+		cardGroup, err := getCardsFromInputs(inputGroup, nextState)
+		if err != nil {
+			return nextState, errors.Wrap(err, "failed to parse cards from inputs")
 		}
-		//fmt.Printf("found %v cards in card group %v\n", len(cardGroup), cardGroup)
-		// try to group cards by type so that movement cards don't happen in parallel with attack cards
-		var cardTypeGroupsMap = make(map[int][]cards.Card)
+
+		// [cardPriority][list of cards with that priority]
+		// NOTE: Some cardPriority lists may be empty (ex: there may be movements, and shots, but no utility)
+		cardPriorities := make([][]cards.Card, 0)
 		for _, card := range cardGroup {
-			var cardTypeGroupKey = int(card.CardType / 100)
-			cardTypeGroupsMap[cardTypeGroupKey] = append(cardTypeGroupsMap[cardTypeGroupKey], card)
+			for len(cardPriorities) < card.CardType.Priority()+1 {
+				cardPriorities = append(cardPriorities, make([]cards.Card, 0))
+			}
+			cardPriorities[card.CardType.Priority()] = append(cardPriorities[card.CardType.Priority()], card)
 		}
-		var cardTypeGroupKeysOrder []int
-		for cardTypeGroupKey := range cardTypeGroupsMap {
-			cardTypeGroupKeysOrder = append(cardTypeGroupKeysOrder, cardTypeGroupKey)
-		}
-		sort.Ints(cardTypeGroupKeysOrder)
-		//fmt.Printf("found %v types of cards in card type group %v\n", len(cardTypeGroupKeysOrder), cardTypeGroupsMap)
-		for _, cardTypeGroupKeyOrder := range cardTypeGroupKeysOrder {
-			// these cards are now grouped by type
-			var cardTypeGroup = cardTypeGroupsMap[cardTypeGroupKeyOrder]
-			// now break up each cardTypeGroup into its own list of actions
+
+		for _, cardPriorityGroup := range cardPriorities {
+			// now break up each cardPriorityGroup into its own list of actions
 			var actionLists [][]actions.Action
 			var longest = 0
-			for _, ctGroup := range cardTypeGroup {
+			for _, ctGroup := range cardPriorityGroup {
 				actionLists = append(actionLists, ctGroup.Actions)
 				if len(ctGroup.Actions) > longest {
 					longest = len(ctGroup.Actions)
@@ -94,6 +87,19 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		}
 	}
 	return nextState, nil
+}
+
+// getCardsFromInputs returns a slice of cards based on the given input list
+func getCardsFromInputs(inputs []pogo.GameInputMsg, state *pogo.GameState) ([]cards.Card, error) {
+	var cardGroup []cards.Card
+	for _, input := range inputs {
+		card, err := cards.GameInputToCard(input.CardID, input.Owner, state.GetCardType(input.CardID))
+		if err != nil {
+			return cardGroup, err
+		}
+		cardGroup = append(cardGroup, *card)
+	}
+	return cardGroup, nil
 }
 
 type playerTracker struct {

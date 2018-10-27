@@ -24,3 +24,9 @@ const (
 	TurnRight CardType = 120
 	TurnLeft  CardType = 121
 )
+
+// Priority is a helper func to return a numerical value for the priority of the card.
+// Lower values indicate higher priority
+func (c CardType) Priority() int {
+	return int(c / 100)
+}
