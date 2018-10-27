@@ -18,6 +18,7 @@ type Condition interface {
 func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg, conditions []Condition) (*pogo.GameState, error) {
 	var nextState = currentState
 	// [turnOrder][GameInputMsg's]
+	// NOTE: Will it be possible for a player to submit turn 1 and 3, but not turn 2? May lead to cool strats
 	turnGrouped := make([][]pogo.GameInputMsg, 0)
 	for _, input := range inputs {
 		for len(turnGrouped) < input.Order+1 {
@@ -26,9 +27,7 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		turnGrouped[input.Order] = append(turnGrouped[input.Order], input)
 	}
 
-	for ord, inputGroup := range turnGrouped {
-		fmt.Printf("Handling all inputs with order %v\n", ord)
-
+	for _, inputGroup := range turnGrouped {
 		cardGroup, err := getCardsFromInputs(inputGroup, nextState)
 		if err != nil {
 			return nextState, errors.Wrap(err, "failed to parse cards from inputs")
@@ -45,45 +44,7 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 		}
 
 		for _, cardPriorityGroup := range cardPriorities {
-			// now break up each cardPriorityGroup into its own list of actions
-			var actionLists [][]actions.Action
-			var longest = 0
-			for _, ctGroup := range cardPriorityGroup {
-				actionLists = append(actionLists, ctGroup.Actions)
-				if len(ctGroup.Actions) > longest {
-					longest = len(ctGroup.Actions)
-				}
-			}
-			// the group of action lists now has to be horizontally partitioned into action groups
-			var actionGroups [][]actions.Action
-			for i := 0; i < longest; i++ {
-				actionGroups = append(actionGroups, nil)
-				for _, actionList := range actionLists {
-					if i < len(actionList) {
-						actionGroups[i] = append(actionGroups[i], actionList[i])
-					}
-				}
-			}
-			//fmt.Printf("processing %v action groups\n", len(actionGroups))
-			// loop through each action group and check it against every condition
-			for _, actionGroup := range actionGroups {
-				//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
-				for _, cond := range conditions {
-					// this is the step that actually checks each condition
-					var condErr = cond.Apply(nextState, actionGroup)
-					if condErr != nil {
-						return nextState, condErr
-					}
-				}
-				// here is where the actions are applied to the state to generate each next state
-				for _, act := range actionGroup {
-					var nxt, actErr = act.Apply(nextState)
-					if actErr != nil {
-						return nxt, actErr
-					}
-					nextState = nxt
-				}
-			}
+			nextState, err = applyCardsToState(cardPriorityGroup, nextState, conditions)
 		}
 	}
 	return nextState, nil
@@ -100,6 +61,45 @@ func getCardsFromInputs(inputs []pogo.GameInputMsg, state *pogo.GameState) ([]ca
 		cardGroup = append(cardGroup, *card)
 	}
 	return cardGroup, nil
+}
+
+// applyCardsToState will apply all the cards to the game state with the given conditions, or an error otherwise
+func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []Condition) (*pogo.GameState, error) {
+	// the group of action lists now has to be horizontally partitioned into action groups
+	// In otherwords, we are grouping all of the cards' 1st actions together, 2nd actions together, etc
+	var actionGroups [][]actions.Action
+
+	for _, card := range cards {
+		for i, action := range card.Actions {
+			for len(actionGroups) < i+1 {
+				actionGroups = append(actionGroups, make([]actions.Action, 0))
+			}
+			actionGroups[i] = append(actionGroups[i], action)
+		}
+	}
+
+	//fmt.Printf("processing %v action groups\n", len(actionGroups))
+	// loop through each action group and check it against every condition
+	for _, actionGroup := range actionGroups {
+		//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
+		for _, cond := range conditions {
+			// this is the step that actually checks each condition
+			var condErr = cond.Apply(state, actionGroup)
+			if condErr != nil {
+				return state, condErr
+			}
+		}
+		// here is where the actions are applied to the state to generate each next state
+		for _, act := range actionGroup {
+			var nxt, actErr = act.Apply(state)
+			if actErr != nil {
+				return nxt, actErr
+			}
+			state = nxt
+		}
+	}
+
+	return state, nil
 }
 
 type playerTracker struct {
