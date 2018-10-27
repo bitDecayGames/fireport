@@ -17,11 +17,12 @@ type GameService interface {
 
 // Game is a group of players in a game
 type Game struct {
-	Name       string
-	ID         uuid.UUID
-	Players    []string
-	Rules      []rules.GameRule
-	InputRules []rules.InputRule
+	Name        string
+	ID          uuid.UUID
+	CurrentTurn int
+	Players     []string
+	Rules       []rules.GameRule
+	InputRules  []rules.InputRule
 }
 
 var gameMutex = &sync.Mutex{}

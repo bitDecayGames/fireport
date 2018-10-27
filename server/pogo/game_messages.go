@@ -50,3 +50,9 @@ type GameResultSummaryMsg struct {
 	Winner string
 	// TODO: attach stats and other summary information
 }
+
+// CurrentTurnMsg contains information of what turn a game is on
+type CurrentTurnMsg struct {
+	GameID      string `json:"gameID"`
+	CurrentTurn int    `json:"currentTurn"`
+}
