@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"time"
 )
@@ -39,4 +40,30 @@ func (a *SyncLastUpdatedAction) Apply(currentState *pogo.GameState) (*pogo.GameS
 // GetOwner get the owner of this action
 func (a *SyncLastUpdatedAction) GetOwner() int {
 	return -1
+}
+
+// DrawCardAction draw a card from a player's deck and put it in their hand
+type DrawCardAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *DrawCardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	for i := range nextState.Players {
+		if nextState.Players[i].ID == a.Owner {
+			if len(nextState.Players[i].Deck) > 0 {
+				nextState.Players[i].Hand = append(nextState.Players[i].Hand, nextState.Players[i].Deck[len(nextState.Players[i].Deck)-1])
+				nextState.Players[i].Deck = nextState.Players[i].Deck[:len(nextState.Players[i].Deck)-1]
+				return nextState, nil
+			}
+			return nextState, fmt.Errorf("player %v tried to draw a card from an empty deck", a.Owner)
+		}
+	}
+	return nextState, fmt.Errorf("failed to find player %v", a.Owner)
+}
+
+// GetOwner get the owner of this action
+func (a *DrawCardAction) GetOwner() int {
+	return a.Owner
 }

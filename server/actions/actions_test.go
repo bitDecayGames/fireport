@@ -96,6 +96,33 @@ func TestSyncLastUpdatedAction(t *testing.T) {
 	assert.True(t, a.Updated < b.Updated)
 }
 
+func TestDrawCardAction(t *testing.T) {
+	var a = getTestState()
+	var action = &DrawCardAction{}
+
+	var b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.Owner = 100
+
+	b, err = action.Apply(a)
+	assert.NoError(t, err)
+
+	assert.True(t, len(b.Players[0].Hand) > len(a.Players[0].Hand))
+	assert.True(t, len(b.Players[0].Deck) < len(a.Players[0].Deck))
+
+	b, err = action.Apply(b)
+	assert.NoError(t, err)
+	b, err = action.Apply(b)
+	assert.NoError(t, err)
+	b, err = action.Apply(b)
+	assert.NoError(t, err)
+	b, err = action.Apply(b)
+	assert.NoError(t, err)
+	b, err = action.Apply(b)
+	assert.Error(t, err)
+}
+
 func TestTurnClockwise90Action(t *testing.T) {
 	var a = getTestState()
 	var action = &TurnClockwise90Action{Owner: a.Players[0].ID}
