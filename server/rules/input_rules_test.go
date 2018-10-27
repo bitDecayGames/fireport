@@ -120,3 +120,47 @@ func TestMaxNumberOfSwapsRule(t *testing.T) {
 	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Swap: 1}, {CardID: 101}})
 	assert.NoError(t, err)
 }
+
+func TestOneCardPerOrderRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &OneCardPerOrderRule{}
+
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 1}, {Order: 2}, {Order: 3}})
+	assert.NoError(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 3}, {Order: 2}, {Order: 3}})
+	assert.Error(t, err)
+}
+
+func TestMaxAllowedOrderRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MaxAllowedOrderRule{OrderLimit: 10}
+
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 1}, {Order: 2}, {Order: 3}})
+	assert.NoError(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 1}, {Order: 2}, {Order: 30}})
+	assert.Error(t, err)
+}
+
+func TestMinAllowedOrderRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &MinAllowedOrderRule{OrderLimit: 2}
+
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 2}, {Order: 3}, {Order: 4}})
+	assert.NoError(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 1}, {Order: 2}, {Order: 3}})
+	assert.Error(t, err)
+}
+
+func TestCannotSkipOrderRule(t *testing.T) {
+	var gameState = getTestState()
+	var rule = &CannotSkipOrderRule{}
+
+	var err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 2}, {Order: 3}, {Order: 4}})
+	assert.NoError(t, err)
+
+	err = rule.Apply(gameState, &gameState.Players[0], []pogo.GameInputMsg{{Order: 1}, {Order: 3}, {Order: 4}})
+	assert.Error(t, err)
+}

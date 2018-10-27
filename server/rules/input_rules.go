@@ -101,3 +101,73 @@ func (r *MaxNumberOfSwapsRule) Apply(gameState *pogo.GameState, player *pogo.Pla
 	}
 	return nil
 }
+
+// OneCardPerOrderRule limits a player to only one card per order grouping
+type OneCardPerOrderRule struct{}
+
+// Apply apply this rule
+func (r *OneCardPerOrderRule) Apply(gameState *pogo.GameState, player *pogo.PlayerState, inputs []pogo.GameInputMsg) error {
+	var orderGrouping []int
+	for _, input := range inputs {
+		for len(orderGrouping) < input.Order+1 {
+			orderGrouping = append(orderGrouping, 0)
+		}
+		orderGrouping[input.Order]++
+		if orderGrouping[input.Order] > 1 {
+			return fmt.Errorf("player %v had more than one input for order %v", player.ID, input.Order)
+		}
+	}
+	return nil
+}
+
+// MaxAllowedOrderRule forces the order on cards to be less than a specific maximum
+type MaxAllowedOrderRule struct {
+	OrderLimit int
+}
+
+// Apply apply this rule
+func (r *MaxAllowedOrderRule) Apply(gameState *pogo.GameState, player *pogo.PlayerState, inputs []pogo.GameInputMsg) error {
+	for _, input := range inputs {
+		if input.Order > r.OrderLimit {
+			return fmt.Errorf("player %v has an input with a higher order than %v", player.ID, r.OrderLimit)
+		}
+	}
+	return nil
+}
+
+// MinAllowedOrderRule forces the order on cards to be greater than a specific minimum
+type MinAllowedOrderRule struct {
+	OrderLimit int
+}
+
+// Apply apply this rule
+func (r *MinAllowedOrderRule) Apply(gameState *pogo.GameState, player *pogo.PlayerState, inputs []pogo.GameInputMsg) error {
+	for _, input := range inputs {
+		if input.Order < r.OrderLimit {
+			return fmt.Errorf("player %v has an input with a smaller order than %v", player.ID, r.OrderLimit)
+		}
+	}
+	return nil
+}
+
+// CannotSkipOrderRule forces the order on cards to be sequential with no gaps
+type CannotSkipOrderRule struct{}
+
+// Apply apply this rule
+func (r *CannotSkipOrderRule) Apply(gameState *pogo.GameState, player *pogo.PlayerState, inputs []pogo.GameInputMsg) error {
+	var orderGrouping []int
+	for _, input := range inputs {
+		for len(orderGrouping) < input.Order+1 {
+			orderGrouping = append(orderGrouping, 0)
+		}
+		orderGrouping[input.Order]++
+	}
+	var lastOrder = -1000000
+	for i, order := range orderGrouping {
+		if lastOrder > order {
+			return fmt.Errorf("player %v skipped order %v", player.ID, i)
+		}
+		lastOrder = order
+	}
+	return nil
+}
