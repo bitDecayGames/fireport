@@ -1,6 +1,10 @@
 # Tanxz Server
 This is the server code for the Tanxz multiplayer game
 
+## Refresh Go Imports
+
+`go mod download`
+
 ## Deploy
 Locally, run `./deploy.sh`
 

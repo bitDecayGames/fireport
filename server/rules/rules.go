@@ -273,13 +273,7 @@ type PlayersMustOccupyAnExistingSpaceRule struct{}
 // Apply apply this rule
 func (r *PlayersMustOccupyAnExistingSpaceRule) Apply(a *pogo.GameState, b *pogo.GameState) error {
 	for _, playerB := range b.Players {
-		var found = false
-		for _, space := range b.BoardSpaces {
-			if playerB.Location == space.ID {
-				found = true
-			}
-		}
-		if !found {
+		if playerB.Location < 0 || playerB.Location >= len(b.BoardSpaces) {
 			return fmt.Errorf("player %v is occupying a space %v that does not exist", playerB.ID, playerB.Location)
 		}
 	}
