@@ -1,10 +1,12 @@
 package conditions
 
 import (
+	"fmt"
+	"sort"
+
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
-	"sort"
 )
 
 // Condition checks each ActionGroup for a specific condition and modifies that ActionGroup if necessary
@@ -14,24 +16,18 @@ type Condition interface {
 
 // ProcessConditions with a GameState, Inputs, and Conditions, generate the necessary and valid list of actions to get to the next state
 func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg, conditions []Condition) (*pogo.GameState, error) {
-	// TODO: clean up all of the printf statements
-	//fmt.Printf("processing conditions with %v inputs and %v conditions\n", len(inputs), len(conditions))
 	var nextState = currentState
-	// group all of the inputs based on the order value they have
-	var inputGroupsMap = make(map[int][]pogo.GameInputMsg)
+	// [turnOrder][GameInputMsg's]
+	turnGrouped := make([][]pogo.GameInputMsg, 0)
 	for _, input := range inputs {
-		inputGroupsMap[input.Order] = append(inputGroupsMap[input.Order], input)
+		for len(turnGrouped) < input.Order+1 {
+			turnGrouped = append(turnGrouped, make([]pogo.GameInputMsg, 0))
+		}
+		turnGrouped[input.Order] = append(turnGrouped[input.Order], input)
 	}
-	var order []int
-	for key := range inputGroupsMap {
-		order = append(order, key)
-	}
-	sort.Ints(order)
-	//fmt.Printf("found %v input groups %v\n", len(order), inputGroupsMap)
-	for _, ord := range order {
-		// these are all the inputs with order N
-		var inputGroup = inputGroupsMap[ord]
-		//fmt.Printf("found %v inputs in group %v\n", len(inputGroup), inputGroup)
+
+	for ord, inputGroup := range turnGrouped {
+		fmt.Printf("Handling all inputs with order %v\n", ord)
 		var cardGroup []cards.Card
 		for _, input := range inputGroup {
 			card, err := cards.GameInputToCard(input.CardID, input.Owner, nextState.GetCardType(input.CardID))
