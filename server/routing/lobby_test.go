@@ -1,10 +1,6 @@
 package routing
 
 import (
-	"bytes"
-	"fmt"
-	"io/ioutil"
-	"net/http"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/services"
@@ -19,13 +15,7 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Len(t, lobbies, 0)
 
 	// Create our lobby
-	r, err := http.Post(fmt.Sprintf("http://127.0.0.1:%v%v", port, LobbyRoute), "application/json", bytes.NewBuffer([]byte("{}")))
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	assert.Equal(t, "200 OK", r.Status)
-
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := post(port, LobbyRoute, []byte{})
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
@@ -48,20 +38,10 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Len(t, lobby.Players, 0)
 
 	// Join our lobby
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, LobbyRoute, lobbyID),
-		bytes.NewBuffer([]byte("TestPlayer1")),
-	)
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/join", []byte("TestPlayer1"))
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
-
-	r, err = http.DefaultClient.Do(req)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	assert.Equal(t, "200 OK", r.Status)
 
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
@@ -70,23 +50,9 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
 
 	// Create game from our lobby
-	req, err = http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/start", port, LobbyRoute, lobbyID),
-		bytes.NewBuffer([]byte("{}")),
-	)
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", []byte{})
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
-	}
-
-	r, err = http.DefaultClient.Do(req)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	if !assert.Equal(t, "200 OK", r.Status) {
-		body, _ := ioutil.ReadAll(r.Body)
-		t.Logf("Expected lobby: %v", lobbyID)
-		t.Fatalf("Body from error message: %v", string(body))
 	}
 
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
@@ -98,26 +64,9 @@ func TestLobbyAPI(t *testing.T) {
 func TestBadLobbyRequest(t *testing.T) {
 	port, _ := startTestServer()
 
-	// Join our lobby
-	req, err := http.NewRequest(
-		http.MethodPut,
-		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, LobbyRoute, "no-such-lobby"),
-		bytes.NewBuffer([]byte("TestPlayer1")),
-	)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
+	resp, err := put(port, LobbyRoute+"/no-such-lobby/join", []byte("TestPlayer1"))
+	if !assert.Contains(t, err.Error(), "404 Not Found") {
+		t.Fatal("Expected bad lobby join to fail")
 	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	assert.Equal(t, "404 Not Found", resp.Status)
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-
-	assert.Contains(t, string(body), "no lobby found with ID 'no-such-lobby'")
+	assert.Contains(t, string(resp), "no lobby found with ID 'no-such-lobby'")
 }
