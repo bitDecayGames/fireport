@@ -2,6 +2,7 @@ package routing
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -24,19 +25,24 @@ func startTestServer() (int, *services.MasterList) {
 	return port, svcs
 }
 
-func get(port int, endpoint string, data []byte) ([]byte, error) {
-	return doHTTPReq(http.MethodGet, port, endpoint, data)
+func get(port int, endpoint string, msg interface{}) ([]byte, error) {
+	return doHTTPReq(http.MethodGet, port, endpoint, msg)
 }
 
-func post(port int, endpoint string, data []byte) ([]byte, error) {
-	return doHTTPReq(http.MethodPost, port, endpoint, data)
+func post(port int, endpoint string, msg interface{}) ([]byte, error) {
+	return doHTTPReq(http.MethodPost, port, endpoint, msg)
 }
 
-func put(port int, endpoint string, data []byte) ([]byte, error) {
-	return doHTTPReq(http.MethodPut, port, endpoint, data)
+func put(port int, endpoint string, msg interface{}) ([]byte, error) {
+	return doHTTPReq(http.MethodPut, port, endpoint, msg)
 }
 
-func doHTTPReq(method string, port int, endpoint string, data []byte) ([]byte, error) {
+func doHTTPReq(method string, port int, endpoint string, msg interface{}) ([]byte, error) {
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return []byte{}, err
+	}
+
 	req, err := http.NewRequest(
 		method,
 		fmt.Sprintf("http://127.0.0.1:%v%v", port, endpoint),

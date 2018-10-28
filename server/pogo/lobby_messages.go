@@ -4,6 +4,12 @@ package pogo
 type LobbyCreateMsg struct {
 }
 
+// LobbyJoinMsg is a client message for a player to join a lobby
+type LobbyJoinMsg struct {
+	LobbyID  string `json:"lobbyID"`
+	PlayerID string `json:"playerID"`
+}
+
 // LobbyMsg contains a snapshot of a server lobby for a client
 type LobbyMsg struct {
 	ID          string          `json:"id"`

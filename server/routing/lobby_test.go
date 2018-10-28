@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -39,12 +38,22 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Len(t, lobby.Players, 0)
 
 	// Join our lobby
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/join", []byte("TestPlayer1"))
+	msg := pogo.LobbyJoinMsg{
+		LobbyID:  lobbyID,
+		PlayerID: "TestPlayer1",
+	}
+
+	_, err = put(port, LobbyRoute+"/join", msg)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
 
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/join", []byte("TestPlayer2"))
+	msg = pogo.LobbyJoinMsg{
+		LobbyID:  lobbyID,
+		PlayerID: "TestPlayer2",
+	}
+
+	_, err = put(port, LobbyRoute+"/join", msg)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
@@ -53,36 +62,27 @@ func TestLobbyAPI(t *testing.T) {
 	if !assert.Len(t, lobbies[lobbyID].Players, 2) {
 		t.Fatal("expected 2 players in game lobby")
 	}
-	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
-	assert.Equal(t, lobbies[lobbyID].Players[1], "TestPlayer2")
+	assert.Equal(t, lobbies[lobbyID].Players[0], `TestPlayer1`)
+	assert.Equal(t, lobbies[lobbyID].Players[1], `TestPlayer2`)
 
 	// Ready player 1 in  our lobby
-	msg := pogo.PlayerReadyMsg{
+	readyMsg := pogo.PlayerReadyMsg{
 		PlayerName: "TestPlayer1",
 		Ready:      true,
 	}
 
-	bytes,err := json.Marshal(msg)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", bytes)
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", readyMsg)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
 
 	// NotReady player 2 in  our lobby
-	msg = pogo.PlayerReadyMsg{
+	readyMsg = pogo.PlayerReadyMsg{
 		PlayerName: "TestPlayer2",
 		Ready:      false,
 	}
 
-	bytes,err = json.Marshal(msg)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", bytes)
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", readyMsg)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, lobbies[lobbyID].PlayerReady["TestPlayer2"], false)
 
 	// Create game from our lobby
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", []byte{})
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
 	}
@@ -109,7 +109,12 @@ func TestLobbyAPI(t *testing.T) {
 func TestBadLobbyRequest(t *testing.T) {
 	port, _ := startTestServer()
 
-	resp, err := put(port, LobbyRoute+"/no-such-lobby/join", []byte("TestPlayer1"))
+	msg := pogo.LobbyJoinMsg{
+		LobbyID:  "no-such-lobby",
+		PlayerID: "TestPlayer1",
+	}
+
+	resp, err := put(port, LobbyRoute+"/join", msg)
 	if !assert.Contains(t, err.Error(), "404 Not Found") {
 		t.Fatal("Expected bad lobby join to fail")
 	}

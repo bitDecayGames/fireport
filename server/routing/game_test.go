@@ -38,16 +38,11 @@ func TestGameInteraction(t *testing.T) {
 		GameID: ID,
 	}
 
-	turnBytes, err := json.Marshal(player1Turn)
-	if !assert.Nil(t, err) {
-		t.Fatal(err)
-	}
-
 	// TODO: Actually play legal cards and test accordingly
 
 	resp, err = put(port,
 		gameRoute+"/"+ID+"/turn/"+strconv.Itoa(currentTurn.CurrentTurn)+"/player/Player1",
-		turnBytes,
+		player1Turn,
 	)
 	if !assert.Nil(t, err) {
 		t.Fatal(err)
