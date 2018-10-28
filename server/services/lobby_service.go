@@ -4,12 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/bitdecaygames/fireport/server/pogo"
 	uuid "github.com/satori/go.uuid"
-)
-
-const (
-	Ready    = "Ready"
-	NotReady = "Not Ready"
 )
 
 // LobbyModFunc takes a lobby as an argument and is a thread-safe way of modifying a lobby
@@ -19,7 +15,7 @@ type LobbyModFunc = func(*Lobby)
 type LobbyService interface {
 	CreateLobby() *Lobby
 	JoinLobby(string, string) (Lobby, error)
-	ReadyPlayer(string, string) (Lobby, error)
+	ReadyPlayer(string, pogo.PlayerReadyMsg) (Lobby, error)
 	RegisterConnection(string, string, PlayerConnection) error
 	Close(string) (Lobby, bool)
 	GetLobbiesSnapshot() map[string]Lobby
@@ -36,7 +32,7 @@ type Lobby struct {
 	Name              string
 	ID                uuid.UUID
 	Players           []string
-	PlayerReady       map[string]string
+	PlayerReady       map[string]bool
 	ActiveConnections map[string]PlayerConnection
 }
 
@@ -63,7 +59,7 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 
 	newLobby := &Lobby{
 		ID:                uuid.NewV4(),
-		PlayerReady:       make(map[string]string),
+		PlayerReady:       make(map[string]bool),
 		ActiveConnections: make(map[string]PlayerConnection),
 	}
 
@@ -82,25 +78,20 @@ func (l *LobbyServiceImpl) JoinLobby(lobbyID string, playerID string) (Lobby, er
 	}
 
 	lobby.Players = append(lobby.Players, playerID)
-	lobby.PlayerReady[playerID] = NotReady
+	lobby.PlayerReady[playerID] = false
 	return *lobby, nil
 }
 
-// ReadyPlayer will toggle the player's ready status in the lobby, if they exist, or an error
-func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, playerID string) (Lobby, error) {
+// ReadyPlayer will set player's ready status to what ever they passed us(true or false), if they exist, or an error
+func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, readyMsg pogo.PlayerReadyMsg) (Lobby, error) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
-
 	lobby, ok := l.activeLobbies[lobbyID]
 	if !ok {
 		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)
 	}
+	lobby.PlayerReady[readyMsg.PlayerName] = readyMsg.Ready
 
-	if lobby.PlayerReady[playerID] == Ready {
-		lobby.PlayerReady[playerID] = NotReady
-	} else {
-		lobby.PlayerReady[playerID] = Ready
-	}
 	return *lobby, nil
 }
 

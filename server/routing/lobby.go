@@ -77,30 +77,26 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
 
-	playerName, err := ioutil.ReadAll(r.Body)
+	requestBytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	lobby, err := lr.Services.Lobby.ReadyPlayer(lobbyID, string(playerName))
+	readyMsg := pogo.PlayerReadyMsg{}
+	err = json.Unmarshal(requestBytes, &readyMsg)
+
+	lobby, err := lr.Services.Lobby.ReadyPlayer(lobbyID, readyMsg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-
 	msg := pogo.LobbyMsg{
 		ID:      lobby.ID.String(),
 		Players: lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
 	}
 
-	bytes, err := json.Marshal(msg)
-	if err != nil {
-		http.Error(w, "failed to build lobby message", http.StatusInternalServerError)
-		return
-	}
-
-	w.Write([]byte(bytes))
+	w.Write([]byte("ready status updated"))
 
 	// tell all pubsubbers
 	for id, conn := range lobby.ActiveConnections {
