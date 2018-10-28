@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/services"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,11 +62,28 @@ func TestLobbyAPI(t *testing.T) {
 	}
 	assert.Equal(t, "200 OK", r.Status)
 
+	// Join our lobby again
+	req, err = http.NewRequest(
+		http.MethodPut,
+		fmt.Sprintf("http://127.0.0.1:%v%v/%v/join", port, LobbyRoute, lobbyID),
+		bytes.NewBuffer([]byte("TestPlayer2")),
+	)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	r, err = http.DefaultClient.Do(req)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+	assert.Equal(t, "200 OK", r.Status)
+
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
-	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
-		t.Fatal("expected 1 player in game lobby")
+	if !assert.Len(t, lobbies[lobbyID].Players, 2) {
+		t.Fatal("expected 2 players in game lobby")
 	}
 	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
+	assert.Equal(t, lobbies[lobbyID].Players[1], "TestPlayer2")
 
 	// Create game from our lobby
 	req, err = http.NewRequest(

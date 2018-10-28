@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/bitdecaygames/fireport/server/rules"
-
 	"github.com/satori/go.uuid"
 )
 
@@ -17,11 +16,12 @@ type GameService interface {
 
 // Game is a group of players in a game
 type Game struct {
-	Name       string
-	ID         uuid.UUID
-	Players    []string
-	Rules      []rules.GameRule
-	InputRules []rules.InputRule
+	Name              string
+	ID                uuid.UUID
+	Players           []string
+	Rules             []rules.GameRule
+	ActiveConnections map[string]PlayerConnection
+	InputRules        []rules.InputRule
 }
 
 var gameMutex = &sync.Mutex{}
@@ -37,11 +37,12 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *Game {
 	defer gameMutex.Unlock()
 
 	newGame := &Game{
-		Name:       lobby.Name,
-		ID:         lobby.ID,
-		Players:    lobby.Players,
-		Rules:      rules.DefaultGameRules,
-		InputRules: rules.DefaultInputRules,
+		Name:              lobby.Name,
+		ID:                lobby.ID,
+		Players:           lobby.Players,
+		Rules:             rules.DefaultGameRules,
+		ActiveConnections: lobby.ActiveConnections,
+		InputRules:        rules.DefaultInputRules,
 	}
 	g.activeGames = append(g.activeGames, newGame)
 	return newGame
