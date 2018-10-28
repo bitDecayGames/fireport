@@ -14,7 +14,7 @@ type LobbyModFunc = func(*Lobby)
 // LobbyService is responsible for managing our lobby list
 type LobbyService interface {
 	CreateLobby() *Lobby
-	JoinLobby(string, string) (Lobby, error)
+	JoinLobby(pogo.LobbyJoinMsg) (Lobby, error)
 	ReadyPlayer(string, pogo.PlayerReadyMsg) (Lobby, error)
 	RegisterConnection(string, string, PlayerConnection) error
 	Close(string) (Lobby, bool)
@@ -68,17 +68,17 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 }
 
 // JoinLobby will add the player to the lobby, if it exists, or an error
-func (l *LobbyServiceImpl) JoinLobby(lobbyID string, playerID string) (Lobby, error) {
+func (l *LobbyServiceImpl) JoinLobby(msg pogo.LobbyJoinMsg) (Lobby, error) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 
-	lobby, ok := l.activeLobbies[lobbyID]
+	lobby, ok := l.activeLobbies[msg.LobbyID]
 	if !ok {
-		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)
+		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", msg.LobbyID)
 	}
 
-	lobby.Players = append(lobby.Players, playerID)
-	lobby.PlayerReady[playerID] = false
+	lobby.Players = append(lobby.Players, msg.PlayerID)
+	lobby.PlayerReady[msg.PlayerID] = false
 	return *lobby, nil
 }
 
@@ -86,6 +86,7 @@ func (l *LobbyServiceImpl) JoinLobby(lobbyID string, playerID string) (Lobby, er
 func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, readyMsg pogo.PlayerReadyMsg) (Lobby, error) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
+
 	lobby, ok := l.activeLobbies[lobbyID]
 	if !ok {
 		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)

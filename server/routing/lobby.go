@@ -23,7 +23,7 @@ type LobbyRoutes struct {
 // AddRoutes will add all lobby routes to the given router
 func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 	r.HandleFunc(LobbyRoute, lr.lobbyCreateHandler).Methods("POST")
-	r.HandleFunc(LobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
+	r.HandleFunc(LobbyRoute+"/join", lr.lobbyJoinHandler).Methods("PUT")
 	r.HandleFunc(LobbyRoute+"/{lobbyID}/ready", lr.lobbyReadyHandler).Methods("PUT")
 	r.HandleFunc(LobbyRoute+"/{lobbyID}/start", lr.lobbyStartGameHandler).Methods("PUT")
 }
@@ -34,23 +34,27 @@ func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	lobbyID := vars["lobbyID"]
-
-	playerName, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	lobby, err := lr.Services.Lobby.JoinLobby(lobbyID, string(playerName))
+	joinMsg := pogo.LobbyJoinMsg{}
+	err = json.Unmarshal(body, &joinMsg)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lobby, err := lr.Services.Lobby.JoinLobby(joinMsg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	msg := pogo.LobbyMsg{
-		ID:      lobby.ID.String(),
-		Players: lobby.Players,
+		ID:          lobby.ID.String(),
+		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
 	}
 
@@ -91,8 +95,8 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	msg := pogo.LobbyMsg{
-		ID:      lobby.ID.String(),
-		Players: lobby.Players,
+		ID:          lobby.ID.String(),
+		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
 	}
 
@@ -118,10 +122,10 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	msg := pogo.GameStartMsg{
-		GameID:	lobby.ID.String(),
+		GameID:  lobby.ID.String(),
 		Players: lobby.Players,
-		Msg:      "The game is starting.",
-	}	
+		Msg:     "The game is starting.",
+	}
 
 	w.Write([]byte("The game is starting."))
 
@@ -134,6 +138,6 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	lr.Services.Game.CreateGame(lobby)
-	
+
 	return
 }
