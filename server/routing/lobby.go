@@ -51,6 +51,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	msg := pogo.LobbyMsg{
 		ID:      lobby.ID.String(),
 		Players: lobby.Players,
+		ReadyStatus: lobby.PlayerReady,
 	}
 
 	bytes, err := json.Marshal(msg)
@@ -87,10 +88,10 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	msg := pogo.ReadyMsg{
+	msg := pogo.LobbyMsg{
 		ID:      lobby.ID.String(),
 		Players: lobby.Players,
-		ReadyStatus: string(playerName) +" is "+ lobby.PlayerReady[string(playerName)],
+		ReadyStatus: lobby.PlayerReady,
 	}
 
 	bytes, err := json.Marshal(msg)
@@ -124,19 +125,13 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 		GameID:	lobby.ID.String(),
 		Players: lobby.Players,
 		Msg:      "The game is starting.",
-	}
+	}	
 
-	bytes, err := json.Marshal(msg)
-	if err != nil {
-		http.Error(w, "failed to build game start message", http.StatusInternalServerError)
-		return
-	}
-
-	w.Write([]byte(bytes))
+	w.Write([]byte("The game is starting."))
 
 	// tell all pubsubbers
 	for id, conn := range lobby.ActiveConnections {
-		err = conn.WriteJSON(msg)
+		err := conn.WriteJSON(msg)
 		if err != nil {
 			fmt.Printf("Failed to tell player %v about starting the game: %v\n", id, err)
 		}
