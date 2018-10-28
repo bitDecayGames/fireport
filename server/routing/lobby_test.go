@@ -54,6 +54,30 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
 	assert.Equal(t, lobbies[lobbyID].Players[1], "TestPlayer2")
 
+	// Ready player 1 in  our lobby
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", []byte("TestPlayer1"))
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	// Ready player 2 in  our lobby
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", []byte("TestPlayer2"))
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+	// NotReady player 2 in  our lobby
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", []byte("TestPlayer2"))
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies[lobbyID].PlayerReady, 2) {
+		t.Fatal("expected 2 players in with a ready status in game lobby")
+	}
+	assert.Equal(t, lobbies[lobbyID].PlayerReady["TestPlayer1"], services.Ready)
+	assert.Equal(t, lobbies[lobbyID].PlayerReady["TestPlayer2"], services.NotReady)
+
 	// Create game from our lobby
 	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", []byte{})
 	if !assert.Nil(t, err) {
