@@ -24,6 +24,7 @@ type LobbyRoutes struct {
 func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 	r.HandleFunc(LobbyRoute, lr.lobbyCreateHandler).Methods("POST")
 	r.HandleFunc(LobbyRoute+"/{lobbyID}/join", lr.lobbyJoinHandler).Methods("PUT")
+	r.HandleFunc(LobbyRoute+"/{lobbyID}/ready", lr.lobbyReadyHandler).Methods("PUT")
 	r.HandleFunc(LobbyRoute+"/{lobbyID}/start", lr.lobbyStartGameHandler).Methods("PUT")
 }
 
@@ -50,6 +51,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	msg := pogo.LobbyMsg{
 		ID:      lobby.ID.String(),
 		Players: lobby.Players,
+		ReadyStatus: lobby.PlayerReady,
 	}
 
 	bytes, err := json.Marshal(msg)
@@ -71,6 +73,41 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	return
 }
 
+func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	lobbyID := vars["lobbyID"]
+
+	requestBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	readyMsg := pogo.PlayerReadyMsg{}
+	err = json.Unmarshal(requestBytes, &readyMsg)
+
+	lobby, err := lr.Services.Lobby.ReadyPlayer(lobbyID, readyMsg)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	msg := pogo.LobbyMsg{
+		ID:      lobby.ID.String(),
+		Players: lobby.Players,
+		ReadyStatus: lobby.PlayerReady,
+	}
+
+	w.Write([]byte("ready status updated"))
+
+	// tell all pubsubbers
+	for id, conn := range lobby.ActiveConnections {
+		err = conn.WriteJSON(msg)
+		if err != nil {
+			fmt.Printf("Failed to tell player %v about lobby update: %v\n", id, err)
+		}
+	}
+	return
+}
+
 func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
@@ -80,5 +117,23 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
+	msg := pogo.GameStartMsg{
+		GameID:	lobby.ID.String(),
+		Players: lobby.Players,
+		Msg:      "The game is starting.",
+	}	
+
+	w.Write([]byte("The game is starting."))
+
+	// tell all pubsubbers
+	for id, conn := range lobby.ActiveConnections {
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			fmt.Printf("Failed to tell player %v about starting the game: %v\n", id, err)
+		}
+	}
+
 	lr.Services.Game.CreateGame(lobby)
+	
+	return
 }

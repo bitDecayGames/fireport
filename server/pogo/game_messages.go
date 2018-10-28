@@ -7,7 +7,9 @@ import (
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
-	GameID uuid.UUID
+	GameID  string   `json:"gameID"`
+	Players []string `json:"players"`
+	Msg     string   `json:"message"`
 }
 
 // TurnTimeoutMsg contains information for when a player's turn has timed out
@@ -30,6 +32,13 @@ type TurnResultMsg struct {
 	Animations    []AnimationAction
 }
 
+// TurnSubmissionMsg is a full turn of actions submitted by a player
+type TurnSubmissionMsg struct {
+	GameID   string         `json:"gameID"`
+	PlayerID string         `json:"playerID"`
+	Inputs   []GameInputMsg `json:"inputs"`
+}
+
 // GameInputMsg is sent by the user to tell the server which card the user is selecting
 type GameInputMsg struct {
 	CardID int // this should maybe just be a query parameter or something simple
@@ -42,4 +51,10 @@ type GameInputMsg struct {
 type GameResultSummaryMsg struct {
 	Winner string
 	// TODO: attach stats and other summary information
+}
+
+// CurrentTurnMsg contains information of what turn a game is on
+type CurrentTurnMsg struct {
+	GameID      string `json:"gameID"`
+	CurrentTurn int    `json:"currentTurn"`
 }
