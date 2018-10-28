@@ -69,6 +69,39 @@ func (a *DrawCardAction) GetOwner() int {
 	return a.Owner
 }
 
+// DiscardCardAction move a card from the player's hand onto their discard
+type DiscardCardAction struct {
+	Owner  int
+	CardID int
+}
+
+// Apply apply this action
+func (a *DiscardCardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	for i := range nextState.Players {
+		if nextState.Players[i].ID == a.Owner {
+			var discarded = false
+			for k, card := range nextState.Players[i].Hand {
+				if card.ID == a.CardID {
+					nextState.Players[i].Discard = append(nextState.Players[i].Discard, nextState.Players[i].Hand[i])
+					nextState.Players[i].Hand = append(nextState.Players[i].Hand[:k], nextState.Players[i].Hand[k+1:]...)
+					discarded = true
+				}
+			}
+			if discarded {
+				return nextState, nil
+			}
+			return nextState, fmt.Errorf("player %v tried to discard a card %v that was not in their hand", a.Owner, a.CardID)
+		}
+	}
+	return nextState, fmt.Errorf("failed to find player %v", a.Owner)
+}
+
+// GetOwner get the owner of this action
+func (a *DiscardCardAction) GetOwner() int {
+	return a.Owner
+}
+
 // ResetDiscardPileAction put all of the cards from a player's discard onto the bottom of their deck
 type ResetDiscardPileAction struct {
 	Owner int

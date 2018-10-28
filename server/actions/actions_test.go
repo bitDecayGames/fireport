@@ -124,6 +124,27 @@ func TestDrawCardAction(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestDiscardCardAction(t *testing.T) {
+	var a = getTestState()
+	var action = &DiscardCardAction{}
+
+	var b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.Owner = 100
+
+	b, err = action.Apply(a)
+	assert.Error(t, err)
+
+	action.CardID = 101
+
+	b, err = action.Apply(a)
+	assert.NoError(t, err)
+
+	assert.True(t, len(b.Players[0].Discard) > len(a.Players[0].Discard))
+	assert.True(t, len(b.Players[0].Hand) < len(a.Players[0].Hand))
+}
+
 func TestResetDiscardPileAction(t *testing.T) {
 	var a = getTestState()
 	var action = &ResetDiscardPileAction{}
