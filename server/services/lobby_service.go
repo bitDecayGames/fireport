@@ -86,7 +86,7 @@ func (l *LobbyServiceImpl) JoinLobby(lobbyID string, playerID string) (Lobby, er
 	return *lobby, nil
 }
 
-// ReadyPlayer will ready the player in the lobby, if they exist, or an error
+// ReadyPlayer will toggle the player's ready status in the lobby, if they exist, or an error
 func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, playerID string) (Lobby, error) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
@@ -96,7 +96,11 @@ func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, playerID string) (Lobby, 
 		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)
 	}
 
-	lobby.PlayerReady[playerID] = Ready
+	if lobby.PlayerReady[playerID] == Ready {
+		lobby.PlayerReady[playerID] = NotReady
+	} else {
+		lobby.PlayerReady[playerID] = Ready
+	}
 	return *lobby, nil
 }
 
