@@ -9,3 +9,9 @@ type LobbyMsg struct {
 	ID      string   `json:"id"`
 	Players []string `json:"players"`
 }
+
+type ReadyMsg struct {
+	ID          string   `json:"id"`
+	Players     []string `json:"players"`
+	ReadyStatus string   `json:"readyStatus"`
+}
