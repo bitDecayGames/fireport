@@ -80,5 +80,29 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
+	msg := pogo.GameStartMsg{
+		GameID:	lobby.ID.String(),
+		Msg:      "The game is starting.",
+		Players: lobby.Players,
+	}
+
+	bytes, err := json.Marshal(msg)
+	if err != nil {
+		http.Error(w, "failed to build game start message", http.StatusInternalServerError)
+		return
+	}
+
+	w.Write([]byte(bytes))
+
+	// tell all pubsubbers
+	for id, conn := range lobby.ActiveConnections {
+		err = conn.WriteJSON(msg)
+		if err != nil {
+			fmt.Printf("Failed to tell player %v about starting the game: %v\n", id, err)
+		}
+	}
+
 	lr.Services.Game.CreateGame(lobby)
+	
+	return
 }

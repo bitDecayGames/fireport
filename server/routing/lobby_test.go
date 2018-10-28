@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/services"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,11 +42,17 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/join", []byte("TestPlayer2"))
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
-	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
-		t.Fatal("expected 1 player in game lobby")
+	if !assert.Len(t, lobbies[lobbyID].Players, 2) {
+		t.Fatal("expected 2 players in game lobby")
 	}
 	assert.Equal(t, lobbies[lobbyID].Players[0], "TestPlayer1")
+	assert.Equal(t, lobbies[lobbyID].Players[1], "TestPlayer2")
 
 	// Create game from our lobby
 	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", []byte{})
