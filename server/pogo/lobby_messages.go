@@ -11,6 +11,7 @@ type LobbyMsg struct {
 	ReadyStatus map[string]bool `json:"readyStatus"`
 }
 
+// PlayerReadyMsg contains a ready(true or false) message from the player
 type PlayerReadyMsg struct {
 	PlayerName string `json:"playerName"`
 	Ready      bool   `json:"ready"`
