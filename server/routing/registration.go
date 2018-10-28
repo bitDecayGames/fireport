@@ -21,7 +21,9 @@ func RegisterAll(r *mux.Router, svcs *services.MasterList) {
 	}
 	lobby.AddRoutes(r)
 
-	game := &GameRoutes{}
+	game := &GameRoutes{
+		Services: svcs,
+	}
 	game.AddRoutes(r)
 
 	pubsub := &Subscriber{

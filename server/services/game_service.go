@@ -18,6 +18,7 @@ type GameService interface {
 type Game struct {
 	Name              string
 	ID                uuid.UUID
+	CurrentTurn       int
 	Players           []string
 	Rules             []rules.GameRule
 	ActiveConnections map[string]PlayerConnection
