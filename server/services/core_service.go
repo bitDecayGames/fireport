@@ -33,8 +33,13 @@ func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.G
 		return nextState, err
 	}
 
+	var cardIDs []int
+	for i := range inputs {
+		cardIDs = append(cardIDs, inputs[i].CardID)
+	}
+
 	// apply our post-step triggers
-	nextState, err = triggers.ApplyTriggers(nextState, triggers.DefaultPostStepTriggers)
+	nextState, err = triggers.ApplyTriggers(nextState, triggers.DefaultPostStepTriggers(5, cardIDs))
 	if err != nil {
 		return nextState, err
 	}

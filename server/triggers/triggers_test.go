@@ -204,3 +204,19 @@ func TestDrawAndDeckRefreshTriggersTogether(t *testing.T) {
 	assert.Equal(t, 10, len(b.Players[0].Deck))
 	assert.Equal(t, 0, len(b.Players[0].Discard))
 }
+
+func TestDiscardUsedCardsTrigger(t *testing.T) {
+	var a = getTestState()
+
+	var b, err = ApplyTriggers(a, []Trigger{&DiscardUsedCardsTrigger{Cards: []int{101, 201, 202}}})
+	assert.NoError(t, err)
+
+	assert.Equal(t, len(a.Players[0].Hand), len(b.Players[0].Hand)+1)
+	assert.Equal(t, len(a.Players[1].Hand), len(b.Players[1].Hand)+2)
+
+	c, err := ApplyTriggers(b, []Trigger{&DiscardUsedCardsTrigger{Cards: []int{101, 201, 202}}})
+	assert.NoError(t, err)
+
+	assert.Equal(t, len(b.Players[0].Hand), len(c.Players[0].Hand))
+	assert.Equal(t, len(b.Players[1].Hand), len(c.Players[1].Hand))
+}

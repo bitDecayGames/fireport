@@ -6,10 +6,13 @@ import (
 )
 
 // DefaultPostStepTriggers the default post-step triggers
-var DefaultPostStepTriggers = []Trigger{
-	&WinTrigger{},
-	&NotEnoughCardsInHandTrigger{RequiredCardsInHand: 5}, // TODO: MW magic number alert
-	&RefreshDeckTrigger{},
+func DefaultPostStepTriggers(numberOfCardsInHand int, cardsToDiscard []int) []Trigger {
+	return []Trigger{
+		&WinTrigger{},
+		&NotEnoughCardsInHandTrigger{RequiredCardsInHand: numberOfCardsInHand},
+		&RefreshDeckTrigger{},
+		&DiscardUsedCardsTrigger{Cards: cardsToDiscard},
+	}
 }
 
 // WinTrigger the trigger for marking the game as finished
@@ -86,4 +89,35 @@ func (t *RefreshDeckTrigger) Check(currentState *pogo.GameState) bool {
 // GetActions get the actions for this trigger
 func (t *RefreshDeckTrigger) GetActions() []actions.Action {
 	return []actions.Action{&actions.ResetDiscardPileAction{Owner: t.playerID}, &actions.ShuffleDeckAction{Owner: t.playerID}}
+}
+
+// DiscardUsedCardsTrigger triggers when a player has used a card
+type DiscardUsedCardsTrigger struct {
+	Cards    []int
+	playerID int
+	cardID   int
+}
+
+// Check check the current state to fire the trigger
+func (t *DiscardUsedCardsTrigger) Check(currentState *pogo.GameState) bool {
+	t.playerID = -1
+	t.cardID = -1
+	for _, player := range currentState.Players {
+		for _, card := range player.Hand {
+			for i, cardID := range t.Cards {
+				if card.ID == cardID {
+					t.cardID = cardID
+					t.Cards = append(t.Cards[:i], t.Cards[i+1:]...)
+					t.playerID = player.ID
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// GetActions get the actions for this trigger
+func (t *DiscardUsedCardsTrigger) GetActions() []actions.Action {
+	return []actions.Action{&actions.DiscardCardAction{Owner: t.playerID, CardID: t.cardID}}
 }
