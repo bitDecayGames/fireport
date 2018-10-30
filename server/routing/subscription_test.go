@@ -1,14 +1,11 @@
 package routing
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"testing"
-
+ 
 	"github.com/bitdecaygames/fireport/server/pogo"
 
 	"github.com/gorilla/websocket"
