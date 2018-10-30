@@ -41,3 +41,27 @@ func (a *BumpDamageSelfAction) Apply(currentState *pogo.GameState) (*pogo.GameSt
 func (a *BumpDamageSelfAction) GetOwner() int {
 	return a.Owner
 }
+
+// WinGameAction marks the game as won by the owner of this action
+type WinGameAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *WinGameAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	if a.Owner >= 0 { // -1 means that it is a tie game
+		player := nextState.GetPlayer(a.Owner)
+		if player == nil {
+			return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+		}
+	}
+	nextState.Winner = a.Owner
+	nextState.IsGameFinished = true
+	return nextState, nil
+}
+
+// GetOwner get the owner of this action
+func (a *WinGameAction) GetOwner() int {
+	return a.Owner
+}
