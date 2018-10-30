@@ -39,7 +39,7 @@ func (g *CoreServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.G
 	}
 
 	// apply our post-step triggers
-	nextState, err = triggers.ApplyTriggers(nextState, triggers.DefaultPostStepTriggers(5, cardIDs))
+	nextState, err = triggers.ApplyTriggers(nextState, triggers.DefaultPostStepTriggers(5, cardIDs)) // TODO: MW magic number alert
 	if err != nil {
 		return nextState, err
 	}
