@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
 	"github.com/satori/go.uuid"
 )
@@ -60,4 +61,17 @@ func (g *GameServiceImpl) GetActiveGame(gameID uuid.UUID) (Game, error) {
 		}
 	}
 	return Game{}, fmt.Errorf("no game found with uuid '%v'", gameID.String())
+}
+
+func createInitialGameState(lobby Lobby) pogo.GameState {
+	panic("NotImplemented")
+}
+
+func createInitialDeck() []pogo.CardState {
+	panic("NotImplemented")
+
+}
+
+func createInitialPlayerStates(lobby Lobby) []pogo.PlayerState {
+	panic("NotImplemented")
 }
