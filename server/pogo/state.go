@@ -13,6 +13,9 @@ type GameState struct {
 	BoardWidth  int          // how many tiles wide is the game
 	BoardHeight int          // how many tiles long is the game
 	BoardSpaces []BoardSpace // defines each space on the board reading from top left to bottom right
+
+	IsGameFinished bool // is the game finished
+	Winner         int  // the id of the winner of the game
 }
 
 // GetNewID increments the IDCounter on this game state and returns the last IDCounter

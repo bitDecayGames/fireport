@@ -1,10 +1,10 @@
 package tests
 
 import (
+	"github.com/bitdecaygames/fireport/server/conditions"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
-	"github.com/bitdecaygames/fireport/server/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,6 +25,13 @@ func getTestState(width int, height int, players []pogo.PlayerState) *pogo.GameS
 	}
 }
 
+func stepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.GameState, error) {
+	return conditions.ProcessConditions(currentState, inputs, []conditions.Condition{
+		&conditions.SpaceCollisionCondition{},
+		&conditions.EdgeCollisionCondition{},
+	})
+}
+
 /*
 +++
 +A+
@@ -40,9 +47,8 @@ func TestTwoPlayersAreMoving(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -72,9 +78,8 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -104,9 +109,8 @@ func TestTwoPlayersSimpleSpaceCollide(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -135,9 +139,8 @@ func TestTwoPlayersSimpleEdgeCollide(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Move Forward
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -164,9 +167,8 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Right
 		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -195,9 +197,8 @@ func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
 		{CardID: 1002, Owner: 300, Order: 1}, // C Move Forward
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -229,9 +230,8 @@ func TestOneCollisionCausesAnother(t *testing.T) {
 		{CardID: 1001, Owner: 200, Order: 1}, // B Turn Left
 		{CardID: 1002, Owner: 300, Order: 1}, // C Turn Left
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -265,9 +265,8 @@ func TestTurningTanksCollide(t *testing.T) {
 		{CardID: 1002, Owner: 300, Order: 1}, // C Turn Right
 		{CardID: 1003, Owner: 400, Order: 1}, // D Turn Right
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -300,9 +299,8 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward x3
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
@@ -332,9 +330,8 @@ func TestRotatingAndMovementPartII(t *testing.T) {
 		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
 		{CardID: 1001, Owner: 200, Order: 1}, // B Move Forward x3
 	}
-	var core = &services.CoreServiceImpl{}
 
-	var nextState, err = core.StepGame(gameState, inputs)
+	var nextState, err = stepGame(gameState, inputs)
 	assert.NoError(t, err)
 
 	/*
