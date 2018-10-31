@@ -1,0 +1,121 @@
+@startuml TurnAnatomy
+
+node "Turn" {
+    ["Starting State"]
+    node "Inputs" {
+        ["A1"]
+        ["B1"]
+        ["A2"]
+        ["B2"]
+        ["A3"]
+        ["B3"]
+
+        ' Enforce ordering
+        ["A1"] - ["B1"]
+        ["B1"] - ["A2"]
+        ["A2"] - ["B2"]
+        ["B2"] - ["A3"]
+        ["A3"] - ["B3"]
+    }
+
+    node "Card Groups" {
+        node "Card Group 1" {
+            ["A1g"] #Yellow
+            ["A1"] --> ["A1g"]
+            ["B1g"] #Red
+            ["B1"] --> ["B1g"]
+        }
+
+        node "Card Group 2" {
+            ["A2g"] #Red
+            ["A2"] --> ["A2g"]
+            ["B2g"] #Red
+            ["B2"] --> ["B2g"]
+        }
+
+        node "Card Group 3" {
+            ["A3g"] #Blue
+            ["A3"] --> ["A3g"]
+            ["B3g"] #Yellow
+            ["B3"] --> ["B3g"]
+        }
+    }
+
+    node "Type Groups" {
+        node "Type Group 1" {
+            ["A1t"] #Yellow
+            ["A1g"] --> ["A1t"]
+
+        }
+
+        node "Type Group 2" {
+            ["B1t"] #Red
+            ["B1g"] --> ["B1t"]
+        }
+
+        node "Type Group 3" {
+            ["A2t"] #Red
+            ["A2g"] --> ["A2t"]
+            ["B2t"] #Red
+            ["B2g"] --> ["B2t"]
+        }
+
+        node "Type Group 4" {
+            ["B3t"] #Yellow
+            ["B3g"] --> ["B3t"]
+        }
+
+        node "Type Group 5" {
+            ["A3t"] #Blue
+            ["A3g"] --> ["A3t"]
+        }
+    }
+
+    node "Action Groups" {
+        node "Action Group 1" {
+            ["A1.1"] #Green
+            ["A1.2"] #Green
+            ["A1.1"] --> ["A1.2"]
+        }
+
+        ["A1t"] --> ["A1.1"]
+
+        node "Action Group 2" {
+            ["B1.1"] #Green
+            ["B1.2"] #Green
+            ["B1.1"] --> ["B1.2"]
+        }
+
+        ["B1t"] --> ["B1.1"]
+
+        node "Action Group 3" {
+            ["A2.1"] #Green
+            ["B2.1"] #Green
+            ["A2.2"] #Green
+            ["B2.2"] #Green
+            ["A2.1"] --> ["A2.2"]
+            ["B2.1"] --> ["B2.2"]
+        }
+
+        ["A2t"] --> ["A2.1"]
+        ["B2t"] --> ["B2.1"]
+
+        node "Action Group 4" {
+            ["A3.1"] #Green
+            ["A3.2"] #Green
+            ["A3.1"] --> ["A3.2"]
+        }
+
+        ["A3t"] --> ["A3.1"]
+
+        node "Action Group 5" {
+            ["B3.1"] #Green
+            ["B3.2"] #Green
+            ["B3.1"] --> ["B3.2"]
+        }
+
+        ["B3t"] --> ["B3.1"]
+    }
+}
+
+@enduml
