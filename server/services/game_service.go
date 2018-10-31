@@ -8,7 +8,6 @@ import (
 	"github.com/bitdecaygames/fireport/server/triggers"
 	"sync"
 
-	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
 	"github.com/satori/go.uuid"
 )
