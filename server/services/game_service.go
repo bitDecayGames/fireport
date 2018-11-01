@@ -97,15 +97,62 @@ func (g *GameServiceImpl) StepGame(currentState *pogo.GameState, inputs []pogo.G
 	// TODO: MW there needs to be a way to track what actions have been successfully applied each step
 	return nextState, nil
 }
+//createInitialGameState creates the initial state for the lobby, probably should call some board creation method to ensure width, height and tile types are set accordingly
 func createInitialGameState(lobby Lobby) pogo.GameState {
-	panic("NotImplemented")
+	var playerStates []pogo.PlayerState
+	
+	for i, player := range lobby.Players{
+		playerStates = append(playerStates , createInitialPlayerStates(player, i ))
+	}
+
+	return pogo.GameState{
+		Turn: 			0,
+		Created: 		0,
+		Updated: 		0,
+		IDCounter:		0,
+		BoardWidth:		3,
+		BoardHeight: 	3,
+		BoardSpaces: 	[]pogo.BoardSpace{
+			{ID: 0, SpaceType: 0, State: 0},
+			{ID: 1, SpaceType: 0, State: 0},
+			{ID: 2, SpaceType: 0, State: 0},
+			{ID: 3, SpaceType: 0, State: 0},
+			{ID: 4, SpaceType: 0, State: 0},
+			{ID: 5, SpaceType: 0, State: 0},
+			{ID: 6, SpaceType: 0, State: 0},
+			{ID: 7, SpaceType: 0, State: 0},
+			{ID: 8, SpaceType: 0, State: 0},
+		},
+		Players: 		playerStates,
+	}
 }
-
-func createInitialDeck() []pogo.CardState {
-	panic("NotImplemented")
-
+// createInitialCards returns a slice of CardStates for the initial discard pile, can probably be refactored to pull a list of playable/implimented cards
+func createInitialCards() []pogo.CardState {
+	return []pogo.CardState{
+		{ID: 101, CardType: pogo.MoveForwardOne},
+		{ID: 102, CardType: pogo.MoveForwardOne},
+		{ID: 103, CardType: pogo.MoveForwardTwo},
+		{ID: 104, CardType: pogo.MoveForwardTwo},
+		{ID: 105, CardType: pogo.MoveForwardThree},
+		{ID: 106, CardType: pogo.MoveForwardThree},
+		{ID: 107, CardType: pogo.MoveBackwardOne},
+		{ID: 108, CardType: pogo.MoveBackwardOne},
+		{ID: 109, CardType: pogo.MoveBackwardTwo},
+		{ID: 110, CardType: pogo.MoveBackwardTwo},
+		{ID: 111, CardType: pogo.MoveBackwardThree},
+		{ID: 112, CardType: pogo.MoveBackwardThree},
+		{ID: 113, CardType: pogo.TurnRight},
+		{ID: 114, CardType: pogo.TurnRight},
+	}
 }
-
-func createInitialPlayerStates(lobby Lobby) []pogo.PlayerState {
-	panic("NotImplemented")
+//createInitialPlayerStates creates the inital state for a player, probably needs a list of available starting locations
+func createInitialPlayerStates(playerName string, playerId int) pogo.PlayerState {	
+	return pogo.PlayerState{
+		ID:			playerId,
+		Name:		playerName,
+		Location:	playerId,
+		Hand:		[]pogo.CardState{},
+		Deck:		[]pogo.CardState{},
+		Discard:	createInitialCards(),
+	}
 }
