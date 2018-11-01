@@ -22,7 +22,7 @@ type GameService interface {
 type Game struct {
 	Name              string
 	ID                uuid.UUID
-	CurrentTurn       int
+	State			  pogo.GameState
 	Players           []string
 	Rules             []rules.GameRule
 	ActiveConnections map[string]PlayerConnection
@@ -44,6 +44,7 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *Game {
 	newGame := &Game{
 		Name:              lobby.Name,
 		ID:                lobby.ID,
+		State:			   createInitialGameState(lobby),
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
 		ActiveConnections: lobby.ActiveConnections,
