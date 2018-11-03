@@ -1,3 +1,5 @@
+using System;
+
 namespace Utils {
     public enum CardType {
         Unknown = -1,
@@ -13,5 +15,14 @@ namespace Utils {
         Rotate180 = 112,
         TurnRight = 120,
         TurnLeft = 121
+    }
+    
+    public static class CardTypeUtils {
+        private static Random random = new Random();
+        
+        public static CardType RandomCardType() {
+            Array values = Enum.GetValues(typeof(CardType));
+            return (CardType)values.GetValue(random.Next(values.Length));
+        }
     }
 }

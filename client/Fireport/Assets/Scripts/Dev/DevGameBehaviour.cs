@@ -42,10 +42,11 @@ namespace Dev {
             ReadyButton.onClick.AddListener(ReadyUp);
             StartButton.onClick.AddListener(StartGame);
 
-            PlayerNameInputField.interactable = false;
             ReadyButton.interactable = false;
             StartButton.interactable = false;
             cardButtons.ForEach(b => b.interactable = false);
+            
+            debugPrintGameState();
         }
 
         public void CreateLobby() {
@@ -126,7 +127,7 @@ namespace Dev {
         }
 
         private void addToActivityStream(string message) {
-            ActivityText.text = message + "\n" + ActivityText.text;
+            ActivityText.text = "- " + message + "\n" + ActivityText.text;
         }
 
         private void gameStateToInfoText() {
@@ -144,6 +145,55 @@ namespace Dev {
                     cards[i].text = "Unknown(" + card.ID + "): " + card.CardType;
                 }
             }
+        }
+
+        private void debugPrintGameState() {
+            var a = new GameState();
+            a.Turn = 7;
+            a.BoardWidth = 5;
+            a.BoardHeight = 5;
+            a.Players = new List<PlayerState>();
+            a.Players.Add(new PlayerState());
+            a.Players[0].Name = "Mike";
+            a.Players[0].Location = 7;
+            a.Players[0].Hand = new List<CardState>();
+            a.Players[0].Hand.Add(randomCard(101));
+            a.Players[0].Hand.Add(randomCard(102));
+            a.Players[0].Hand.Add(randomCard(103));
+            a.Players[0].Hand.Add(randomCard(104));
+            a.Players[0].Hand.Add(randomCard(105));
+            a.Players.Add(new PlayerState());
+            a.Players[1].Name = "Bob";
+            a.Players[1].Location = 2;
+            a.Players[1].Facing = 2;
+            a.Players[1].Hand = new List<CardState>();
+            a.Players[1].Hand.Add(randomCard(201));
+            a.Players[1].Hand.Add(randomCard(202));
+            a.Players[1].Hand.Add(randomCard(203));
+            a.Players[1].Hand.Add(randomCard(204));
+            a.Players[1].Hand.Add(randomCard(205));
+            a.Players.Add(new PlayerState());
+            a.Players[2].Name = "Steve";
+            a.Players[2].Location = 18;
+            a.Players[2].Facing = 3;
+            a.Players[2].Hand = new List<CardState>();
+            a.Players[2].Hand.Add(randomCard(301));
+            a.Players[2].Hand.Add(randomCard(302));
+            a.Players[2].Hand.Add(randomCard(303));
+            a.Players[2].Hand.Add(randomCard(304));
+            a.Players[2].Hand.Add(randomCard(305));
+            Debug.Log(a.ToString());
+            currentState = a;
+            currentPlayer = a.Players[0];
+            gameStateToInfoText();
+            cardStatesToButtonText();
+        }
+
+        private CardState randomCard(int id) {
+            var card = new CardState();
+            card.ID = id;
+            card.CardType = (int) CardTypeUtils.RandomCardType();
+            return card;
         }
     }
 }
