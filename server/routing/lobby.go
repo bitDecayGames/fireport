@@ -30,7 +30,7 @@ func (lr *LobbyRoutes) AddRoutes(r *mux.Router) {
 
 func (lr *LobbyRoutes) lobbyCreateHandler(w http.ResponseWriter, r *http.Request) {
 	lobby := lr.Services.Lobby.CreateLobby()
-	w.Write([]byte(lobby.ID.String()))
+	w.Write([]byte(lobby.ID))
 }
 
 func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +53,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	msg := pogo.LobbyMsg{
-		ID:          lobby.ID.String(),
+		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
 	}
@@ -95,7 +95,7 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	msg := pogo.LobbyMsg{
-		ID:          lobby.ID.String(),
+		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
 	}
@@ -122,7 +122,7 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	msg := pogo.GameStartMsg{
-		GameID:  lobby.ID.String(),
+		GameID:  lobby.ID,
 		Players: lobby.Players,
 		Msg:     "The game is starting.",
 	}

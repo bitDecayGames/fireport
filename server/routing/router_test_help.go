@@ -4,12 +4,30 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"testing"
 
 	"github.com/bitdecaygames/fireport/server/services"
 )
+
+// Unmarshal will read all bytes from r and populate the given obj, returning
+// any error that may occur
+func Unmarshal(r io.ReadCloser, obj interface{}) error {
+	body, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, obj)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func startTestServer() (int, *services.MasterList) {
 	listener, err := net.Listen("tcp", ":0")
@@ -23,6 +41,16 @@ func startTestServer() (int, *services.MasterList) {
 
 	go serveInternal(listener, svcs)
 	return port, svcs
+}
+
+func dumpResponse(t *testing.T, r *http.Response) {
+	bytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		t.Logf("failed to read response: %v", err)
+		return
+	}
+
+	t.Logf("response body: %v", string(bytes))
 }
 
 func get(port int, endpoint string, msg interface{}) ([]byte, error) {
@@ -42,6 +70,8 @@ func doHTTPReq(method string, port int, endpoint string, msg interface{}) ([]byt
 	if err != nil {
 		return []byte{}, err
 	}
+
+	fmt.Println(string(data))
 
 	req, err := http.NewRequest(
 		method,
