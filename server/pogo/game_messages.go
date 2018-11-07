@@ -7,9 +7,9 @@ import (
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
-	GameID  string   `json:"gameID"`
-	Players []string `json:"players"`
-	Msg     string   `json:"message"`
+	GameID    string    `json:"gameID"`
+	GameState GameState `json:"gameState"`
+	Players   []string  `json:"players"`
 }
 
 // TurnTimeoutMsg contains information for when a player's turn has timed out
