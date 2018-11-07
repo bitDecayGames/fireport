@@ -100,10 +100,14 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	}
 
 	if allTurnsSubmitted {
-		// TODO: step the game
+		msg := &pogo.GameStartMsg{
+			GameID:    game.ID,
+			Players:   game.Players,
+			GameState: game.State,
+		}
 
-		for pid, _ := range game.ActiveConnections {
-			//err = conn.WriteJSON(game)
+		for pid, conn := range game.ActiveConnections {
+			err = conn.WriteJSON(msg)
 			if err != nil {
 				fmt.Println("failed to send state to player ", pid)
 			}
