@@ -1,7 +1,11 @@
 package routing
 
 import (
+	"fmt"
+	"net/url"
 	"testing"
+	"encoding/json"
+	"github.com/gorilla/websocket"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/services"
@@ -9,6 +13,9 @@ import (
 )
 
 func TestLobbyAPI(t *testing.T) {
+	TestPlayer1 := "TestPlayer1"
+	TestPlayer2 := "TestPlayer2"
+
 	port, svcs := startTestServer()
 
 	lobbies := svcs.Lobby.GetLobbiesSnapshot()
@@ -40,7 +47,7 @@ func TestLobbyAPI(t *testing.T) {
 	// Join our lobby
 	msg := pogo.LobbyJoinMsg{
 		LobbyID:  lobbyID,
-		PlayerID: "TestPlayer1",
+		PlayerID: TestPlayer1,
 	}
 
 	_, err = put(port, LobbyRoute+"/join", msg)
@@ -50,7 +57,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	msg = pogo.LobbyJoinMsg{
 		LobbyID:  lobbyID,
-		PlayerID: "TestPlayer2",
+		PlayerID: TestPlayer2,
 	}
 
 	_, err = put(port, LobbyRoute+"/join", msg)
@@ -67,7 +74,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	// Ready player 1 in  our lobby
 	readyMsg := pogo.PlayerReadyMsg{
-		PlayerName: "TestPlayer1",
+		PlayerName: TestPlayer1,
 		Ready:      true,
 	}
 
@@ -78,7 +85,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	// NotReady player 2 in  our lobby
 	readyMsg = pogo.PlayerReadyMsg{
-		PlayerName: "TestPlayer2",
+		PlayerName: TestPlayer2,
 		Ready:      false,
 	}
 
@@ -91,12 +98,40 @@ func TestLobbyAPI(t *testing.T) {
 	if !assert.Len(t, lobbies[lobbyID].PlayerReady, 2) {
 		t.Fatal("expected 2 players in with a ready status in game lobby")
 	}
-	assert.Equal(t, lobbies[lobbyID].PlayerReady["TestPlayer1"], true)
-	assert.Equal(t, lobbies[lobbyID].PlayerReady["TestPlayer2"], false)
+	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer1], true)
+	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer2], false)
 
 	// Create game from our lobby
-	_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
-	if !assert.Nil(t, err) {
+	
+
+	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, TestPlayer1)
+	t.Logf("Path: %v", path)
+
+	u := url.URL{Scheme: "ws", Host: fmt.Sprintf(`localhost:%v`, port), Path: path}
+
+	t.Logf("Connecting to: %v", u)
+	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	if err != nil {
+		t.Fatalf("dial: %v", err)
+	}
+	defer c.Close()
+
+	go func() {
+
+		_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
+		if !assert.Nil(t, err) {
+			t.Fatal(err)
+		}
+	}()
+
+	_, message, err := c.ReadMessage()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updatedLobby := pogo.GameStartMsg{}
+	err = json.Unmarshal(message, &updatedLobby)
+	if err != nil {
 		t.Fatal(err)
 	}
 
