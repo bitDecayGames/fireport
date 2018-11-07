@@ -30,7 +30,7 @@ type PlayerConnection interface {
 // Lobby is a group of players waiting to start a game
 type Lobby struct {
 	Name              string
-	ID                uuid.UUID
+	ID                string
 	Players           []string
 	PlayerReady       map[string]bool
 	ActiveConnections map[string]PlayerConnection
@@ -58,12 +58,12 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	defer l.mutex.Unlock()
 
 	newLobby := &Lobby{
-		ID:                uuid.NewV4(),
+		ID:                uuid.NewV4().String(),
 		PlayerReady:       make(map[string]bool),
 		ActiveConnections: make(map[string]PlayerConnection),
 	}
 
-	l.activeLobbies[newLobby.ID.String()] = newLobby
+	l.activeLobbies[newLobby.ID] = newLobby
 	return newLobby
 }
 

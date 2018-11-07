@@ -2,7 +2,6 @@ package routing
 
 import (
 	"encoding/json"
-	"strconv"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -21,7 +20,7 @@ func TestGameInteraction(t *testing.T) {
 	}
 
 	game := svcs.Game.CreateGame(*lobby)
-	ID := game.ID.String()
+	ID := game.ID
 
 	resp, err := get(port, gameRoute+"/"+ID+"/turn", []byte{})
 	if err != nil {
@@ -35,16 +34,27 @@ func TestGameInteraction(t *testing.T) {
 	}
 
 	player1Turn := pogo.TurnSubmissionMsg{
-		GameID: ID,
+		GameID:   ID,
+		PlayerID: "Player1",
 	}
 
 	// TODO: Actually play legal cards and test accordingly
 
+	t.Logf("Sending player turn: \n%+v", player1Turn)
 	resp, err = put(port,
-		gameRoute+"/"+ID+"/turn/"+strconv.Itoa(currentTurn.CurrentTurn)+"/player/Player1",
+		gameRoute+"/"+ID+"/turn/Player1",
 		player1Turn,
 	)
 	if !assert.Nil(t, err) {
+		t.Log(string(resp))
 		t.Fatal(err)
+	}
+
+	resp, err = put(port,
+		gameRoute+"/"+ID+"/turn/Player1",
+		player1Turn,
+	)
+	if !assert.NotNil(t, err) {
+		t.Fatal("A second submission was accepted")
 	}
 }
