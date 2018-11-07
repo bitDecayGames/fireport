@@ -139,6 +139,11 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, newGameMsg.Players[0], TestPlayer1)
 	assert.Equal(t, newGameMsg.Players[1], TestPlayer2)
 
+	if assert.NotNil(t,newGameMsg.GameState) {
+	}else{
+		t.Fatal("expected initial game state to have something in it.")
+	}
+
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies, 0) {
 		t.Fatal("expected lobby to be closed after game starts")
