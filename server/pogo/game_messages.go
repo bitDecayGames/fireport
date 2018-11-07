@@ -9,9 +9,9 @@ import (
 type GameStartMsg struct {
 	TypedMsg
 
-	GameID  string   `json:"gameID"`
-	Players []string `json:"players"`
-	Msg     string   `json:"message"`
+	GameID    string    `json:"gameID"`
+	GameState GameState `json:"gameState"`
+	Players   []string  `json:"players"`
 }
 
 // TurnTimeoutMsg contains information for when a player's turn has timed out
