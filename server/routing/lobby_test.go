@@ -101,9 +101,6 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer1], true)
 	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer2], false)
 
-	// Create game from our lobby
-	
-
 	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, TestPlayer1)
 	t.Logf("Path: %v", path)
 
@@ -117,7 +114,7 @@ func TestLobbyAPI(t *testing.T) {
 	defer c.Close()
 
 	go func() {
-
+		//Create Game
 		_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
 		if !assert.Nil(t, err) {
 			t.Fatal(err)
