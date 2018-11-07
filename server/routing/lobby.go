@@ -124,17 +124,16 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	gameInstance := lr.Services.Game.CreateGame(lobby)
 
 	msg := pogo.GameStartMsg{
-		GameID:  lobby.ID,
-		Players: lobby.Players,
+		GameID:  gameInstance.ID,
+		Players: gameInstance.Players,
 		GameState: gameInstance.State,
-		Msg:     "The game has started.",
 	}
 
 	// tell all pubsubbers
 	for id, conn := range lobby.ActiveConnections {
 		err := conn.WriteJSON(msg)
 		if err != nil {
-			fmt.Printf("Failed to tell player %v about the started the game: %v\n", id, err)
+			fmt.Printf("Failed to tell player %v about the started game: %v\n", id, err)
 		}
 	}
 

@@ -10,7 +10,6 @@ type GameStartMsg struct {
 	GameID    string    `json:"gameID"`
 	GameState GameState `json:"gameState"`
 	Players   []string  `json:"players"`
-	Msg       string    `json:"message"`
 }
 
 // TurnTimeoutMsg contains information for when a player's turn has timed out

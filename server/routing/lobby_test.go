@@ -129,11 +129,15 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	updatedLobby := pogo.GameStartMsg{}
-	err = json.Unmarshal(message, &updatedLobby)
+	newGameMsg := pogo.GameStartMsg{}
+	err = json.Unmarshal(message, &newGameMsg)
 	if err != nil {
 		t.Fatal(err)
-	}
+	}	
+	assert.Equal(t, lobbyID, newGameMsg.GameID)
+	assert.Len(t, newGameMsg.Players, 2)
+	assert.Equal(t, newGameMsg.Players[0], TestPlayer1)
+	assert.Equal(t, newGameMsg.Players[1], TestPlayer2)
 
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies, 0) {
