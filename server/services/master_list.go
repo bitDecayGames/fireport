@@ -10,6 +10,6 @@ type MasterList struct {
 func NewMasterList() *MasterList {
 	return &MasterList{
 		Lobby: NewLobbyService(),
-		Game:  &GameServiceImpl{},
+		Game:  NewGameService(),
 	}
 }
