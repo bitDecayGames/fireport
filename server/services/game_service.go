@@ -89,7 +89,19 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 
 	game.PlayerSubmissions[submit.PlayerID] = submit
 
-	// TODO: If all player turns are submitted, step the game
+	allTurnsSubmitted := true
+	for _, pid := range game.Players {
+		if _, found := game.PlayerSubmissions[pid]; !found {
+			// still waiting on player turns to come in
+			allTurnsSubmitted = false
+			break
+		}
+	}
+
+	if allTurnsSubmitted {
+		// TODO: step the game
+	}
+
 	return nil
 }
 
