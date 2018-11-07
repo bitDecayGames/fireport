@@ -52,8 +52,9 @@ namespace Dev {
         public void CreateLobby() {
             addToActivityStream("Attempt to create lobby");
             Api.CreateLobby(lobbyCode => {
+                Debug.Log(lobbyCode);
                 GameCodeInputField.text = lobbyCode;
-                GameCodeInputField.enabled = false;
+                GameCodeInputField.interactable = false;
                 addToActivityStream("Created lobby " + lobbyCode);
                 CreateButton.interactable = false;
             });
@@ -63,7 +64,10 @@ namespace Dev {
             addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
             Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, () => {
                 addToActivityStream("Joined lobby " + GameCodeInputField.text);
-                // TODO: probably need to start listening on the websocket
+                Listener.StartListening(GameCodeInputField.text, PlayerNameInputField.text, () => {
+                    addToActivityStream("Made websocket connection");
+                });
+                GameCodeInputField.interactable = false;
                 PlayerNameInputField.interactable = false;
                 JoinButton.interactable = false;
                 ReadyButton.interactable = true;
@@ -90,15 +94,17 @@ namespace Dev {
         }
 
         public void SelectCard(int index) {
-            if (!cardSelections.Contains(index)) {
+            if (!cardSelections.Contains(index) && index < cardButtons.Count && index >= 0) {
                 addToActivityStream("Select card " + index);
                 cardSelections.Add(index);
+                cardButtons[index].interactable = false;
                 if (cardSelections.Count >= MAX_CARD_SELECTIONS) {
                     var cardIds = cardSelections.ConvertAll(i => currentPlayer.Hand[i].ID);
                     Api.SubmitTurn(GameCodeInputField.text, currentTurn, PlayerNameInputField.text, playerId,
                         cardIds.ToArray(),
                         () => { addToActivityStream("Submitted selections"); });
                     cardSelections.Clear();
+                    cardButtons.ForEach(b => b.interactable = false);
                 }
             }
         }
@@ -127,7 +133,7 @@ namespace Dev {
         }
 
         private void addToActivityStream(string message) {
-            ActivityText.text = "- " + message + "\n" + ActivityText.text;
+            ActivityText.text = " - " + message + "\n" + ActivityText.text;
         }
 
         private void gameStateToInfoText() {
@@ -142,9 +148,10 @@ namespace Dev {
                     cards[i].text = cardType.ToString();
                 }
                 else {
-                    cards[i].text = "Unknown(" + card.ID + "): " + card.CardType;
+                    cards[i].text = "???(" + card.ID + "): " + card.CardType;
                 }
             }
+            cardButtons.ForEach(b => b.interactable = true);
         }
 
         private void debugPrintGameState() {
@@ -182,7 +189,6 @@ namespace Dev {
             a.Players[2].Hand.Add(randomCard(303));
             a.Players[2].Hand.Add(randomCard(304));
             a.Players[2].Hand.Add(randomCard(305));
-            Debug.Log(a.ToString());
             currentState = a;
             currentPlayer = a.Players[0];
             gameStateToInfoText();

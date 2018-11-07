@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Network {
@@ -235,6 +236,10 @@ namespace Network {
             return Delete(this);
         }
 
+        public override string ToString() {
+            return string.Format("{0}", url);
+        }
+
         public static RESTEasyRequest Build() {
             return new RESTEasyRequest();
         }
@@ -294,7 +299,7 @@ namespace Network {
                 else if (handler.successStringStatus != null)
                     handler.successStringStatus(bodyStr, (int) req.responseCode);
                 else handler.successResponse(new RESTEasyResponse((int) req.responseCode, bodyStr, req.GetResponseHeaders(), req));
-            }
+            } else if (handler.successEmpty != null) handler.successEmpty();
         }
 
         private static void HandleFailure(UnityWebRequest req, RESTEasyRequest handler) {
@@ -305,7 +310,7 @@ namespace Network {
                 else if (handler.failureStringStatus != null)
                     handler.failureStringStatus(bodyStr, (int) req.responseCode);
                 else handler.failureResponse(new RESTEasyResponse((int) req.responseCode, bodyStr, req.GetResponseHeaders(), req));
-            }
+            } else if (handler.failureEmpty != null) handler.failureEmpty();
         }
         
         public class RESTEasyHeader {

@@ -51,7 +51,7 @@ namespace Network {
                 input.cardID = cardIds[i];
                 body.inputs.Add(input);
             }
-            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + turn + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
             StartCoroutine(req.Put());
         }
 
@@ -63,7 +63,7 @@ namespace Network {
 
         public void GetGameState(string gameId, int turn, string playerName, int playerId, Action onSuccess) {
             var req = new RESTEasyRequest();
-            req.Body(JsonUtility.ToJson("{}")).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + turn + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson("{}")).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
             StartCoroutine(req.Get());
         }
 
