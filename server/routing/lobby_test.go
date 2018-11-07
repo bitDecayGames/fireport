@@ -114,7 +114,7 @@ func TestLobbyAPI(t *testing.T) {
 	defer c.Close()
 
 	go func() {
-		//Create Game
+		//Starts Game
 		_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
 		if !assert.Nil(t, err) {
 			t.Fatal(err)
@@ -136,8 +136,7 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, newGameMsg.Players[0], TestPlayer1)
 	assert.Equal(t, newGameMsg.Players[1], TestPlayer2)
 
-	if assert.NotNil(t,newGameMsg.GameState) {
-	}else{
+	if !assert.NotNil(t,newGameMsg.GameState) {
 		t.Fatal("expected initial game state to have something in it.")
 	}
 
