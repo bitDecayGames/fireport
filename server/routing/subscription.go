@@ -37,7 +37,7 @@ func (s *Subscriber) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.Services.Lobby.RegisterConnection(lobbyID, playerID, c)
+	err = s.Services.Lobby.RegisterConnection(lobbyID, playerID, &PlayerConnWrapper{con: c})
 
 	if err != nil {
 		c.Close()

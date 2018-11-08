@@ -52,7 +52,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	msg := pogo.LobbyMsg{
+	msg := &pogo.LobbyMsg{
 		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
@@ -94,7 +94,7 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	msg := pogo.LobbyMsg{
+	msg := &pogo.LobbyMsg{
 		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
@@ -123,9 +123,9 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 
 	gameInstance := lr.Services.Game.CreateGame(lobby)
 
-	msg := pogo.GameStartMsg{
-		GameID:  gameInstance.ID,
-		Players: gameInstance.Players,
+	msg := &pogo.GameStartMsg{
+		GameID:    gameInstance.ID,
+		Players:   gameInstance.Players,
 		GameState: gameInstance.State,
 	}
 

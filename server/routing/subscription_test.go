@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"testing"
- 
+
 	"github.com/bitdecaygames/fireport/server/pogo"
 
 	"github.com/gorilla/websocket"
@@ -77,6 +77,8 @@ func TestLobbyPubSubHappyPath(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	assert.Equal(t, "*pogo.LobbyMsg", updatedLobby.Type)
 
 	assert.Equal(t, lobbyID, updatedLobby.ID)
 	assert.Len(t, updatedLobby.Players, 2)
