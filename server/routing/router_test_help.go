@@ -71,7 +71,7 @@ func doHTTPReq(method string, port int, endpoint string, msg interface{}) ([]byt
 		return []byte{}, err
 	}
 
-	fmt.Println(string(data))
+	fmt.Println("raw response data: ", string(data))
 
 	req, err := http.NewRequest(
 		method,

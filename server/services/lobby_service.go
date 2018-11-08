@@ -23,7 +23,7 @@ type LobbyService interface {
 
 // PlayerConnection is a general connection that allows messages to be sent
 type PlayerConnection interface {
-	WriteJSON(interface{}) error
+	WriteJSON(pogo.Typer) error
 	Close() error
 }
 

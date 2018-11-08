@@ -52,7 +52,7 @@ func (lr *LobbyRoutes) lobbyJoinHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	msg := pogo.LobbyMsg{
+	msg := &pogo.LobbyMsg{
 		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
@@ -94,7 +94,7 @@ func (lr *LobbyRoutes) lobbyReadyHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	msg := pogo.LobbyMsg{
+	msg := &pogo.LobbyMsg{
 		ID:          lobby.ID,
 		Players:     lobby.Players,
 		ReadyStatus: lobby.PlayerReady,
@@ -121,23 +121,23 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
 	}
 
-	msg := pogo.GameStartMsg{
-		GameID:  lobby.ID,
-		Players: lobby.Players,
-		Msg:     "The game is starting.",
-	}
+	gameInstance := lr.Services.Game.CreateGame(lobby)
 
-	w.Write([]byte("The game is starting."))
+	msg := &pogo.GameStartMsg{
+		GameID:    gameInstance.ID,
+		Players:   gameInstance.Players,
+		GameState: gameInstance.State,
+	}
 
 	// tell all pubsubbers
 	for id, conn := range lobby.ActiveConnections {
 		err := conn.WriteJSON(msg)
 		if err != nil {
-			fmt.Printf("Failed to tell player %v about starting the game: %v\n", id, err)
+			fmt.Printf("Failed to tell player %v about the started game: %v\n", id, err)
 		}
 	}
 
-	lr.Services.Game.CreateGame(lobby)
+	w.Write([]byte("The game has started."))
 
 	return
 }

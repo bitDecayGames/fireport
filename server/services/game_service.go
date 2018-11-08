@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/bitdecaygames/fireport/server/pogo"
+	"github.com/bitdecaygames/fireport/server/logic"
 
+	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
 )
 
@@ -22,6 +23,7 @@ type GameService interface {
 type GameInstance struct {
 	Lock              *sync.Mutex
 	Name              string
+	State             pogo.GameState
 	ID                string
 	CurrentTurn       int
 	Players           []string
@@ -51,6 +53,7 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 		Lock:              &sync.Mutex{},
 		Name:              lobby.Name,
 		ID:                lobby.ID,
+		State:             createInitialGameState(lobby),
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
 		ActiveConnections: lobby.ActiveConnections,
@@ -89,7 +92,39 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 
 	game.PlayerSubmissions[submit.PlayerID] = submit
 
-	// TODO: If all player turns are submitted, step the game
+	allTurnsSubmitted := true
+	for _, pid := range game.Players {
+		if _, found := game.PlayerSubmissions[pid]; !found {
+			// still waiting on player turns to come in
+			allTurnsSubmitted = false
+			break
+		}
+	}
+
+	if allTurnsSubmitted {
+		allInputs := make([]pogo.GameInputMsg, 0)
+		for _, msg := range game.PlayerSubmissions {
+			allInputs = append(allInputs, msg.Inputs...)
+		}
+		// TODO: Does it make sense to pass pointers through all the logic, or just structs?
+		oldState := game.State
+		newState, err := logic.StepGame(&game.State, allInputs)
+		msg := &pogo.TurnResultMsg{
+			GameID:        game.ID,
+			PreviousState: oldState,
+			CurrentState:  *newState,
+		}
+
+		game.State = *newState
+
+		for pid, conn := range game.ActiveConnections {
+			err = conn.WriteJSON(msg)
+			if err != nil {
+				fmt.Println("failed to send state to player ", pid)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -105,4 +140,73 @@ func (g *GameServiceImpl) lockActiveGame(gameID string) (*GameInstance, error) {
 	fmt.Println("locking game " + gameID)
 	game.Lock.Lock()
 	return game, nil
+}
+
+//createInitialGameState creates the initial state for the lobby, probably should call some board creation method to ensure width, height and tile types are set accordingly
+func createInitialGameState(lobby Lobby) pogo.GameState {
+	var playerStates []pogo.PlayerState
+	gameState := pogo.GameState{
+		Turn:        0,
+		Created:     0,
+		Updated:     0,
+		IDCounter:   0,
+		BoardWidth:  3,
+		BoardHeight: 3,
+	}
+
+	for i, player := range lobby.Players {
+		playerStates = append(playerStates, createInitialPlayerStates(player, i, gameState))
+	}
+
+	gameState.BoardSpaces = createBoard(gameState)
+	gameState.Players = playerStates
+
+	return gameState
+}
+
+// createInitialCards returns a slice of CardStates for the initial discard pile, can probably be refactored to pull a list of playable/implimented cards
+func createInitialCards(gameState pogo.GameState) []pogo.CardState {
+	return []pogo.CardState{
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
+		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
+		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
+		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
+	}
+}
+
+//createInitialPlayerStates creates the inital state for a player, probably needs a list of available starting locations
+func createInitialPlayerStates(playerName string, playerLocation int, gameState pogo.GameState) pogo.PlayerState {
+	return pogo.PlayerState{
+		ID:       gameState.GetNewID(),
+		Name:     playerName,
+		Location: playerLocation,
+		Hand:     []pogo.CardState{},
+		Deck:     []pogo.CardState{},
+		Discard:  createInitialCards(gameState),
+	}
+}
+
+//createBoard creates a board, will need to accept some type of identifier down the line if we want multiple maps
+func createBoard(gameState pogo.GameState) []pogo.BoardSpace {
+	return []pogo.BoardSpace{
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+	}
 }
