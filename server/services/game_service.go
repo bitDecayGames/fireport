@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/bitdecaygames/fireport/server/logic"
+
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
 )
@@ -100,11 +102,20 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	}
 
 	if allTurnsSubmitted {
-		msg := &pogo.GameStartMsg{
-			GameID:    game.ID,
-			Players:   game.Players,
-			GameState: game.State,
+		allInputs := make([]pogo.GameInputMsg, 0)
+		for _, msg := range game.PlayerSubmissions {
+			allInputs = append(allInputs, msg.Inputs...)
 		}
+		// TODO: Does it make sense to pass pointers through all the logic, or just structs?
+		oldState := game.State
+		newState, err := logic.StepGame(&game.State, allInputs)
+		msg := &pogo.TurnResultMsg{
+			GameID:        game.ID,
+			PreviousState: oldState,
+			CurrentState:  *newState,
+		}
+
+		game.State = *newState
 
 		for pid, conn := range game.ActiveConnections {
 			err = conn.WriteJSON(msg)

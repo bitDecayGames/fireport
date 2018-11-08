@@ -1,9 +1,5 @@
 package pogo
 
-import (
-	"github.com/satori/go.uuid"
-)
-
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
@@ -34,7 +30,7 @@ type GameTimeoutMsg struct {
 type TurnResultMsg struct {
 	TypedMsg
 
-	GameID        uuid.UUID
+	GameID        string
 	PreviousState GameState
 	CurrentState  GameState
 	Animations    []AnimationAction
