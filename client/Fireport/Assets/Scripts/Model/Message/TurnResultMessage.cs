@@ -7,6 +7,6 @@ namespace Model.Message {
         public string gameID;
         public GameState previousState;
         public GameState currentState;
-        public List<AnimationAction> animationActions;
+        public List<AnimationAction> animations;
     }
 }

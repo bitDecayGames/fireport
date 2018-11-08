@@ -2,6 +2,7 @@ package routing
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 
@@ -16,7 +17,8 @@ type PlayerConnWrapper struct {
 // WriteJSON will set the type of the msg before sending it over the websocket
 func (pc *PlayerConnWrapper) WriteJSON(msg pogo.Typer) error {
 	trueType := reflect.TypeOf(msg)
-	msg.SetType(trueType.String())
+	split := strings.Split(trueType.String(), ".")
+	msg.SetType(split[len(split)-1])
 	return pc.con.WriteJSON(msg)
 }
 

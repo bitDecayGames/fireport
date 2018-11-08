@@ -8,7 +8,7 @@ namespace Network {
 
         public void CreateLobby(Action<string> onSuccess) {
             var req = new RESTEasyRequest();
-            req.Body(" ").Url(State.HTTP_HOST + "/api/v1/lobby").OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(" ").Url(State.HTTP_HOST + "/api/v1/lobby").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Post());
         }
         
@@ -17,7 +17,7 @@ namespace Network {
             var body = new LobbyJoinMessage();
             body.lobbyID = code;
             body.playerID = playerName;
-            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/join").OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/join").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
 
@@ -26,7 +26,7 @@ namespace Network {
             var body = new PlayerReadyMessage();
             body.playerName = playerName;
             body.ready = true;
-            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/" + code + "/ready").OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/" + code + "/ready").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
 
@@ -34,7 +34,7 @@ namespace Network {
             var req = new RESTEasyRequest();
             var body = new GameStartMessage();
             body.gameID = code;
-            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/" + code + "/start").OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/" + code + "/start").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
 
@@ -51,24 +51,24 @@ namespace Network {
                 input.cardID = cardIds[i];
                 body.inputs.Add(input);
             }
-            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + playerName).OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
 
-        public void GetCurrentTurn(string gameId, int turn, Action onSuccess) {
+        public void GetCurrentTurn(string gameId, Action onSuccess) {
             var req = new RESTEasyRequest();
-            req.Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + turn).OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Get());
         }
 
         public void GetGameState(string gameId, int turn, string playerName, int playerId, Action onSuccess) {
             var req = new RESTEasyRequest();
-            req.Body(JsonUtility.ToJson("{}")).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/player/" + playerName).OnSuccess(onSuccess).OnFailure(handleFailure);
+            req.Body(JsonUtility.ToJson("{}")).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + playerName).OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Get());
         }
 
-        private void handleFailure(string error, int status) {
-            Debug.LogError(string.Format("ApiFailure({0}): {1}", status, error));
+        private void handleFailure(RESTEasyRequest req, string error, int status) {
+            Debug.LogError(string.Format("{2} ({0}): {1}", status, error, req.url));
         }
     }
 }

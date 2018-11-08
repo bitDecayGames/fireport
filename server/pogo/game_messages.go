@@ -30,10 +30,10 @@ type GameTimeoutMsg struct {
 type TurnResultMsg struct {
 	TypedMsg
 
-	GameID        string
-	PreviousState GameState
-	CurrentState  GameState
-	Animations    []AnimationAction
+	GameID        string            `json:"gameID"`
+	PreviousState GameState         `json:"previousState"`
+	CurrentState  GameState         `json:"currentState"`
+	Animations    []AnimationAction `json:"animations"`
 }
 
 // TurnSubmissionMsg is a full turn of actions submitted by a player

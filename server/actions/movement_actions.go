@@ -41,6 +41,42 @@ func (a *MoveForwardAction) GetOwner() int {
 	return a.Owner
 }
 
+// MoveBackwardAction move this player backwards one space
+type MoveBackwardAction struct {
+	Owner int
+}
+
+// Apply apply this action
+func (a *MoveBackwardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
+	nextState := currentState.DeepCopy()
+	player := nextState.GetPlayer(a.Owner)
+	if player == nil {
+		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+	}
+	switch player.Facing {
+	case 0: // facing north going south
+		player.Location = player.Location + nextState.BoardWidth
+		break
+	case 1: // facing east going west
+		player.Location = player.Location - 1
+		break
+	case 2: // facing south going north
+		player.Location = player.Location - nextState.BoardWidth
+		break
+	case 3: // facing west going east
+		player.Location = player.Location + 1
+		break
+	default:
+		return nextState, fmt.Errorf("player %v with unknown facing %v", player.ID, player.Facing)
+	}
+	return nextState, nil
+}
+
+// GetOwner get the owner of this action
+func (a *MoveBackwardAction) GetOwner() int {
+	return a.Owner
+}
+
 // TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
 type TurnClockwise90Action struct {
 	Owner int

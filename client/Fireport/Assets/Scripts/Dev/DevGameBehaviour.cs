@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Message;
 using Model.State;
 using Network;
@@ -9,6 +10,7 @@ using Utils;
 namespace Dev {
     public class DevGameBehaviour : MonoBehaviour, IDownStreamSubscriber {
         public const int MAX_CARD_SELECTIONS = 3;
+        public const int CARDS_IN_HAND = 5;
 
         public RestApi Api;
         public WebSocketListener Listener;
@@ -61,18 +63,19 @@ namespace Dev {
         }
 
         public void JoinLobby() {
-            addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
-            Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, () => {
-                addToActivityStream("Joined lobby " + GameCodeInputField.text);
-                Listener.StartListening(GameCodeInputField.text, PlayerNameInputField.text, () => {
-                    addToActivityStream("Made websocket connection");
+            if (PlayerNameInputField.text.Length > 0) {
+                addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
+                Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, () => {
+                    addToActivityStream("Joined lobby " + GameCodeInputField.text);
+                    Listener.StartListening(GameCodeInputField.text, PlayerNameInputField.text,
+                        () => { addToActivityStream("Made websocket connection"); });
+                    GameCodeInputField.interactable = false;
+                    PlayerNameInputField.interactable = false;
+                    JoinButton.interactable = false;
+                    ReadyButton.interactable = true;
+                    StartButton.interactable = true;
                 });
-                GameCodeInputField.interactable = false;
-                PlayerNameInputField.interactable = false;
-                JoinButton.interactable = false;
-                ReadyButton.interactable = true;
-                StartButton.interactable = true;
-            });
+            } else addToActivityStream("Failed to join lobby, must have a player name");
         }
 
         public void ReadyUp() {
@@ -99,6 +102,8 @@ namespace Dev {
                 cardSelections.Add(index);
                 cardButtons[index].interactable = false;
                 if (cardSelections.Count >= MAX_CARD_SELECTIONS) {
+                    Debug.Log("Card selections: " + string.Join(", ", cardSelections.ConvertAll(i => i.ToString()).ToArray()));
+                    Debug.Log("Player hand: " + string.Join(", ", currentPlayer.Hand.ConvertAll(c => c.ID.ToString()).ToArray()));
                     var cardIds = cardSelections.ConvertAll(i => currentPlayer.Hand[i].ID);
                     Api.SubmitTurn(GameCodeInputField.text, currentTurn, PlayerNameInputField.text, playerId,
                         cardIds.ToArray(),
@@ -118,18 +123,33 @@ namespace Dev {
             addToActivityStream("Received message: " + messageType);
 
             switch (messageType) {
+                case MsgTypes.LOBBY:
+                    var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
+                    addToActivityStream("Lobby status: " + lobbyMsg.readyStatus);
+                    break;
+                case MsgTypes.GAME_START:
+                    var gameStartMsg = JsonUtility.FromJson<GameStartMessage>(message);
+                    addToActivityStream("Game started");
+                    nextState(gameStartMsg.gameState);
+                    break;
                 case MsgTypes.TURN_RESULT:
-                    var msg = JsonUtility.FromJson<TurnResultMessage>(message);
-                    currentState = msg.currentState;
-                    currentPlayer = currentState.Players.Find(p => p.Name == PlayerNameInputField.text);
-                    msg.animationActions.ForEach(a => addToActivityStream("Action: " + a.Name));
-                    gameStateToInfoText();
-                    cardStatesToButtonText();
+                    var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
+                    turnResultMsg.animations.ForEach(a => addToActivityStream("Action: " + a.Name));
+                    nextState(turnResultMsg.currentState);
                     break;
                 default:
                     addToActivityStream("Message unhandled: " + messageType);
                     break;
             }
+        }
+
+        private void nextState(GameState next) {
+            Debug.Log("Got current state: " + JsonUtility.ToJson(next));
+            currentState = next;
+            currentPlayer = currentState.Players.Find(p => p.Name == PlayerNameInputField.text);
+            Debug.Log("Got current player: " + JsonUtility.ToJson(currentPlayer));
+            gameStateToInfoText();
+            cardStatesToButtonText();
         }
 
         private void addToActivityStream(string message) {
@@ -141,17 +161,24 @@ namespace Dev {
         }
 
         private void cardStatesToButtonText() {
-            for (int i = 0; i < currentPlayer.Hand.Count; i++) {
-                var card = currentPlayer.Hand[i];
-                if (System.Enum.IsDefined(typeof(CardType), card.CardType)) {
-                    var cardType = (CardType) card.CardType;
-                    cards[i].text = cardType.ToString();
+            for (int i = 0; i < CARDS_IN_HAND; i++) {
+                if (i < currentPlayer.Hand.Count) {
+                    var card = currentPlayer.Hand[i];
+                    if (System.Enum.IsDefined(typeof(CardType), card.CardType)) {
+                        var cardType = (CardType) card.CardType;
+                        cards[i].text = cardType.ToString();
+                    }
+                    else {
+                        cards[i].text = "???(" + card.ID + "): " + card.CardType;
+                    }
+
+                    cardButtons[i].interactable = true;
                 }
                 else {
-                    cards[i].text = "???(" + card.ID + "): " + card.CardType;
+                    cards[i].text = "<empty>";
+                    cardButtons[i].interactable = false;
                 }
             }
-            cardButtons.ForEach(b => b.interactable = true);
         }
 
         private void debugPrintGameState() {

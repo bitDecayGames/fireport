@@ -38,6 +38,12 @@ func GameInputToCard(cardID int, playerID int, cardType pogo.CardType) (*Card, e
 		return moveForwardTwoCard(cardID, playerID), nil
 	case pogo.MoveForwardThree:
 		return moveForwardThreeCard(cardID, playerID), nil
+	case pogo.MoveBackwardOne:
+		return moveBackwardOneCard(cardID, playerID), nil
+	case pogo.MoveBackwardTwo:
+		return moveBackwardTwoCard(cardID, playerID), nil
+	case pogo.MoveBackwardThree:
+		return moveBackwardThreeCard(cardID, playerID), nil
 	case pogo.TurnRight:
 		return turnRightCard(cardID, playerID), nil
 	case pogo.TurnLeft:
@@ -62,6 +68,18 @@ func moveForwardTwoCard(id int, owner int) *Card {
 
 func moveForwardThreeCard(id int, owner int) *Card {
 	return &Card{ID: id, Owner: owner, CardType: pogo.MoveForwardThree, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+}
+
+func moveBackwardOneCard(id int, owner int) *Card {
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveBackwardOne, Actions: []actions.Action{&actions.MoveBackwardAction{Owner: owner}}}
+}
+
+func moveBackwardTwoCard(id int, owner int) *Card {
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveBackwardTwo, Actions: []actions.Action{&actions.MoveBackwardAction{Owner: owner}, &actions.MoveBackwardAction{Owner: owner}}}
+}
+
+func moveBackwardThreeCard(id int, owner int) *Card {
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveBackwardThree, Actions: []actions.Action{&actions.MoveBackwardAction{Owner: owner}, &actions.MoveBackwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
 }
 
 func turnRightCard(id int, owner int) *Card {

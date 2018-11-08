@@ -78,7 +78,7 @@ func TestLobbyPubSubHappyPath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, "*pogo.LobbyMsg", updatedLobby.Type)
+	assert.Equal(t, "LobbyMsg", updatedLobby.Type)
 
 	assert.Equal(t, lobbyID, updatedLobby.ID)
 	assert.Len(t, updatedLobby.Players, 2)

@@ -68,7 +68,7 @@ namespace Network {
                 string msg = webSocket.RecvString();
                 if (msg != null) {
                     var json = JsonUtility.FromJson<MessageType>(msg); // grab the messageType string for future classification
-                    subscribers.ForEach(s => s.handleDownStreamMessage(json.messageType, msg));
+                    subscribers.ForEach(s => s.handleDownStreamMessage(json.msgType, msg));
                 }
 
                 if (webSocket.error != null) {
@@ -83,7 +83,7 @@ namespace Network {
         }
     
         public class MessageType {
-            public string messageType;
+            public string msgType;
         }
     }
 
