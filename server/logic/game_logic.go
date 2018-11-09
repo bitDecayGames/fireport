@@ -1,10 +1,10 @@
 package logic
 
 import (
-	"github.com/bitdecaygames/fireport/server/triggers"
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/conditions"
 	"github.com/bitdecaygames/fireport/server/pogo"
+	"github.com/bitdecaygames/fireport/server/triggers"
 )
 
 // StepGame moves the game state forward using a list of inputs
@@ -13,6 +13,7 @@ func StepGame(currentState *pogo.GameState, inputs []pogo.GameInputMsg) (*pogo.G
 	var nextState, err = conditions.ProcessConditions(currentState, inputs, []conditions.Condition{ // TODO: MW Conditions should probably be a part of the Game struct
 		&conditions.SpaceCollisionCondition{},
 		&conditions.EdgeCollisionCondition{},
+		&conditions.BoundaryCollisionCondition{},
 	})
 	if err != nil {
 		return nextState, err

@@ -211,7 +211,7 @@ func createInitialPlayerStates(playerName string, playerLocation int, gameState 
 		ID:       gameState.GetNewID(),
 		Name:     playerName,
 		Location: playerLocation,
-		Health:   3,
+		Health:   10, // TODO: MW magic number alert
 		Hand:     []pogo.CardState{},
 		Deck:     []pogo.CardState{},
 		Discard:  createInitialCards(gameState),
