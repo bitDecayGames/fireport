@@ -1,7 +1,6 @@
 package conditions
 
 import (
-	"fmt"
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )

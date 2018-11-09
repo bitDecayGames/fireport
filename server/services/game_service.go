@@ -112,6 +112,7 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		for _, msg := range game.PlayerSubmissions {
 			allInputs = append(allInputs, msg.Inputs...)
 		}
+		game.PlayerSubmissions = map[string]pogo.TurnSubmissionMsg{}
 		// TODO: Does it make sense to pass pointers through all the logic, or just structs?
 		oldState := game.State
 		newState, err := logic.StepGame(&game.State, allInputs)

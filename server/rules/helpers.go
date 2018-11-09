@@ -7,6 +7,7 @@ import (
 
 func doesPlayerHaveCardID(p *pogo.PlayerState, id int) bool {
 	var allPlayerCards = collectAllPlayersCards(p)
+	fmt.Printf("all cards: %v\n", allPlayerCards)
 	for _, card := range allPlayerCards {
 		if card.ID == id {
 			return true
