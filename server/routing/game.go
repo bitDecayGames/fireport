@@ -2,6 +2,7 @@ package routing
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -37,6 +38,7 @@ func (gr *GameRoutes) submitCardsHandler(w http.ResponseWriter, r *http.Request)
 
 	err = gr.Services.Game.SubmitTurn(*turnSubMsg)
 	if err != nil {
+		fmt.Printf(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

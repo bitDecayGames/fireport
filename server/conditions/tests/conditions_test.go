@@ -446,3 +446,107 @@ func TestCollisionWithRightSide(t *testing.T) {
 	assert.Equal(t, 5, nextState.Players[0].Location)
 	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
 }
+
+/*
+A++
++++
++++
+*/
+func TestCollisionWithTopLeftCorner(t *testing.T) {
+	var gameState = getTestState(3, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 0, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+	})
+	var inputs = []pogo.GameInputMsg{
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+	}
+
+	var nextState, err = stepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		A++
+		+++
+		+++
+	*/
+	assert.Equal(t, 0, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+}
+
+/*
+++A
++++
++++
+*/
+func TestCollisionWithTopRightCorner(t *testing.T) {
+	var gameState = getTestState(3, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 2, Facing: 0, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnRight}}},
+	})
+	var inputs = []pogo.GameInputMsg{
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Right
+	}
+
+	var nextState, err = stepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		++A
+		+++
+		+++
+	*/
+	assert.Equal(t, 2, nextState.Players[0].Location)
+	assert.Equal(t, 1, nextState.Players[0].Facing)
+	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+}
+
+/*
++++
++++
+++A
+*/
+func TestCollisionWithBottomRightCorner(t *testing.T) {
+	var gameState = getTestState(3, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 8, Facing: 2, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnLeft}}},
+	})
+	var inputs = []pogo.GameInputMsg{
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Left
+	}
+
+	var nextState, err = stepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		+++
+		+++
+		++A
+	*/
+	assert.Equal(t, 8, nextState.Players[0].Location)
+	assert.Equal(t, 1, nextState.Players[0].Facing)
+	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+}
+
+/*
++++
++++
+A++
+*/
+func TestCollisionWithBottomLeftCorner(t *testing.T) {
+	var gameState = getTestState(3, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 6, Facing: 2, Hand: []pogo.CardState{{ID: 1000, CardType: pogo.TurnRight}}},
+	})
+	var inputs = []pogo.GameInputMsg{
+		{CardID: 1000, Owner: 100, Order: 1}, // A Turn Right
+	}
+
+	var nextState, err = stepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		+++
+		+++
+		A++
+	*/
+	assert.Equal(t, 6, nextState.Players[0].Location)
+	assert.Equal(t, 3, nextState.Players[0].Facing)
+	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+}

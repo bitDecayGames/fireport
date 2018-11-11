@@ -48,7 +48,7 @@ func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGrou
 			me.Collided = true
 		}
 		// check for collisions on the bottom side
-		if me.PlayerB.Location > len(gameState.BoardSpaces) {
+		if me.PlayerB.Location >= len(gameState.BoardSpaces) {
 			me.Collided = true
 		}
 		// check for collisions on the left side
