@@ -166,8 +166,8 @@ func createInitialGameState(lobby Lobby) pogo.GameState {
 		Created:     time.Now().Unix(),
 		Updated:     time.Now().Unix(),
 		IDCounter:   0,
-		BoardWidth:  3, // TODO: MW magic number alert
-		BoardHeight: 3, // TODO: MW magic number alert
+		BoardWidth:  6, // TODO: MW magic number alert
+		BoardHeight: 6, // TODO: MW magic number alert
 	}
 
 	for i, player := range lobby.Players {
@@ -221,15 +221,9 @@ func createInitialPlayerState(playerName string, playerLocation int, gameState *
 
 //createBoard creates a board, will need to accept some type of identifier down the line if we want multiple maps
 func createBoard(gameState *pogo.GameState) []pogo.BoardSpace {
-	return []pogo.BoardSpace{
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+	var boardSpaces []pogo.BoardSpace
+	for i := 0; i < gameState.BoardWidth*gameState.BoardHeight; i++ {
+		boardSpaces = append(boardSpaces, pogo.BoardSpace{ID: gameState.GetNewID(), SpaceType: 0, State: 0})
 	}
+	return boardSpaces
 }

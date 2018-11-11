@@ -18,7 +18,6 @@ namespace Model.State {
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Turn: " + Turn);
             for (int h = 0; h < BoardHeight; h++) {
                 for (int w = 0; w < BoardWidth; w++) {
                     sb.Append(" ");

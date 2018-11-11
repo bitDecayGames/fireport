@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Model.Message;
 using Model.State;
 using Network;
@@ -68,6 +69,7 @@ namespace Dev {
 
         public void JoinLobby() {
             if (PlayerNameInputField.text.Length > 0) {
+                if (GameCodeInputField.text.Length <= 0) GameCodeInputField.text = "GAME";
                 addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
                 Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, () => {
                     addToActivityStream("Joined lobby " + GameCodeInputField.text);
@@ -75,6 +77,7 @@ namespace Dev {
                         () => { addToActivityStream("Made websocket connection"); });
                     GameCodeInputField.interactable = false;
                     PlayerNameInputField.interactable = false;
+                    CreateButton.interactable = false;
                     JoinButton.interactable = false;
                     ReadyButton.interactable = true;
                 });
@@ -167,7 +170,11 @@ namespace Dev {
         }
 
         private void playerStateToInfoText() {
-            PlayerInfoText.text = string.Format("Turn: {0}\nHealth: {1}", currentState.Turn, currentPlayer.Health);
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Turn: ").Append(currentState.Turn).AppendLine();
+            sb.Append("Health: ").Append(currentPlayer.Health).AppendLine();
+            if (currentState.IsGameFinished) sb.Append("Game Over").AppendLine().Append(currentState.Winner);
+            PlayerInfoText.text = sb.ToString();
         }
 
         private void cardStatesToButtonText() {
@@ -194,8 +201,8 @@ namespace Dev {
         private void debugPrintGameState() {
             var a = new GameState();
             a.Turn = 7;
-            a.BoardWidth = 5;
-            a.BoardHeight = 5;
+            a.BoardWidth = 7;
+            a.BoardHeight = 7;
             a.Players = new List<PlayerState>();
             a.Players.Add(new PlayerState());
             a.Players[0].Name = "Mike";
