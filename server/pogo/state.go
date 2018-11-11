@@ -41,6 +41,7 @@ func (s *GameState) DeepCopy() *GameState {
 			Name:     player.Name,
 			Location: player.Location,
 			Facing:   player.Facing,
+			Health:   player.Health,
 			Hand:     deepCopyListOfCards(player.Hand),
 			Deck:     deepCopyListOfCards(player.Deck),
 			Discard:  deepCopyListOfCards(player.Discard),
@@ -105,14 +106,13 @@ func (s *GameState) GetCardType(id int) CardType {
 // PlayerState contains all of the information about a given player, their hand, their discard, everything
 type PlayerState struct {
 	ID       int         // unique id for this player in this game
-	Name     string      // essentially the username of the player // TODO: MW is this necessary?
+	Name     string      // essentially the username of the player
 	Hand     []CardState // the cards currently available to the player
 	Discard  []CardState // the cards that have been played or discarded
 	Deck     []CardState // the cards still in the deck
 	Location int         // the index of the board space the player is on
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	Health   int         // the current hitpoints of this player
-	// TODO: MW there could be more here like how much health the player has, if that is something we want
 }
 
 // AnimationAction tracks the specific animations required by the client to move from state A to state B

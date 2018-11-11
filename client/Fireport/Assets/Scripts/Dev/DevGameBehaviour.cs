@@ -23,6 +23,7 @@ namespace Dev {
         public Button StartButton;
         public Text ActivityText;
         public Text GameInfoText;
+        public Text PlayerInfoText;
         public Transform CardGroup;
 
         private List<Button> cardButtons = new List<Button>();
@@ -48,6 +49,8 @@ namespace Dev {
             StartButton.interactable = false;
             cardButtons.ForEach(b => b.interactable = false);
             
+            PlayerNameInputField.Select();
+            
             debugPrintGameState();
         }
 
@@ -59,6 +62,7 @@ namespace Dev {
                 GameCodeInputField.interactable = false;
                 addToActivityStream("Created lobby " + lobbyCode);
                 CreateButton.interactable = false;
+                PlayerNameInputField.Select();
             });
         }
 
@@ -73,7 +77,6 @@ namespace Dev {
                     PlayerNameInputField.interactable = false;
                     JoinButton.interactable = false;
                     ReadyButton.interactable = true;
-                    StartButton.interactable = true;
                 });
             } else addToActivityStream("Failed to join lobby, must have a player name");
         }
@@ -84,6 +87,7 @@ namespace Dev {
                 () => {
                     addToActivityStream(PlayerNameInputField.text + " is ready");
                     ReadyButton.interactable = false;
+                    StartButton.interactable = true;
                 });
         }
 
@@ -147,8 +151,10 @@ namespace Dev {
             Debug.Log("Got current state: " + JsonUtility.ToJson(next));
             currentState = next;
             currentPlayer = currentState.Players.Find(p => p.Name == PlayerNameInputField.text);
+            Debug.Log(string.Format("Cards in Hand: {0} Deck: {1} Discard: {2}", currentPlayer.Hand.Count, currentPlayer.Deck.Count, currentPlayer.Discard.Count));
             Debug.Log("Got current player: " + JsonUtility.ToJson(currentPlayer));
             gameStateToInfoText();
+            playerStateToInfoText();
             cardStatesToButtonText();
         }
 
@@ -158,6 +164,10 @@ namespace Dev {
 
         private void gameStateToInfoText() {
             GameInfoText.text = currentState.ToString();
+        }
+
+        private void playerStateToInfoText() {
+            PlayerInfoText.text = string.Format("Turn: {0}\nHealth: {1}", currentState.Turn, currentPlayer.Health);
         }
 
         private void cardStatesToButtonText() {
@@ -219,6 +229,7 @@ namespace Dev {
             currentState = a;
             currentPlayer = a.Players[0];
             gameStateToInfoText();
+            playerStateToInfoText();
             cardStatesToButtonText();
         }
 

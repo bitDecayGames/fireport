@@ -470,7 +470,7 @@ func TestCollisionWithTopLeftCorner(t *testing.T) {
 	*/
 	assert.Equal(t, 0, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
-	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
 }
 
 /*
@@ -496,7 +496,7 @@ func TestCollisionWithTopRightCorner(t *testing.T) {
 	*/
 	assert.Equal(t, 2, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
-	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
 }
 
 /*
@@ -522,7 +522,7 @@ func TestCollisionWithBottomRightCorner(t *testing.T) {
 	*/
 	assert.Equal(t, 8, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
-	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
 }
 
 /*
@@ -548,5 +548,5 @@ func TestCollisionWithBottomLeftCorner(t *testing.T) {
 	*/
 	assert.Equal(t, 6, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
-	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
 }

@@ -171,7 +171,7 @@ func createInitialGameState(lobby Lobby) pogo.GameState {
 	}
 
 	for i, player := range lobby.Players {
-		playerStates = append(playerStates, createInitialPlayerStates(player, i, &gameState))
+		playerStates = append(playerStates, createInitialPlayerState(player, i, &gameState))
 	}
 
 	gameState.BoardSpaces = createBoard(&gameState)
@@ -207,7 +207,7 @@ func createInitialCards(gameState *pogo.GameState) []pogo.CardState {
 }
 
 //createInitialPlayerStates creates the inital state for a player, probably needs a list of available starting locations
-func createInitialPlayerStates(playerName string, playerLocation int, gameState *pogo.GameState) pogo.PlayerState {
+func createInitialPlayerState(playerName string, playerLocation int, gameState *pogo.GameState) pogo.PlayerState {
 	return pogo.PlayerState{
 		ID:       gameState.GetNewID(),
 		Name:     playerName,

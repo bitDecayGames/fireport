@@ -24,6 +24,8 @@ func getTestState() *GameState {
 				ID:       100,
 				Name:     "PlayerOne",
 				Location: 0,
+				Facing:   1,
+				Health:   1,
 				Hand: []CardState{
 					{ID: 101, CardType: 0},
 					{ID: 102, CardType: 0},
@@ -50,6 +52,8 @@ func getTestState() *GameState {
 				ID:       200,
 				Name:     "PlayerTwo",
 				Location: 3,
+				Facing:   2,
+				Health:   2,
 				Hand: []CardState{
 					{ID: 201, CardType: 0},
 					{ID: 202, CardType: 0},
@@ -84,16 +88,27 @@ func TestGameState_DeepCopy(t *testing.T) {
 	b.Turn++
 	assert.Equal(t, a.Turn+1, b.Turn)
 
-	assert.Equal(t, a.Players[0].ID, b.Players[0].ID)
-	b.Players[0].ID++
-	assert.Equal(t, a.Players[0].ID+1, b.Players[0].ID)
-
-	assert.Equal(t, a.Players[0].Hand[0].ID, b.Players[0].Hand[0].ID)
-	b.Players[0].Hand[0].ID++
-	assert.Equal(t, a.Players[0].Hand[0].ID+1, b.Players[0].Hand[0].ID)
-
 	assert.Equal(t, len(a.Players), len(b.Players))
+
+	var pA = a.Players[0]
+	var pB = b.Players[0]
+
+	assert.Equal(t, pA.ID, pB.ID)
+	assert.Equal(t, pA.Name, pB.Name)
+	assert.Equal(t, pA.Location, pB.Location)
+	assert.Equal(t, pA.Facing, pB.Facing)
+	assert.Equal(t, pA.Health, pB.Health)
+	assert.Equal(t, pA.Health, pB.Health)
+	assert.Equal(t, len(pA.Hand), len(pB.Hand))
+	assert.Equal(t, len(pA.Deck), len(pB.Deck))
+	assert.Equal(t, len(pA.Discard), len(pB.Discard))
+
+	b.Players[0].ID++
+	b.Players[0].Hand[0].ID++
 	b.Players = append(b.Players, PlayerState{})
+
+	assert.Equal(t, a.Players[0].ID+1, b.Players[0].ID)
+	assert.Equal(t, a.Players[0].Hand[0].ID+1, b.Players[0].Hand[0].ID)
 	assert.Equal(t, len(a.Players)+1, len(b.Players))
 }
 
