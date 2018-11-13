@@ -154,6 +154,7 @@ namespace Dev {
             Debug.Log("Got current state: " + JsonUtility.ToJson(next));
             currentState = next;
             currentPlayer = currentState.Players.Find(p => p.Name == PlayerNameInputField.text);
+            playerId = currentPlayer.ID;
             Debug.Log(string.Format("Cards in Hand: {0} Deck: {1} Discard: {2}", currentPlayer.Hand.Count, currentPlayer.Deck.Count, currentPlayer.Discard.Count));
             Debug.Log("Got current player: " + JsonUtility.ToJson(currentPlayer));
             gameStateToInfoText();

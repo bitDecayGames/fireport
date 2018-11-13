@@ -49,10 +49,10 @@ type TurnSubmissionMsg struct {
 type GameInputMsg struct {
 	TypedMsg
 
-	CardID int // this should maybe just be a query parameter or something simple
-	Owner  int // this should come from the authentication layer
-	Order  int // the order of the card for this player's selection
-	Swap   int // the id of the basic movement type that this input will use, 0 means use the card as is
+	CardID int `json:"cardID"` // this should maybe just be a query parameter or something simple
+	Owner  int `json:"owner"`  // this should come from the authentication layer
+	Order  int `json:"order"`  // the order of the card for this player's selection
+	Swap   int `json:"swap"`   // the id of the basic movement type that this input will use, 0 means use the card as is
 }
 
 // GameResultSummaryMsg is sent out to each player when the game has been won
