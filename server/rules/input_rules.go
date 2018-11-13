@@ -3,6 +3,7 @@ package rules
 import (
 	"fmt"
 	"github.com/bitdecaygames/fireport/server/pogo"
+	"strings"
 )
 
 // InputRule is meant to validate the inputs for each player against the current state
@@ -19,8 +20,8 @@ var DefaultInputRules = []InputRule{
 }
 
 // ApplyInputRules checks that the input for a game are valid
-func ApplyInputRules(gameState *pogo.GameState, inputs []pogo.GameInputMsg, rules []InputRule) []error {
-	var errors []error
+func ApplyInputRules(gameState *pogo.GameState, inputs []pogo.GameInputMsg, rules []InputRule) error {
+	var errors []string
 	for _, player := range gameState.Players {
 		var playerInputs []pogo.GameInputMsg
 		for _, input := range inputs {
@@ -31,11 +32,14 @@ func ApplyInputRules(gameState *pogo.GameState, inputs []pogo.GameInputMsg, rule
 		for _, rule := range rules {
 			err := rule.Apply(gameState, &player, playerInputs)
 			if err != nil {
-				errors = append(errors, err)
+				errors = append(errors, err.Error())
 			}
 		}
 	}
-	return errors
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
+	}
+	return nil
 }
 
 // MinNumberOfInputsRule forces a player to play at least n number of cards

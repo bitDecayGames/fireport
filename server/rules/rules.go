@@ -3,6 +3,7 @@ package rules
 import (
 	"fmt"
 	"github.com/bitdecaygames/fireport/server/pogo"
+	"strings"
 )
 
 // GameRule is meant to validate the previous and new proposed state, it WILL NOT make any modifications to either state
@@ -32,15 +33,18 @@ var DefaultGameRules = []GameRule{
 }
 
 // ApplyGameRules takes two states and a list of rules and compiles a list of errors that correspond to the rules that have been violated
-func ApplyGameRules(a *pogo.GameState, b *pogo.GameState, rules []GameRule) []error {
-	var errors []error
+func ApplyGameRules(a *pogo.GameState, b *pogo.GameState, rules []GameRule) error {
+	var errors []string
 	for _, rule := range rules {
 		err := rule.Apply(a, b)
 		if err != nil {
-			errors = append(errors, err)
+			errors = append(errors, err.Error())
 		}
 	}
-	return errors
+	if len(errors) > 0 {
+		return fmt.Errorf(strings.Join(errors, "\n"))
+	}
+	return nil
 }
 
 // OneTurnAtATimeRule makes sure the turn ticker only moves up by 1

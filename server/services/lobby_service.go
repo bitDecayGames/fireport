@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
-	uuid "github.com/satori/go.uuid"
 )
 
 // LobbyModFunc takes a lobby as an argument and is a thread-safe way of modifying a lobby
@@ -58,7 +57,8 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	defer l.mutex.Unlock()
 
 	newLobby := &Lobby{
-		ID:                uuid.NewV4().String(),
+		//ID:                uuid.NewV4().String(), // TODO: MW uncomment this
+		ID:                "GAME", // TODO: MW for dev play testing only
 		PlayerReady:       make(map[string]bool),
 		ActiveConnections: make(map[string]PlayerConnection),
 	}

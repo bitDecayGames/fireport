@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/bitdecaygames/fireport/server/logic"
 
@@ -28,9 +29,9 @@ type GameInstance struct {
 	CurrentTurn       int
 	Players           []string
 	Rules             []rules.GameRule
+	InputRules        []rules.InputRule
 	ActiveConnections map[string]PlayerConnection
 	PlayerSubmissions map[string]pogo.TurnSubmissionMsg
-	InputRules        []rules.InputRule
 }
 
 var gameMutex = &sync.Mutex{}
@@ -56,8 +57,8 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 		State:             createInitialGameState(lobby),
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
-		ActiveConnections: lobby.ActiveConnections,
 		InputRules:        rules.DefaultInputRules,
+		ActiveConnections: lobby.ActiveConnections,
 
 		PlayerSubmissions: make(map[string]pogo.TurnSubmissionMsg),
 	}
@@ -90,6 +91,11 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		return fmt.Errorf("Player %v already has a pending turn submission", submit.PlayerID)
 	}
 
+	err = rules.ApplyInputRules(&game.State, submit.Inputs, game.InputRules)
+	if err != nil {
+		return err
+	}
+
 	game.PlayerSubmissions[submit.PlayerID] = submit
 
 	allTurnsSubmitted := true
@@ -106,9 +112,19 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		for _, msg := range game.PlayerSubmissions {
 			allInputs = append(allInputs, msg.Inputs...)
 		}
+		game.PlayerSubmissions = map[string]pogo.TurnSubmissionMsg{}
 		// TODO: Does it make sense to pass pointers through all the logic, or just structs?
 		oldState := game.State
 		newState, err := logic.StepGame(&game.State, allInputs)
+		if err != nil {
+			return err
+		}
+
+		err = rules.ApplyGameRules(&oldState, newState, game.Rules)
+		if err != nil {
+			return err
+		}
+
 		msg := &pogo.TurnResultMsg{
 			GameID:        game.ID,
 			PreviousState: oldState,
@@ -147,25 +163,31 @@ func createInitialGameState(lobby Lobby) pogo.GameState {
 	var playerStates []pogo.PlayerState
 	gameState := pogo.GameState{
 		Turn:        0,
-		Created:     0,
-		Updated:     0,
+		Created:     time.Now().Unix(),
+		Updated:     time.Now().Unix(),
 		IDCounter:   0,
-		BoardWidth:  3,
-		BoardHeight: 3,
+		BoardWidth:  6, // TODO: MW magic number alert
+		BoardHeight: 6, // TODO: MW magic number alert
 	}
 
 	for i, player := range lobby.Players {
-		playerStates = append(playerStates, createInitialPlayerStates(player, i, gameState))
+		playerStates = append(playerStates, createInitialPlayerState(player, i, &gameState))
 	}
 
-	gameState.BoardSpaces = createBoard(gameState)
+	gameState.BoardSpaces = createBoard(&gameState)
 	gameState.Players = playerStates
 
-	return gameState
+	// TODO: MW maybe this shouldn't go here? Like maybe it should go one up from this method
+	finalState, err := logic.StepGame(&gameState, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	return *finalState
 }
 
 // createInitialCards returns a slice of CardStates for the initial discard pile, can probably be refactored to pull a list of playable/implimented cards
-func createInitialCards(gameState pogo.GameState) []pogo.CardState {
+func createInitialCards(gameState *pogo.GameState) []pogo.CardState {
 	return []pogo.CardState{
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
@@ -185,11 +207,12 @@ func createInitialCards(gameState pogo.GameState) []pogo.CardState {
 }
 
 //createInitialPlayerStates creates the inital state for a player, probably needs a list of available starting locations
-func createInitialPlayerStates(playerName string, playerLocation int, gameState pogo.GameState) pogo.PlayerState {
+func createInitialPlayerState(playerName string, playerLocation int, gameState *pogo.GameState) pogo.PlayerState {
 	return pogo.PlayerState{
 		ID:       gameState.GetNewID(),
 		Name:     playerName,
 		Location: playerLocation,
+		Health:   10, // TODO: MW magic number alert
 		Hand:     []pogo.CardState{},
 		Deck:     []pogo.CardState{},
 		Discard:  createInitialCards(gameState),
@@ -197,16 +220,10 @@ func createInitialPlayerStates(playerName string, playerLocation int, gameState 
 }
 
 //createBoard creates a board, will need to accept some type of identifier down the line if we want multiple maps
-func createBoard(gameState pogo.GameState) []pogo.BoardSpace {
-	return []pogo.BoardSpace{
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
-		{ID: gameState.GetNewID(), SpaceType: 0, State: 0},
+func createBoard(gameState *pogo.GameState) []pogo.BoardSpace {
+	var boardSpaces []pogo.BoardSpace
+	for i := 0; i < gameState.BoardWidth*gameState.BoardHeight; i++ {
+		boardSpaces = append(boardSpaces, pogo.BoardSpace{ID: gameState.GetNewID(), SpaceType: 0, State: 0})
 	}
+	return boardSpaces
 }

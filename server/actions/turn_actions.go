@@ -83,9 +83,10 @@ func (a *DiscardCardAction) Apply(currentState *pogo.GameState) (*pogo.GameState
 			var discarded = false
 			for k, card := range nextState.Players[i].Hand {
 				if card.ID == a.CardID {
-					nextState.Players[i].Discard = append(nextState.Players[i].Discard, nextState.Players[i].Hand[i])
+					nextState.Players[i].Discard = append(nextState.Players[i].Discard, nextState.Players[i].Hand[k])
 					nextState.Players[i].Hand = append(nextState.Players[i].Hand[:k], nextState.Players[i].Hand[k+1:]...)
 					discarded = true
+					break
 				}
 			}
 			if discarded {

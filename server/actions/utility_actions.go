@@ -24,6 +24,7 @@ func (a *EmptyAction) GetOwner() int {
 // BumpDamageSelfAction damage myself because I bumped something solid
 type BumpDamageSelfAction struct {
 	Owner int
+	// TODO: MW probably need a direction component on this
 }
 
 // Apply apply this action
