@@ -82,6 +82,7 @@ func (g *GameServiceImpl) GetCurrentTurn(gameID string) (int, error) {
 func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	game, err := g.lockActiveGame(submit.GameID)
 	if err != nil {
+		game.sendMessageOverWebSocketConnections(&pogo.GameErrorMsg{Error: err.Error()})
 		return err
 	}
 	defer game.Lock.Unlock()
@@ -93,6 +94,7 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 
 	err = rules.ApplyInputRules(&game.State, submit.Inputs, game.InputRules)
 	if err != nil {
+		game.sendMessageOverWebSocketConnections(&pogo.GameErrorMsg{Error: err.Error()})
 		return err
 	}
 
@@ -117,11 +119,13 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		oldState := game.State
 		newState, err := logic.StepGame(&game.State, allInputs)
 		if err != nil {
+			game.sendMessageOverWebSocketConnections(&pogo.GameErrorMsg{Error: err.Error()})
 			return err
 		}
 
 		err = rules.ApplyGameRules(&oldState, newState, game.Rules)
 		if err != nil {
+			game.sendMessageOverWebSocketConnections(&pogo.GameErrorMsg{Error: err.Error()})
 			return err
 		}
 
@@ -142,6 +146,15 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	}
 
 	return nil
+}
+
+func (g *GameInstance) sendMessageOverWebSocketConnections(msg pogo.Typer) {
+	for pid, conn := range g.ActiveConnections {
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			fmt.Println("failed to send message to player ", pid)
+		}
+	}
 }
 
 // lockActiveGame locks the game with the given gameID and returns it, or returns an error
