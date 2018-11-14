@@ -25,6 +25,13 @@ type GameTimeoutMsg struct {
 	// Currently no needed information
 }
 
+// GameErrorMsg contains generic error message strings
+type GameErrorMsg struct {
+	TypedMsg
+
+	Error string `json:"error"`
+}
+
 // TurnResultMsg contains information on game state changes that occurred
 // in the latest turn
 type TurnResultMsg struct {
