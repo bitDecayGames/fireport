@@ -10,7 +10,7 @@ using Utils;
 
 namespace Dev {
     public class DevGameBehaviour : MonoBehaviour, IDownStreamSubscriber {
-        public const int MAX_CARD_SELECTIONS = 3;
+        public const int MAX_CARD_SELECTIONS = 1;
         public const int CARDS_IN_HAND = 5;
 
         public RestApi Api;

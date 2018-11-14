@@ -79,7 +79,7 @@ func moveBackwardTwoCard(id int, owner int) *Card {
 }
 
 func moveBackwardThreeCard(id int, owner int) *Card {
-	return &Card{ID: id, Owner: owner, CardType: pogo.MoveBackwardThree, Actions: []actions.Action{&actions.MoveBackwardAction{Owner: owner}, &actions.MoveBackwardAction{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+	return &Card{ID: id, Owner: owner, CardType: pogo.MoveBackwardThree, Actions: []actions.Action{&actions.MoveBackwardAction{Owner: owner}, &actions.MoveBackwardAction{Owner: owner}, &actions.MoveBackwardAction{Owner: owner}}}
 }
 
 func turnRightCard(id int, owner int) *Card {
