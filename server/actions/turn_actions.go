@@ -2,9 +2,10 @@ package actions
 
 import (
 	"fmt"
-	"github.com/bitdecaygames/fireport/server/pogo"
 	"math/rand"
 	"time"
+
+	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
 // DefaultTurnActions the list of default actions that will be applied at the end of every turn
@@ -127,7 +128,7 @@ func (a *ResetDiscardPileAction) GetOwner() int {
 }
 
 func shuffle(cards []pogo.CardState) []pogo.CardState {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ret := make([]pogo.CardState, len(cards))
 	perm := r.Perm(len(cards))
 	for i, randIndex := range perm {

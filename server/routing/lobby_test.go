@@ -140,6 +140,10 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal("expected initial game state to have something in it.")
 	}
 
+	if !assert.NotEqual(t,newGameMsg.GameState.Players[0].Deck,newGameMsg.GameState.Players[1].Deck) {
+		t.Fatal("players decks should not be the same")
+	}
+
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
 	if !assert.Len(t, lobbies, 0) {
 		t.Fatal("expected lobby to be closed after game starts")
