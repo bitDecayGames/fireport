@@ -12,7 +12,6 @@ import (
 // GetLogFile returns a file in the log directory for the current OS
 func GetLogFile(logName string) (*os.File, error) {
 	datestamp := time.Now().Format("2006-01-02_15.04.05")
-	fmt.Println("datestamp: ", datestamp)
 	fileName := strings.Join([]string{datestamp, logName}, "_")
 	if !strings.HasSuffix(fileName, ".log") {
 		fileName = fmt.Sprintf("%v.log", fileName)
