@@ -1,11 +1,13 @@
 package services
 
 import (
+	"github.com/bitdecaygames/fireport/server/files"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/bitdecaygames/fireport/server/logic"
+	"github.com/sirupsen/logrus"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
@@ -32,6 +34,7 @@ type GameInstance struct {
 	InputRules        []rules.InputRule
 	ActiveConnections map[string]PlayerConnection
 	PlayerSubmissions map[string]pogo.TurnSubmissionMsg
+	Log               *logrus.Logger
 }
 
 var gameMutex = &sync.Mutex{}
@@ -59,11 +62,30 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 		Rules:             rules.DefaultGameRules,
 		InputRules:        rules.DefaultInputRules,
 		ActiveConnections: lobby.ActiveConnections,
-
 		PlayerSubmissions: make(map[string]pogo.TurnSubmissionMsg),
+		Log:               getGameLogger(lobby.ID),
 	}
 	g.activeGames[newInstance.ID] = newInstance
+	fmt.Println("Game created: ", newInstance.ID)
+	newInstance.Log.Info("Game created")
 	return newInstance
+}
+
+func getGameLogger(gameID string) *logrus.Logger {
+	f, err := files.GetLogFile(gameID)
+	if err != nil {
+		fmt.Println("failed to make file logger for game ", gameID)
+	}
+
+	logger := logrus.New()
+	logger.SetOutput(f)
+
+	formatter := new(logrus.TextFormatter)
+    formatter.TimestampFormat = "15:04:05"
+    formatter.FullTimestamp = true
+	logger.SetFormatter(formatter)
+	
+	return logger
 }
 
 // GetCurrentTurn returns the current turn of an active game, or an error
@@ -110,6 +132,7 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	}
 
 	if allTurnsSubmitted {
+		game.Log.Infof("Stepping game for turn %v", game.CurrentTurn)
 		allInputs := make([]pogo.GameInputMsg, 0)
 		for _, msg := range game.PlayerSubmissions {
 			allInputs = append(allInputs, msg.Inputs...)

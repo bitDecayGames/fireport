@@ -1,4 +1,8 @@
-*.exe
-.idea
+#IDE files
 *.iml
+.idea
+
+# Generated files
+*.log
+*.exe
 main

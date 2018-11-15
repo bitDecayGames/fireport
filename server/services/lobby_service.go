@@ -64,6 +64,7 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	}
 
 	l.activeLobbies[newLobby.ID] = newLobby
+	fmt.Println("Lobby created: ", newLobby.ID)
 	return newLobby
 }
 
