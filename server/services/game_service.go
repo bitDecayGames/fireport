@@ -1,10 +1,11 @@
 package services
 
 import (
-	"github.com/bitdecaygames/fireport/server/files"
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/bitdecaygames/fireport/server/files"
 
 	"github.com/bitdecaygames/fireport/server/logic"
 	"github.com/sirupsen/logrus"
@@ -81,10 +82,10 @@ func getGameLogger(gameID string) *logrus.Logger {
 	logger.SetOutput(f)
 
 	formatter := new(logrus.TextFormatter)
-    formatter.TimestampFormat = "15:04:05"
-    formatter.FullTimestamp = true
+	formatter.TimestampFormat = "15:04:05"
+	formatter.FullTimestamp = true
 	logger.SetFormatter(formatter)
-	
+
 	return logger
 }
 
