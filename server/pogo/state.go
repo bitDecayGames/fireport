@@ -16,6 +16,8 @@ type GameState struct {
 
 	IsGameFinished bool // is the game finished
 	Winner         int  // the id of the winner of the game
+
+	Animations []AnimationAction // Animations used to get the current GameState
 }
 
 // GetNewID increments the IDCounter on this game state and returns the last IDCounter
@@ -55,6 +57,15 @@ func (s *GameState) DeepCopy() *GameState {
 			State:     space.State,
 		}
 		cp.BoardSpaces = append(cp.BoardSpaces, *cpS)
+	}
+	for _, animation := range s.Animations {
+		cpA := &AnimationAction{
+			ID:     animation.ID,
+			Name:   animation.Name,
+			Owner:  animation.Owner,
+			Facing: animation.Facing,
+		}
+		cp.Animations = append(cp.Animations, *cpA)
 	}
 	return cp
 }
@@ -119,8 +130,8 @@ type PlayerState struct {
 type AnimationAction struct {
 	ID     int    // id for this specific action (mostly for debugging)
 	Name   string // name key for the type of animation
-	Target int    // the id of the target
-	Value  int    // a generic integer field that will have specific meaning for each type of animation action
+	Owner  int    // UID of the player the animation is associated with
+	Facing int    // Direction the player is facing 0, 1, 2, 3 for North, East, South, West.
 }
 
 // CardState defines a single and specific instance of a card in the game
