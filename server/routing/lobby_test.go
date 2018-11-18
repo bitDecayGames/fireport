@@ -140,7 +140,21 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal("expected initial game state to have something in it.")
 	}
 
-	if !assert.NotEqual(t,newGameMsg.GameState.Players[0].Deck,newGameMsg.GameState.Players[1].Deck) {
+	p1Deck := newGameMsg.GameState.Players[0].Deck
+	p2Deck := newGameMsg.GameState.Players[1].Deck
+	decksEqual := true
+	if len(p1Deck) != len(p2Deck) {
+		decksEqual = false
+	} else {
+		for i, cardState := range p1Deck {
+			if cardState.CardType != p2Deck[i].CardType {
+				decksEqual = false
+				break
+			}
+		}
+	}
+	
+	if decksEqual {
 		t.Fatal("players decks should not be the same")
 	}
 

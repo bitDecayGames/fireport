@@ -127,8 +127,10 @@ func (a *ResetDiscardPileAction) GetOwner() int {
 	return a.Owner
 }
 
+// TODO: We probably want to move this somewhere else so each game can record its own seed value (will likely be useful for debugging)
+var r = rand.New(rand.NewSource(time.Now().UnixNano()))
+
 func shuffle(cards []pogo.CardState) []pogo.CardState {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ret := make([]pogo.CardState, len(cards))
 	perm := r.Perm(len(cards))
 	for i, randIndex := range perm {
