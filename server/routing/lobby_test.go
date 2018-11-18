@@ -115,7 +115,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	go func() {
 		//Starts Game
-		_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
+		_, err := put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
 		if !assert.Nil(t, err) {
 			t.Fatal(err)
 		}
