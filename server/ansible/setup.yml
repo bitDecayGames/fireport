@@ -13,10 +13,6 @@
   tasks:
     - name: ensure nginx is at the latest version
       apt: name=nginx state=latest
-    - name: setup nginx conf
-      template:
-        src: nginx.conf.tpl
-        dest: /etc/nginx/nginx.conf
     - name: restart nginx
       service:
         name=nginx

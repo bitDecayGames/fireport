@@ -11,3 +11,4 @@ Host tanxz01_ubuntu
     IdentityFile ~/.ssh/tanxz
 ```
 
+## TODO: figure out how to actually deploy the server with ansible
