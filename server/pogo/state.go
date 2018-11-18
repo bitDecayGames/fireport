@@ -1,12 +1,15 @@
 package pogo
 
+import "math/rand"
+
 // GameState is an all-containing set of information for the state of a
 // game at a given point in time
 type GameState struct {
-	Turn      int   // the current turn
-	Created   int64 // the epoch timestamp when this game started
-	Updated   int64 // the epoch timestamp for when this specific state was created
-	IDCounter int   // a counter to keep track of all of the ids issued throughout the game
+	Turn      int        // the current turn
+	RNG       *rand.Rand // random number generator for this state
+	Created   int64      // the epoch timestamp when this game started
+	Updated   int64      // the epoch timestamp for when this specific state was created
+	IDCounter int        // a counter to keep track of all of the ids issued throughout the game
 
 	Players []PlayerState // each player state corresponds to each player in the game
 
@@ -29,6 +32,7 @@ func (s *GameState) DeepCopy() *GameState {
 	// TODO: MW I really hate that this is manual like this... Is there no library out there that does deep dynamic copying?
 	cp := &GameState{
 		Turn:        s.Turn,
+		RNG:         s.RNG,
 		Created:     s.Created,
 		Updated:     s.Updated,
 		IDCounter:   s.IDCounter,

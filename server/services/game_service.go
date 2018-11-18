@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"math/rand"
 
 	"github.com/bitdecaygames/fireport/server/files"
 
@@ -54,11 +55,12 @@ func NewGameService() GameService {
 
 // CreateGame creates a new Game from the lobby information and returns it
 func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
+	seed := time.Now().UnixNano()
 	newInstance := &GameInstance{
 		Lock:              &sync.Mutex{},
 		Name:              lobby.Name,
 		ID:                lobby.ID,
-		State:             createInitialGameState(lobby),
+		State:             createInitialGameState(lobby, seed),
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
 		InputRules:        rules.DefaultInputRules,
@@ -68,7 +70,7 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 	}
 	g.activeGames[newInstance.ID] = newInstance
 	fmt.Println("Game created: ", newInstance.ID)
-	newInstance.Log.Info("Game created")
+	newInstance.Log.Info("Game created with seed: ", seed)
 	return newInstance
 }
 
@@ -196,10 +198,11 @@ func (g *GameServiceImpl) lockActiveGame(gameID string) (*GameInstance, error) {
 }
 
 //createInitialGameState creates the initial state for the lobby, probably should call some board creation method to ensure width, height and tile types are set accordingly
-func createInitialGameState(lobby Lobby) pogo.GameState {
+func createInitialGameState(lobby Lobby, seedValue int64) pogo.GameState {
 	var playerStates []pogo.PlayerState
 	gameState := pogo.GameState{
 		Turn:        0,
+		RNG:         rand.New(rand.NewSource(seedValue)),
 		Created:     time.Now().Unix(),
 		Updated:     time.Now().Unix(),
 		IDCounter:   0,

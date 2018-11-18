@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -11,6 +12,7 @@ import (
 func getTestState() *pogo.GameState {
 	return &pogo.GameState{
 		Turn:        0,
+		RNG:         rand.New(rand.NewSource(0)), // this may be useful as our test state will always generate the same sequence of things
 		Created:     1000,
 		Updated:     2000,
 		IDCounter:   300,
