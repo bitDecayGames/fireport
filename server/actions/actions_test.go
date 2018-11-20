@@ -2,87 +2,15 @@ package actions
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
+
 	"github.com/stretchr/testify/assert"
 )
 
-func getTestState() *pogo.GameState {
-	return &pogo.GameState{
-		Turn:        0,
-		RNG:         rand.New(rand.NewSource(0)), // this may be useful as our test state will always generate the same sequence of things
-		Created:     1000,
-		Updated:     2000,
-		IDCounter:   300,
-		BoardWidth:  2,
-		BoardHeight: 2,
-		BoardSpaces: []pogo.BoardSpace{
-			{ID: 0, SpaceType: 0, State: 0},
-			{ID: 1, SpaceType: 0, State: 0},
-			{ID: 2, SpaceType: 0, State: 0},
-			{ID: 3, SpaceType: 0, State: 0},
-		},
-		Players: []pogo.PlayerState{
-			{
-				ID:       100,
-				Name:     "PlayerOne",
-				Location: 0,
-				Hand: []pogo.CardState{
-					{ID: 101, CardType: 0},
-					{ID: 102, CardType: 0},
-					{ID: 103, CardType: 0},
-					{ID: 104, CardType: 0},
-					{ID: 105, CardType: 0},
-				},
-				Deck: []pogo.CardState{
-					{ID: 106, CardType: 0},
-					{ID: 107, CardType: 0},
-					{ID: 108, CardType: 0},
-					{ID: 109, CardType: 0},
-					{ID: 110, CardType: 0},
-				},
-				Discard: []pogo.CardState{
-					{ID: 111, CardType: 0},
-					{ID: 112, CardType: 0},
-					{ID: 113, CardType: 0},
-					{ID: 114, CardType: 0},
-					{ID: 115, CardType: 0},
-				},
-			},
-			{
-				ID:       200,
-				Name:     "PlayerTwo",
-				Location: 3,
-				Hand: []pogo.CardState{
-					{ID: 201, CardType: 0},
-					{ID: 202, CardType: 0},
-					{ID: 203, CardType: 0},
-					{ID: 204, CardType: 0},
-					{ID: 205, CardType: 0},
-				},
-				Deck: []pogo.CardState{
-					{ID: 206, CardType: 0},
-					{ID: 207, CardType: 0},
-					{ID: 208, CardType: 0},
-					{ID: 209, CardType: 0},
-					{ID: 210, CardType: 0},
-				},
-				Discard: []pogo.CardState{
-					{ID: 211, CardType: 0},
-					{ID: 212, CardType: 0},
-					{ID: 213, CardType: 0},
-					{ID: 214, CardType: 0},
-					{ID: 215, CardType: 0},
-				},
-			},
-		},
-	}
-}
-
 func TestIncrementTurnAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &IncrementTurnAction{}
 
 	var b, err = action.Apply(a)
@@ -91,7 +19,7 @@ func TestIncrementTurnAction(t *testing.T) {
 }
 
 func TestSyncLastUpdatedAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &SyncLastUpdatedAction{}
 
 	var b, err = action.Apply(a)
@@ -100,7 +28,7 @@ func TestSyncLastUpdatedAction(t *testing.T) {
 }
 
 func TestDrawCardAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &DrawCardAction{}
 
 	var b, err = action.Apply(a)
@@ -127,7 +55,7 @@ func TestDrawCardAction(t *testing.T) {
 }
 
 func TestDiscardCardAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &DiscardCardAction{}
 
 	var b, err = action.Apply(a)
@@ -148,7 +76,7 @@ func TestDiscardCardAction(t *testing.T) {
 }
 
 func TestResetDiscardPileAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &ResetDiscardPileAction{}
 
 	var b, err = action.Apply(a)
@@ -168,7 +96,7 @@ func TestResetDiscardPileAction(t *testing.T) {
 }
 
 func TestShuffleDeckAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &ShuffleDeckAction{}
 
 	var b, err = action.Apply(a)
@@ -193,7 +121,7 @@ func TestShuffleDeckAction(t *testing.T) {
 }
 
 func TestShuffleDiscardAction(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &ShuffleDiscardAction{}
 
 	var b, err = action.Apply(a)
@@ -218,7 +146,7 @@ func TestShuffleDiscardAction(t *testing.T) {
 }
 
 func TestTurnClockwise90Action(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
 	var action = &TurnClockwise90Action{Owner: a.Players[0].ID}
 
 	var b, err = action.Apply(a)
@@ -227,7 +155,9 @@ func TestTurnClockwise90Action(t *testing.T) {
 }
 
 func TestTurnCounterClockwise90Action(t *testing.T) {
-	var a = getTestState()
+	var a = pogo.GetTestState()
+	// set player facing to zero so we can test overflow handling
+	a.Players[0].Facing = 0
 	var action = &TurnCounterClockwise90Action{Owner: a.Players[0].ID}
 
 	var b, err = action.Apply(a)
