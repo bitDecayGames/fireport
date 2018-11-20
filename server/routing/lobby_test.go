@@ -115,7 +115,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	go func() {
 		//Starts Game
-		_, err = put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
+		_, err := put(port, LobbyRoute+"/"+lobbyID+"/start", nil)
 		if !assert.Nil(t, err) {
 			t.Fatal(err)
 		}
@@ -138,6 +138,24 @@ func TestLobbyAPI(t *testing.T) {
 
 	if !assert.NotNil(t,newGameMsg.GameState) {
 		t.Fatal("expected initial game state to have something in it.")
+	}
+
+	p1Deck := newGameMsg.GameState.Players[0].Deck
+	p2Deck := newGameMsg.GameState.Players[1].Deck
+	decksEqual := true
+	if len(p1Deck) != len(p2Deck) {
+		decksEqual = false
+	} else {
+		for i, cardState := range p1Deck {
+			if cardState.CardType != p2Deck[i].CardType {
+				decksEqual = false
+				break
+			}
+		}
+	}
+	
+	if decksEqual {
+		t.Fatal("players decks should not be the same")
 	}
 
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
