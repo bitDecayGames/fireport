@@ -2,6 +2,7 @@ package cards
 
 import (
 	"fmt"
+
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
@@ -48,6 +49,8 @@ func GameInputToCard(cardID int, playerID int, cardType pogo.CardType) (*Card, e
 		return turnRightCard(cardID, playerID), nil
 	case pogo.TurnLeft:
 		return turnLeftCard(cardID, playerID), nil
+	case pogo.FireBasic:
+		return fireBasicCard(cardID, playerID), nil
 	default:
 		return nil, fmt.Errorf("no card found with the type %v", cardType)
 	}
@@ -88,4 +91,8 @@ func turnRightCard(id int, owner int) *Card {
 
 func turnLeftCard(id int, owner int) *Card {
 	return &Card{ID: id, Owner: owner, CardType: pogo.TurnLeft, Actions: []actions.Action{&actions.MoveForwardAction{Owner: owner}, &actions.TurnCounterClockwise90Action{Owner: owner}, &actions.MoveForwardAction{Owner: owner}}}
+}
+
+func fireBasicCard(id int, owner int) *Card {
+	return &Card{ID: id, Owner: owner, CardType: pogo.FireBasic, Actions: []actions.Action{&actions.FireBasicAction{Owner: owner}}}
 }
