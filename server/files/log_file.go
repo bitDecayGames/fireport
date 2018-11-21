@@ -3,11 +3,14 @@ package files
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 )
+
+const gameLogsDir = "fireport_logs"
 
 // GetLogFile returns a file in the log directory for the current OS
 func GetLogFile(logName string) (*os.File, error) {
@@ -18,7 +21,13 @@ func GetLogFile(logName string) (*os.File, error) {
 	}
 	var path string
 	if runtime.GOOS == "windows" {
-		path = filepath.Join(".", fileName)
+		usr, err := user.Current()
+		if err != nil {
+			// fallback in case we can't get the user
+			path = filepath.Join(".", fileName)
+		} else {
+			path = filepath.Join(usr.HomeDir, gameLogsDir, fileName)
+		}
 	} else {
 		path = filepath.Join("var", "log", fileName)
 	}
