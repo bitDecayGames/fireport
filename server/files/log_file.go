@@ -26,6 +26,10 @@ func GetLogFile(logName string) (*os.File, error) {
 			// fallback in case we can't get the user
 			path = filepath.Join(".", fileName)
 		} else {
+			err = os.MkdirAll(filepath.Join(usr.HomeDir, gameLogsDir), 0755)
+			if err != nil {
+				fmt.Println("Failed to make log directory: ", err)
+			}
 			path = filepath.Join(usr.HomeDir, gameLogsDir, fileName)
 		}
 	} else {

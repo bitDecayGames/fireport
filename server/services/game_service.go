@@ -77,7 +77,7 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 func getGameLogger(gameID string) *logrus.Logger {
 	f, err := files.GetLogFile(gameID)
 	if err != nil {
-		fmt.Println("failed to make file logger for game ", gameID)
+		fmt.Println("failed to make file logger for game ", gameID, ": ", err)
 	}
 
 	logger := logrus.New()
