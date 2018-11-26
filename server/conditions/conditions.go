@@ -7,6 +7,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	// MaxConditionSteps the maximum number of steps a condition will make before throwing an error
+	MaxConditionSteps = 10
+)
+
 // Condition checks each ActionGroup for a specific condition and modifies that ActionGroup if necessary
 type Condition interface {
 	Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error

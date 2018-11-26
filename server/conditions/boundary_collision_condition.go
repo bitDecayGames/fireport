@@ -11,8 +11,8 @@ type BoundaryCollisionCondition struct{}
 
 // Apply applies the condition to the game state
 func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
-	if step > 10 {
-		return fmt.Errorf("failed to handle boudary collision, took more than 10 steps")
+	if step > MaxConditionSteps {
+		return fmt.Errorf("failed to handle boudary collision, took more than %v steps", MaxConditionSteps)
 	}
 	if gameState.BoardWidth == 0 {
 		return nil

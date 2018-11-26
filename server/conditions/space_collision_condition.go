@@ -11,8 +11,8 @@ type SpaceCollisionCondition struct{}
 
 // Apply applies the condition to the game state
 func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
-	if step > 10 {
-		return fmt.Errorf("failed to handle space collision, took more than 10 steps")
+	if step > MaxConditionSteps {
+		return fmt.Errorf("failed to handle space collision, took more than %v steps", MaxConditionSteps)
 	}
 	var futureState = gameState
 	var trackers []playerTracker
