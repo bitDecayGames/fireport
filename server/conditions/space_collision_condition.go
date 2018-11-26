@@ -1,6 +1,7 @@
 package conditions
 
 import (
+	"fmt"
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
@@ -9,7 +10,10 @@ import (
 type SpaceCollisionCondition struct{}
 
 // Apply applies the condition to the game state
-func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action) error {
+func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
+	if step > 10 {
+		return fmt.Errorf("failed to handle space collision, took more than 10 steps")
+	}
 	var futureState = gameState
 	var trackers []playerTracker
 	for playerAIndex := range gameState.Players {
@@ -52,7 +56,7 @@ func (c *SpaceCollisionCondition) Apply(gameState *pogo.GameState, actionGroup [
 		}
 	}
 	if dirty {
-		return c.Apply(gameState, actionGroup)
+		return c.Apply(gameState, actionGroup, step+1)
 	}
 
 	return nil

@@ -1,6 +1,7 @@
 package conditions
 
 import (
+	"fmt"
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
@@ -9,7 +10,10 @@ import (
 type BoundaryCollisionCondition struct{}
 
 // Apply applies the condition to the game state
-func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action) error {
+func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
+	if step > 10 {
+		return fmt.Errorf("failed to handle boudary collision, took more than 10 steps")
+	}
 	if gameState.BoardWidth == 0 {
 		return nil
 	}
@@ -66,7 +70,7 @@ func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGrou
 		}
 	}
 	if dirty {
-		return c.Apply(gameState, actionGroup)
+		return c.Apply(gameState, actionGroup, step+1)
 	}
 
 	return nil

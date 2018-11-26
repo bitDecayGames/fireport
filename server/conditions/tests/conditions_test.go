@@ -550,3 +550,41 @@ func TestCollisionWithBottomLeftCorner(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
 }
+
+/*
++++
+++B
+++A
+*/
+func TestEdgeCollisionWithPlayersGoingSameDirection(t *testing.T) {
+	var gameState = getTestState(3, 3, []pogo.PlayerState{
+		{ID: 100, Name: "A", Location: 8, Facing: 2, Hand: []pogo.CardState{
+			{ID: 101, CardType: pogo.MoveForwardTwo},
+		}},
+		{ID: 200, Name: "B", Location: 5, Facing: 2, Hand: []pogo.CardState{
+			{ID: 201, CardType: pogo.MoveForwardTwo},
+		}},
+	})
+	var inputs []pogo.GameInputMsg
+
+	for _, player := range gameState.Players {
+		for order, card := range player.Hand {
+			inputs = append(inputs, pogo.GameInputMsg{CardID: card.ID, Owner: player.ID, Order: order})
+		}
+	}
+
+	var nextState, err = stepGame(gameState, inputs)
+	assert.NoError(t, err)
+
+	/*
+		+++
+		++B
+		++A
+	*/
+	assert.Equal(t, 8, nextState.Players[0].Location, "A is in the wrong location")
+	assert.Equal(t, 2, nextState.Players[0].Facing, "A is facing the wrong way")
+	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health, "A has the wrong health")
+	assert.Equal(t, 5, nextState.Players[1].Location, "B is in the wrong location")
+	assert.Equal(t, 2, nextState.Players[1].Facing, "B is facing the wrong way")
+	assert.Equal(t, gameState.Players[1].Health-2, nextState.Players[1].Health, "B has the wrong health")
+}

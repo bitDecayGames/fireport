@@ -9,7 +9,7 @@ import (
 
 // Condition checks each ActionGroup for a specific condition and modifies that ActionGroup if necessary
 type Condition interface {
-	Apply(gameState *pogo.GameState, actionGroup []actions.Action) error
+	Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error
 }
 
 // ProcessConditions with a GameState, Inputs, and Conditions, generate the necessary and valid list of actions to get to the next state
@@ -43,6 +43,9 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 
 		for _, cardPriorityGroup := range cardPriorities {
 			nextState, err = applyCardsToState(cardPriorityGroup, nextState, conditions)
+			if err != nil {
+				return nextState, err
+			}
 		}
 	}
 	return nextState, nil
@@ -82,7 +85,7 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 		//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
 		for _, cond := range conditions {
 			// this is the step that actually checks each condition
-			var condErr = cond.Apply(state, actionGroup)
+			var condErr = cond.Apply(state, actionGroup, 0)
 			if condErr != nil {
 				return state, condErr
 			}
