@@ -10,12 +10,12 @@ import (
 type BoundaryCollisionCondition struct{}
 
 // Apply applies the condition to the game state
-func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
+func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) (int, error) {
 	if step > MaxConditionSteps {
-		return fmt.Errorf("failed to handle boudary collision, took more than %v steps", MaxConditionSteps)
+		return step, fmt.Errorf("failed to handle boudary collision, took more than %v steps", MaxConditionSteps)
 	}
 	if gameState.BoardWidth == 0 {
-		return nil
+		return step, nil
 	}
 	var futureState = gameState
 	var trackers []playerTracker
@@ -26,7 +26,7 @@ func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGrou
 		var actOwner = actionGroup[actionIndex].GetOwner()
 		nxt, err := actionGroup[actionIndex].Apply(futureState)
 		if err != nil {
-			return err
+			return step, err
 		}
 		futureState = nxt
 		for i := range trackers {
@@ -73,5 +73,5 @@ func (c *BoundaryCollisionCondition) Apply(gameState *pogo.GameState, actionGrou
 		return c.Apply(gameState, actionGroup, step+1)
 	}
 
-	return nil
+	return step, nil
 }

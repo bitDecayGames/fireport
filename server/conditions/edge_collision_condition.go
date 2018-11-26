@@ -10,9 +10,9 @@ import (
 type EdgeCollisionCondition struct{}
 
 // Apply applies the condition to the game state
-func (c *EdgeCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) error {
+func (c *EdgeCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) (int, error) {
 	if step > MaxConditionSteps {
-		return fmt.Errorf("failed to handle edge collision, took more than %v steps", MaxConditionSteps)
+		return step, fmt.Errorf("failed to handle edge collision, took more than %v steps", MaxConditionSteps)
 	}
 	var futureState = gameState
 	var trackers []playerTracker
@@ -23,7 +23,7 @@ func (c *EdgeCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []
 		var actOwner = actionGroup[actionIndex].GetOwner()
 		nxt, err := actionGroup[actionIndex].Apply(futureState)
 		if err != nil {
-			return err
+			return step, err
 		}
 		futureState = nxt
 		for i := range trackers {
@@ -62,5 +62,5 @@ func (c *EdgeCollisionCondition) Apply(gameState *pogo.GameState, actionGroup []
 		return c.Apply(gameState, actionGroup, step+1)
 	}
 
-	return nil
+	return step, nil
 }
