@@ -127,12 +127,9 @@ func (a *ResetDiscardPileAction) GetOwner() int {
 	return a.Owner
 }
 
-// TODO: We probably want to move this somewhere else so each game can record its own seed value (will likely be useful for debugging)
-var r = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-func shuffle(cards []pogo.CardState) []pogo.CardState {
+func shuffle(cards []pogo.CardState, rng *rand.Rand) []pogo.CardState {
 	ret := make([]pogo.CardState, len(cards))
-	perm := r.Perm(len(cards))
+	perm := rng.Perm(len(cards))
 	for i, randIndex := range perm {
 		ret[i] = cards[randIndex]
 	}
@@ -149,7 +146,7 @@ func (a *ShuffleDeckAction) Apply(currentState *pogo.GameState) (*pogo.GameState
 	nextState := currentState.DeepCopy()
 	for i := range nextState.Players {
 		if nextState.Players[i].ID == a.Owner {
-			nextState.Players[i].Deck = shuffle(nextState.Players[i].Deck)
+			nextState.Players[i].Deck = shuffle(nextState.Players[i].Deck, nextState.RNG)
 			return nextState, nil
 		}
 	}
@@ -171,7 +168,7 @@ func (a *ShuffleDiscardAction) Apply(currentState *pogo.GameState) (*pogo.GameSt
 	nextState := currentState.DeepCopy()
 	for i := range nextState.Players {
 		if nextState.Players[i].ID == a.Owner {
-			nextState.Players[i].Discard = shuffle(nextState.Players[i].Discard)
+			nextState.Players[i].Discard = shuffle(nextState.Players[i].Discard, nextState.RNG)
 			return nextState, nil
 		}
 	}
