@@ -62,7 +62,7 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 		checkSpaces := state.BoardWidth - x
 
 		pos := shooter.Location
-		for i := 1; i < checkSpaces; i++ {
+		for i := 1; i <= checkSpaces; i++ {
 			for k := range state.Players {
 				if state.Players[k].Location == pos+i {
 					// YOU SUNK MY BATTLESHIP
@@ -86,9 +86,8 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 	case WEST:
 		x := shooter.Location % state.BoardWidth
 		checkSpaces := state.BoardWidth - x
-
 		pos := shooter.Location
-		for i := 1; i < checkSpaces; i++ {
+		for i := 1; i <= checkSpaces; i++ {
 			for k := range state.Players {
 				if state.Players[k].Location == pos-i {
 					// YOU SUNK MY BATTLESHIP
