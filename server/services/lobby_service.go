@@ -117,7 +117,7 @@ func (l *LobbyServiceImpl) IsReady(lobbyID string) (bool, bool) {
 			}
 		}
 	}
-	return true, true
+	return true, true // only ready if more than 1 player, and all players are ready
 }
 
 // RegisterConnection adds a connection the given lobby and returns true if it exists, or an error
