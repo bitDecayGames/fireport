@@ -77,7 +77,7 @@ func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
 func getGameLogger(gameID string) *logrus.Logger {
 	f, err := files.GetLogFile(gameID)
 	if err != nil {
-		fmt.Println("failed to make file logger for game ", gameID)
+		fmt.Println("failed to make file logger for game ", gameID, ": ", err)
 	}
 
 	logger := logrus.New()
@@ -230,19 +230,19 @@ func createInitialGameState(lobby Lobby, seedValue int64) pogo.GameState {
 func createInitialCards(gameState *pogo.GameState) []pogo.CardState {
 	return []pogo.CardState{
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
 		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
-		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
+		{ID: gameState.GetNewID(), CardType: pogo.TurnLeft},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
 	}
 }
 

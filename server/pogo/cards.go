@@ -4,6 +4,9 @@ package pogo
 type CardType int
 
 // this is the enum for CardTypes
+// Cards in the 1xx are movement cards
+// Cards in the 2xx are utility cards
+// Cards in the 3xx are attack cards
 const (
 	Unknown CardType = -1
 
@@ -23,6 +26,8 @@ const (
 
 	TurnRight CardType = 120
 	TurnLeft  CardType = 121
+
+	FireBasic CardType = 300
 )
 
 // Priority is a helper func to return a numerical value for the priority of the card.
