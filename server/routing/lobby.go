@@ -116,6 +116,14 @@ func (lr *LobbyRoutes) lobbyStartGameHandler(w http.ResponseWriter, r *http.Requ
 	vars := mux.Vars(r)
 	lobbyID := vars["lobbyID"]
 
+	isReady, found := lr.Services.Lobby.IsReady(lobbyID)
+	if !found {
+		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)
+	}
+	if !isReady {
+		http.Error(w, fmt.Sprint("all players must be ready before you may start the game"), http.StatusExpectationFailed)
+	}
+
 	lobby, found := lr.Services.Lobby.Close(lobbyID)
 	if !found {
 		http.Error(w, fmt.Sprintf("no lobby found with ID '%v'", lobbyID), http.StatusNotFound)

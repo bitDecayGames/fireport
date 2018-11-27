@@ -16,6 +16,7 @@ type LobbyService interface {
 	JoinLobby(pogo.LobbyJoinMsg) (Lobby, error)
 	ReadyPlayer(string, pogo.PlayerReadyMsg) (Lobby, error)
 	RegisterConnection(string, string, PlayerConnection) error
+	IsReady(string) (bool, bool)
 	Close(string) (Lobby, bool)
 	GetLobbiesSnapshot() map[string]Lobby
 }
@@ -95,6 +96,28 @@ func (l *LobbyServiceImpl) ReadyPlayer(lobbyID string, readyMsg pogo.PlayerReady
 	lobby.PlayerReady[readyMsg.PlayerName] = readyMsg.Ready
 
 	return *lobby, nil
+}
+
+// IsReady checks the ready status of all players, if any are false, returns false
+func (l *LobbyServiceImpl) IsReady(lobbyID string) (bool, bool) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	lobby, ok := l.activeLobbies[lobbyID]
+	if !ok {
+		return false, false
+	}
+	if len(lobby.Players) < 2 {
+		return false, true // games cannot be readied with less than 2 players
+	}
+	for _, playerName := range lobby.Players {
+		if val, ok := lobby.PlayerReady[playerName]; ok {
+			if !val {
+				return false, true
+			}
+		}
+	}
+	return true, true
 }
 
 // RegisterConnection adds a connection the given lobby and returns true if it exists, or an error
