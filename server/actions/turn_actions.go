@@ -2,9 +2,10 @@ package actions
 
 import (
 	"fmt"
-	"github.com/bitdecaygames/fireport/server/pogo"
 	"math/rand"
 	"time"
+
+	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
 // DefaultTurnActions the list of default actions that will be applied at the end of every turn
@@ -126,10 +127,9 @@ func (a *ResetDiscardPileAction) GetOwner() int {
 	return a.Owner
 }
 
-func shuffle(cards []pogo.CardState) []pogo.CardState {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
+func shuffle(cards []pogo.CardState, rng *rand.Rand) []pogo.CardState {
 	ret := make([]pogo.CardState, len(cards))
-	perm := r.Perm(len(cards))
+	perm := rng.Perm(len(cards))
 	for i, randIndex := range perm {
 		ret[i] = cards[randIndex]
 	}
@@ -146,7 +146,7 @@ func (a *ShuffleDeckAction) Apply(currentState *pogo.GameState) (*pogo.GameState
 	nextState := currentState.DeepCopy()
 	for i := range nextState.Players {
 		if nextState.Players[i].ID == a.Owner {
-			nextState.Players[i].Deck = shuffle(nextState.Players[i].Deck)
+			nextState.Players[i].Deck = shuffle(nextState.Players[i].Deck, nextState.RNG)
 			return nextState, nil
 		}
 	}
@@ -168,7 +168,7 @@ func (a *ShuffleDiscardAction) Apply(currentState *pogo.GameState) (*pogo.GameSt
 	nextState := currentState.DeepCopy()
 	for i := range nextState.Players {
 		if nextState.Players[i].ID == a.Owner {
-			nextState.Players[i].Discard = shuffle(nextState.Players[i].Discard)
+			nextState.Players[i].Discard = shuffle(nextState.Players[i].Discard, nextState.RNG)
 			return nextState, nil
 		}
 	}

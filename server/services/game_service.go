@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"math/rand"
+
+	"github.com/bitdecaygames/fireport/server/files"
 
 	"github.com/bitdecaygames/fireport/server/logic"
+	"github.com/sirupsen/logrus"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/rules"
@@ -32,6 +36,7 @@ type GameInstance struct {
 	InputRules        []rules.InputRule
 	ActiveConnections map[string]PlayerConnection
 	PlayerSubmissions map[string]pogo.TurnSubmissionMsg
+	Log               *logrus.Logger
 }
 
 var gameMutex = &sync.Mutex{}
@@ -50,20 +55,40 @@ func NewGameService() GameService {
 
 // CreateGame creates a new Game from the lobby information and returns it
 func (g *GameServiceImpl) CreateGame(lobby Lobby) *GameInstance {
+	seed := time.Now().UnixNano()
 	newInstance := &GameInstance{
 		Lock:              &sync.Mutex{},
 		Name:              lobby.Name,
 		ID:                lobby.ID,
-		State:             createInitialGameState(lobby),
+		State:             createInitialGameState(lobby, seed),
 		Players:           lobby.Players,
 		Rules:             rules.DefaultGameRules,
 		InputRules:        rules.DefaultInputRules,
 		ActiveConnections: lobby.ActiveConnections,
-
 		PlayerSubmissions: make(map[string]pogo.TurnSubmissionMsg),
+		Log:               getGameLogger(lobby.ID),
 	}
 	g.activeGames[newInstance.ID] = newInstance
+	fmt.Println("Game created: ", newInstance.ID)
+	newInstance.Log.Info("Game created with seed: ", seed)
 	return newInstance
+}
+
+func getGameLogger(gameID string) *logrus.Logger {
+	f, err := files.GetLogFile(gameID)
+	if err != nil {
+		fmt.Println("failed to make file logger for game ", gameID, ": ", err)
+	}
+
+	logger := logrus.New()
+	logger.SetOutput(f)
+
+	formatter := new(logrus.TextFormatter)
+	formatter.TimestampFormat = "15:04:05"
+	formatter.FullTimestamp = true
+	logger.SetFormatter(formatter)
+
+	return logger
 }
 
 // GetCurrentTurn returns the current turn of an active game, or an error
@@ -110,6 +135,7 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 	}
 
 	if allTurnsSubmitted {
+		game.Log.Infof("Stepping game for turn %v", game.CurrentTurn)
 		allInputs := make([]pogo.GameInputMsg, 0)
 		for _, msg := range game.PlayerSubmissions {
 			allInputs = append(allInputs, msg.Inputs...)
@@ -172,10 +198,11 @@ func (g *GameServiceImpl) lockActiveGame(gameID string) (*GameInstance, error) {
 }
 
 //createInitialGameState creates the initial state for the lobby, probably should call some board creation method to ensure width, height and tile types are set accordingly
-func createInitialGameState(lobby Lobby) pogo.GameState {
+func createInitialGameState(lobby Lobby, seedValue int64) pogo.GameState {
 	var playerStates []pogo.PlayerState
 	gameState := pogo.GameState{
 		Turn:        0,
+		RNG:         rand.New(rand.NewSource(seedValue)),
 		Created:     time.Now().Unix(),
 		Updated:     time.Now().Unix(),
 		IDCounter:   0,
@@ -203,19 +230,19 @@ func createInitialGameState(lobby Lobby) pogo.GameState {
 func createInitialCards(gameState *pogo.GameState) []pogo.CardState {
 	return []pogo.CardState{
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardOne},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardTwo},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveForwardThree},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardOne},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardTwo},
-		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
 		{ID: gameState.GetNewID(), CardType: pogo.MoveBackwardThree},
 		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
-		{ID: gameState.GetNewID(), CardType: pogo.TurnRight},
+		{ID: gameState.GetNewID(), CardType: pogo.TurnLeft},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
+		{ID: gameState.GetNewID(), CardType: pogo.FireBasic},
 	}
 }
 
