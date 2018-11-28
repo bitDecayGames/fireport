@@ -20,7 +20,7 @@ func GetLogFile(logName string) (*os.File, error) {
 		fileName = fmt.Sprintf("%v.log", fileName)
 	}
 	var path string
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" || runtime.GOOS == "darwin" {
 		usr, err := user.Current()
 		if err != nil {
 			// fallback in case we can't get the user
@@ -33,7 +33,14 @@ func GetLogFile(logName string) (*os.File, error) {
 			path = filepath.Join(usr.HomeDir, gameLogsDir, fileName)
 		}
 	} else {
-		path = filepath.Join("var", "log", fileName)
+		dirPath := filepath.Join("/var", "log", gameLogsDir)
+		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+			err = os.MkdirAll(dirPath, 0755)
+			if err != nil {
+				fmt.Println("Failed to make nix log directory: ", err)
+			}
+		}
+		path = filepath.Join("/var", "log", gameLogsDir, fileName)
 	}
 
 	return os.OpenFile(path, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)

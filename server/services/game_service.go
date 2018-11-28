@@ -1,10 +1,11 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
-	"math/rand"
 
 	"github.com/bitdecaygames/fireport/server/files"
 
@@ -20,6 +21,7 @@ type GameService interface {
 	CreateGame(lobby Lobby) *GameInstance
 	SubmitTurn(submit pogo.TurnSubmissionMsg) error
 	GetCurrentTurn(gameID string) (int, error)
+	SubmitSimpleTestTurn(gameID string, playerName string, playerID int, cards []int) error
 }
 
 // GameInstance is a logical game instance which holds a game
@@ -140,6 +142,7 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		for _, msg := range game.PlayerSubmissions {
 			allInputs = append(allInputs, msg.Inputs...)
 		}
+		logGameTurn(game, allInputs)
 		game.PlayerSubmissions = map[string]pogo.TurnSubmissionMsg{}
 		// TODO: Does it make sense to pass pointers through all the logic, or just structs?
 		oldState := game.State
@@ -171,6 +174,43 @@ func (g *GameServiceImpl) SubmitTurn(submit pogo.TurnSubmissionMsg) error {
 		}
 	}
 
+	return nil
+}
+
+// SubmitSimpleTestTurn an easy way to test a specific turn submission for errors
+func (g *GameServiceImpl) SubmitSimpleTestTurn(gameID string, playerName string, playerID int, cards []int) error {
+	turnSubmission := pogo.TurnSubmissionMsg{
+		GameID:   gameID,
+		PlayerID: playerName,
+		Inputs:   []pogo.GameInputMsg{},
+	}
+
+	for order, cardID := range cards {
+		turnSubmission.Inputs = append(turnSubmission.Inputs, pogo.GameInputMsg{
+			Owner:  playerID,
+			CardID: cardID,
+			Order:  order,
+			Swap:   0,
+		})
+	}
+
+	return g.SubmitTurn(turnSubmission)
+}
+
+// SetTestGameState unmarshals the string into a pogo.GameState and then sets that game state to this instance's .State
+func (g *GameInstance) SetTestGameState(state string) error {
+	obj := &pogo.GameState{}
+	data := []byte(state)
+	// wish this didn't have to be here... but circular dependencies...
+	err := json.Unmarshal(data, obj)
+	if err != nil {
+		return err
+	}
+	g.State = *obj
+	g.Players = []string{}
+	for _, player := range g.State.Players {
+		g.Players = append(g.Players, player.Name)
+	}
 	return nil
 }
 
@@ -266,4 +306,25 @@ func createBoard(gameState *pogo.GameState) []pogo.BoardSpace {
 		boardSpaces = append(boardSpaces, pogo.BoardSpace{ID: gameState.GetNewID(), SpaceType: 0, State: 0})
 	}
 	return boardSpaces
+}
+
+func logGameTurn(game *GameInstance, inputs []pogo.GameInputMsg) {
+	data, err := json.Marshal(game.State)
+	if err != nil {
+		game.Log.Error("Error marshalling game state for logging: ", err, game.State)
+	} else {
+		state := string(data)
+		game.Log.Info("Game Turn: ")
+		game.Log.Info(state)
+		for _, input := range inputs {
+			msgData, err := json.Marshal(input)
+			if err != nil {
+				game.Log.Error("Error marshalling input message for logging: ", err, input)
+			} else {
+				inputStr := string(msgData)
+				game.Log.Info(inputStr)
+			}
+		}
+
+	}
 }
