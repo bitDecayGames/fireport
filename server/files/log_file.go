@@ -40,7 +40,7 @@ func GetLogFile(logName string) (*os.File, error) {
 				fmt.Println("Failed to make nix log directory: ", err)
 			}
 		}
-		path = filepath.Join("/var", "log", gameLogsDir, fileName)
+		path = filepath.Join(dirPath, fileName)
 	}
 
 	return os.OpenFile(path, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
