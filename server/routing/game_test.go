@@ -54,7 +54,9 @@ func TestGameInteraction(t *testing.T) {
 		gameRoute+"/"+ID+"/turn/Player1",
 		player1Turn,
 	)
+
 	if !assert.NotNil(t, err) {
 		t.Fatal("A second submission was accepted")
 	}
+	println("") // TODO: MW if I comment out this line, the test fails to run... wtf?
 }
