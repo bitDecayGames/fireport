@@ -1,11 +1,11 @@
 package routing
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"net/url"
 	"testing"
-	"encoding/json"
-	"github.com/gorilla/websocket"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/bitdecaygames/fireport/server/services"
@@ -72,7 +72,7 @@ func TestLobbyAPI(t *testing.T) {
 	assert.Equal(t, lobbies[lobbyID].Players[0], `TestPlayer1`)
 	assert.Equal(t, lobbies[lobbyID].Players[1], `TestPlayer2`)
 
-	// Ready player 1 in  our lobby
+	// Ready player 1 in our lobby
 	readyMsg := pogo.PlayerReadyMsg{
 		PlayerName: TestPlayer1,
 		Ready:      true,
@@ -83,7 +83,7 @@ func TestLobbyAPI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// NotReady player 2 in  our lobby
+	// NotReady player 2 in our lobby
 	readyMsg = pogo.PlayerReadyMsg{
 		PlayerName: TestPlayer2,
 		Ready:      false,
@@ -100,6 +100,24 @@ func TestLobbyAPI(t *testing.T) {
 	}
 	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer1], true)
 	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer2], false)
+
+	// Ready player 2 in our lobby
+	readyMsg = pogo.PlayerReadyMsg{
+		PlayerName: TestPlayer2,
+		Ready:      true,
+	}
+
+	_, err = put(port, LobbyRoute+"/"+lobbyID+"/ready", readyMsg)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies[lobbyID].PlayerReady, 2) {
+		t.Fatal("expected 2 players in with a ready status in game lobby")
+	}
+	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer1], true)
+	assert.Equal(t, lobbies[lobbyID].PlayerReady[TestPlayer2], true)
 
 	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, TestPlayer1)
 	t.Logf("Path: %v", path)
@@ -130,13 +148,13 @@ func TestLobbyAPI(t *testing.T) {
 	err = json.Unmarshal(message, &newGameMsg)
 	if err != nil {
 		t.Fatal(err)
-	}	
+	}
 	assert.Equal(t, lobbyID, newGameMsg.GameID)
 	assert.Len(t, newGameMsg.Players, 2)
 	assert.Equal(t, newGameMsg.Players[0], TestPlayer1)
 	assert.Equal(t, newGameMsg.Players[1], TestPlayer2)
 
-	if !assert.NotNil(t,newGameMsg.GameState) {
+	if !assert.NotNil(t, newGameMsg.GameState) {
 		t.Fatal("expected initial game state to have something in it.")
 	}
 
@@ -153,7 +171,7 @@ func TestLobbyAPI(t *testing.T) {
 			}
 		}
 	}
-	
+
 	if decksEqual {
 		t.Fatal("players decks should not be the same")
 	}

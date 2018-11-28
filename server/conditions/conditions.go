@@ -1,15 +1,21 @@
 package conditions
 
 import (
+	"fmt"
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/pkg/errors"
 )
 
+const (
+	// MaxConditionSteps the maximum number of steps a condition will make before throwing an error
+	MaxConditionSteps = 10
+)
+
 // Condition checks each ActionGroup for a specific condition and modifies that ActionGroup if necessary
 type Condition interface {
-	Apply(gameState *pogo.GameState, actionGroup []actions.Action) error
+	Apply(gameState *pogo.GameState, actionGroup []actions.Action, step int) (int, error)
 }
 
 // ProcessConditions with a GameState, Inputs, and Conditions, generate the necessary and valid list of actions to get to the next state
@@ -43,6 +49,9 @@ func ProcessConditions(currentState *pogo.GameState, inputs []pogo.GameInputMsg,
 
 		for _, cardPriorityGroup := range cardPriorities {
 			nextState, err = applyCardsToState(cardPriorityGroup, nextState, conditions)
+			if err != nil {
+				return nextState, err
+			}
 		}
 	}
 	return nextState, nil
@@ -80,11 +89,24 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 	// loop through each action group and check it against every condition
 	for _, actionGroup := range actionGroups {
 		//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
-		for _, cond := range conditions {
-			// this is the step that actually checks each condition
-			var condErr = cond.Apply(state, actionGroup)
-			if condErr != nil {
-				return state, condErr
+		var dirty = true
+		var loops = 0
+		for dirty {
+			dirty = false
+			for _, cond := range conditions {
+				// this is the step that actually checks each condition
+				var steps, condErr = cond.Apply(state, actionGroup, 0)
+				if condErr != nil {
+					return state, condErr
+				}
+				if steps != 0 {
+					dirty = true
+					loops++
+					break
+				}
+			}
+			if loops > MaxConditionSteps {
+				return state, fmt.Errorf("failed to apply conditions, reached maximum loop counter of %v", MaxConditionSteps)
 			}
 		}
 		// here is where the actions are applied to the state to generate each next state
