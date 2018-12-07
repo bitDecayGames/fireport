@@ -3,6 +3,8 @@ package actions
 import (
 	"fmt"
 
+	"github.com/bitdecaygames/fireport/server/animations"
+
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -42,6 +44,11 @@ func (a *MoveForwardAction) GetOwner() int {
 	return a.Owner
 }
 
+// GetAnimation get the animation of this action
+func (a *MoveForwardAction) GetAnimation() *pogo.AnimationAction {
+	return animations.GetMoveForward(a.GetOwner())
+}
+
 // MoveBackwardAction move this player backwards one space
 type MoveBackwardAction struct {
 	Owner int
@@ -78,6 +85,11 @@ func (a *MoveBackwardAction) GetOwner() int {
 	return a.Owner
 }
 
+// GetAnimation get the animation of this action
+func (a *MoveBackwardAction) GetAnimation() *pogo.AnimationAction {
+	return animations.GetMoveBackward(a.GetOwner())
+}
+
 // TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
 type TurnClockwise90Action struct {
 	Owner int
@@ -100,6 +112,11 @@ func (a *TurnClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameS
 // GetOwner get the owner of this action
 func (a *TurnClockwise90Action) GetOwner() int {
 	return a.Owner
+}
+
+// GetAnimation get the animation of this action
+func (a *TurnClockwise90Action) GetAnimation() *pogo.AnimationAction {
+	return animations.GetTurnClockwise90(a.GetOwner())
 }
 
 // TurnCounterClockwise90Action rotate the Owner of this action by 90 degrees counter-clockwise
@@ -127,4 +144,9 @@ func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pog
 // GetOwner get the owner of this action
 func (a *TurnCounterClockwise90Action) GetOwner() int {
 	return a.Owner
+}
+
+// GetAnimation get the animation of this action
+func (a *TurnCounterClockwise90Action) GetAnimation() *pogo.AnimationAction {
+	return animations.GetTurnCounterClockwise90(a.GetOwner())
 }

@@ -64,10 +64,9 @@ func (s *GameState) DeepCopy() *GameState {
 	}
 	for _, animation := range s.Animations {
 		cpA := &AnimationAction{
-			ID:     animation.ID,
-			Name:   animation.Name,
-			Owner:  animation.Owner,
-			Facing: animation.Facing,
+			ID:    animation.ID,
+			Name:  animation.Name,
+			Owner: animation.Owner,
 		}
 		cp.Animations = append(cp.Animations, *cpA)
 	}
@@ -129,13 +128,16 @@ type PlayerState struct {
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	Health   int         // the current hitpoints of this player
 }
+// 				  ---ordered action groups
+// 				  | --list of parallel actions
+//                   | |
+// animationActions [][]AnimationAction
 
 // AnimationAction tracks the specific animations required by the client to move from state A to state B
 type AnimationAction struct {
-	ID     int    // id for this specific action (mostly for debugging)
-	Name   string // name key for the type of animation
-	Owner  int    // UID of the player the animation is associated with
-	Facing int    // Direction the player is facing 0, 1, 2, 3 for North, East, South, West.
+	ID    int    // id for this specific action
+	Name  string // name key for the type of animation
+	Owner int    // UID of the player the animation is associated with
 }
 
 // CardState defines a single and specific instance of a card in the game

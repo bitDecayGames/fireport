@@ -2,6 +2,7 @@ package conditions
 
 import (
 	"fmt"
+
 	"github.com/bitdecaygames/fireport/server/actions"
 	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -89,7 +90,7 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 	// loop through each action group and check it against every condition
 	for _, actionGroup := range actionGroups {
 		//fmt.Printf("processing action group with %v actions\n", len(actionGroup))
-		var dirty = true
+		dirty := true
 		var loops = 0
 		for dirty {
 			dirty = false
@@ -110,6 +111,7 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 			}
 		}
 		// here is where the actions are applied to the state to generate each next state
+		//TODO apply animations herer
 		for _, act := range actionGroup {
 			var nxt, actErr = act.Apply(state)
 			if actErr != nil {

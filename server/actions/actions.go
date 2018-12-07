@@ -8,6 +8,7 @@ import (
 type Action interface {
 	Apply(currentState *pogo.GameState) (*pogo.GameState, error)
 	GetOwner() int
+	GetAnimation() *pogo.AnimationAction
 }
 
 // ApplyActions applies a list of actions to a given state

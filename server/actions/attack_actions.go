@@ -3,6 +3,8 @@ package actions
 import (
 	"fmt"
 
+	"github.com/bitdecaygames/fireport/server/animations"
+
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -37,6 +39,11 @@ func (a *FireBasicAction) Apply(currentState *pogo.GameState) (*pogo.GameState, 
 // GetOwner get the owner of this action
 func (a *FireBasicAction) GetOwner() int {
 	return a.Owner
+}
+
+// GetAnimation get the animation of this action
+func (a *FireBasicAction) GetAnimation() *pogo.AnimationAction {
+	return animations.GetFireCanon(a.GetOwner())
 }
 
 func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, error) {
