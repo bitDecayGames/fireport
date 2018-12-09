@@ -20,7 +20,7 @@ type GameState struct {
 	IsGameFinished bool // is the game finished
 	Winner         int  // the id of the winner of the game
 
-	Animations []AnimationAction // Animations used to get the current GameState
+	Animations [][]AnimationAction // Animations used to get the current GameState
 }
 
 // GetNewID increments the IDCounter on this game state and returns the last IDCounter
@@ -62,13 +62,18 @@ func (s *GameState) DeepCopy() *GameState {
 		}
 		cp.BoardSpaces = append(cp.BoardSpaces, *cpS)
 	}
-	for _, animation := range s.Animations {
-		cpA := &AnimationAction{
-			ID:    animation.ID,
-			Name:  animation.Name,
-			Owner: animation.Owner,
+	//TODO Test this
+	for x := range s.Animations {
+		animationGroup := []AnimationAction{}
+		for _, animation := range s.Animations[x] {
+			cpA := &AnimationAction{
+				ID:    animation.ID,
+				Name:  animation.Name,
+				Owner: animation.Owner,
+			}
+			animationGroup = append(animationGroup, *cpA)
 		}
-		cp.Animations = append(cp.Animations, *cpA)
+		cp.Animations = append(cp.Animations, animationGroup)
 	}
 	return cp
 }
@@ -128,6 +133,7 @@ type PlayerState struct {
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	Health   int         // the current hitpoints of this player
 }
+
 // 				  ---ordered action groups
 // 				  | --list of parallel actions
 //                   | |

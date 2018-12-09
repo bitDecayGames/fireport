@@ -17,41 +17,41 @@ const (
 )
 
 //GetMoveForward animation
-func GetMoveForward(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(MoveForward), Name: "MoveForward", Owner: owner}
+func GetMoveForward(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(MoveForward), Name: "MoveForward", Owner: owner}
 }
 
 //GetMoveBackward animation
-func GetMoveBackward(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(MoveBackward), Name: "MoveBackward", Owner: owner}
+func GetMoveBackward(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(MoveBackward), Name: "MoveBackward", Owner: owner}
 }
 
 //GetTurnClockwise90 animation
-func GetTurnClockwise90(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(TurnClockwise90), Name: "TurnClockwise90", Owner: owner}
+func GetTurnClockwise90(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(TurnClockwise90), Name: "TurnClockwise90", Owner: owner}
 }
 
 //GetTurnCounterClockwise90 animation
-func GetTurnCounterClockwise90(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(TurnCounterClockwise90), Name: "TurnCounterClockwise90", Owner: owner}
+func GetTurnCounterClockwise90(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(TurnCounterClockwise90), Name: "TurnCounterClockwise90", Owner: owner}
 }
 
 //GetBumpedInto animation
-func GetBumpedInto(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(BumpedInto), Name: "BumpedInto", Owner: owner}
+func GetBumpedInto(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(BumpedInto), Name: "BumpedInto", Owner: owner}
 }
 
 //GetBumpInto animation
-func GetBumpInto(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(BumpInto), Name: "BumpInto", Owner: owner}
+func GetBumpInto(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(BumpInto), Name: "BumpInto", Owner: owner}
 }
 
 //GetFireCanon animation
-func GetFireCanon(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(FireCanon), Name: "FireCanon", Owner: owner}
+func GetFireCanon(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(FireCanon), Name: "FireCanon", Owner: owner}
 }
 
 //GetHitByCanon animation
-func GetHitByCanon(owner int) *pogo.AnimationAction {
-	return &pogo.AnimationAction{ID: int(HitByCanon), Name: "HitByCanon", Owner: owner}
+func GetHitByCanon(owner int) pogo.AnimationAction {
+	return pogo.AnimationAction{ID: int(HitByCanon), Name: "HitByCanon", Owner: owner}
 }
