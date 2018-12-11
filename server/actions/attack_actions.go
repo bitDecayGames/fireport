@@ -42,7 +42,7 @@ func (a *FireBasicAction) GetOwner() int {
 }
 
 // GetAnimation get the animation of this action
-func (a *FireBasicAction) GetAnimation() *pogo.AnimationAction {
+func (a *FireBasicAction) GetAnimation() animations.AnimationAction {
 	return animations.GetFireCanon(a.GetOwner())
 }
 

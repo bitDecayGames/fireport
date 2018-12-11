@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bitdecaygames/fireport/server/actions"
+	"github.com/bitdecaygames/fireport/server/animations"
 	"github.com/bitdecaygames/fireport/server/cards"
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/pkg/errors"
@@ -112,7 +113,7 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 		}
 		// here is where the actions are applied to the state to generate each next state
 		//TODO apply animations herer
-		animationGroup := []pogo.AnimationAction{}
+		animationGroup := []animations.AnimationAction{}
 		for _, act := range actionGroup {
 			var nxt, actErr = act.Apply(state)
 			if actErr != nil {
@@ -121,6 +122,7 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 			state = nxt
 			animationGroup = append(animationGroup, act.GetAnimation())
 		}
+		state.Animations = append(state.Animations, animationGroup)
 	}
 
 	return state, nil

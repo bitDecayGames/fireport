@@ -1,6 +1,10 @@
 package pogo
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/bitdecaygames/fireport/server/animations"
+)
 
 // GameState is an all-containing set of information for the state of a
 // game at a given point in time
@@ -20,7 +24,7 @@ type GameState struct {
 	IsGameFinished bool // is the game finished
 	Winner         int  // the id of the winner of the game
 
-	Animations [][]AnimationAction // Animations used to get the current GameState
+	Animations [][]animations.AnimationAction // Animations used to get the current GameState
 }
 
 // GetNewID increments the IDCounter on this game state and returns the last IDCounter
@@ -64,9 +68,9 @@ func (s *GameState) DeepCopy() *GameState {
 	}
 	//TODO Test this
 	for x := range s.Animations {
-		animationGroup := []AnimationAction{}
+		animationGroup := []animations.AnimationAction{}
 		for _, animation := range s.Animations[x] {
-			cpA := &AnimationAction{
+			cpA := &animations.AnimationAction{
 				ID:    animation.ID,
 				Name:  animation.Name,
 				Owner: animation.Owner,
@@ -138,13 +142,6 @@ type PlayerState struct {
 // 				  | --list of parallel actions
 //                   | |
 // animationActions [][]AnimationAction
-
-// AnimationAction tracks the specific animations required by the client to move from state A to state B
-type AnimationAction struct {
-	ID    int    // id for this specific action
-	Name  string // name key for the type of animation
-	Owner int    // UID of the player the animation is associated with
-}
 
 // CardState defines a single and specific instance of a card in the game
 type CardState struct {

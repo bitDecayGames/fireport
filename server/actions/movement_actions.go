@@ -45,7 +45,7 @@ func (a *MoveForwardAction) GetOwner() int {
 }
 
 // GetAnimation get the animation of this action
-func (a *MoveForwardAction) GetAnimation() *pogo.AnimationAction {
+func (a *MoveForwardAction) GetAnimation() animations.AnimationAction {
 	return animations.GetMoveForward(a.GetOwner())
 }
 
@@ -86,7 +86,7 @@ func (a *MoveBackwardAction) GetOwner() int {
 }
 
 // GetAnimation get the animation of this action
-func (a *MoveBackwardAction) GetAnimation() *pogo.AnimationAction {
+func (a *MoveBackwardAction) GetAnimation() animations.AnimationAction {
 	return animations.GetMoveBackward(a.GetOwner())
 }
 
@@ -115,7 +115,7 @@ func (a *TurnClockwise90Action) GetOwner() int {
 }
 
 // GetAnimation get the animation of this action
-func (a *TurnClockwise90Action) GetAnimation() *pogo.AnimationAction {
+func (a *TurnClockwise90Action) GetAnimation() animations.AnimationAction {
 	return animations.GetTurnClockwise90(a.GetOwner())
 }
 
@@ -147,6 +147,6 @@ func (a *TurnCounterClockwise90Action) GetOwner() int {
 }
 
 // GetAnimation get the animation of this action
-func (a *TurnCounterClockwise90Action) GetAnimation() *pogo.AnimationAction {
+func (a *TurnCounterClockwise90Action) GetAnimation() animations.AnimationAction {
 	return animations.GetTurnCounterClockwise90(a.GetOwner())
 }
