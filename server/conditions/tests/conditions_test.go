@@ -1,8 +1,11 @@
 package tests
 
 import (
-	"github.com/bitdecaygames/fireport/server/conditions"
 	"testing"
+
+	"github.com/bitdecaygames/fireport/server/animations"
+
+	"github.com/bitdecaygames/fireport/server/conditions"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
 	"github.com/stretchr/testify/assert"
@@ -62,6 +65,14 @@ func TestTwoPlayersAreMoving(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[0].Facing)
 	assert.Equal(t, 8, nextState.Players[1].Location)
 	assert.Equal(t, 1, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
 }
 
 /*
@@ -93,6 +104,14 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[0].Facing)
 	assert.Equal(t, 8, nextState.Players[1].Location)
 	assert.Equal(t, 1, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
 }
 
 /*
@@ -124,6 +143,14 @@ func TestTwoPlayersSimpleSpaceCollide(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[0].Facing)
 	assert.Equal(t, 6, nextState.Players[1].Location)
 	assert.Equal(t, 1, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
 }
 
 /*
@@ -153,6 +180,14 @@ func TestTwoPlayersSimpleEdgeCollide(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 5, nextState.Players[1].Location)
 	assert.Equal(t, 1, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
 }
 
 /*
@@ -180,6 +215,30 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 	assert.Equal(t, 1, nextState.Players[0].Facing)
 	assert.Equal(t, 2, nextState.Players[1].Location)
 	assert.Equal(t, 3, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
+	for _, animation := range nextState.Animations[1] {
+		if animation.Owner == 100 {
+			assert.Equal(t, animation.Name, animations.GetTurnClockwise90(1).Name)
+			assert.Equal(t, animation.ID, animations.GetTurnClockwise90(1).ID)
+		} else if animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+			assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+		} else {
+			assert.Equal(t, 1, 2, "Animations don't have correct owner")
+		}
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
+	}
 }
 
 /*
