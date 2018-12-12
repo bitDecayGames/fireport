@@ -66,7 +66,6 @@ func (s *GameState) DeepCopy() *GameState {
 		}
 		cp.BoardSpaces = append(cp.BoardSpaces, *cpS)
 	}
-	//TODO Test this
 	for x := range s.Animations {
 		animationGroup := []animations.AnimationAction{}
 		for _, animation := range s.Animations[x] {
@@ -137,11 +136,6 @@ type PlayerState struct {
 	Facing   int         // the direction the player is facing 0, 1, 2, 3 for North, East, South, West
 	Health   int         // the current hitpoints of this player
 }
-
-// 				  ---ordered action groups
-// 				  | --list of parallel actions
-//                   | |
-// animationActions [][]AnimationAction
 
 // CardState defines a single and specific instance of a card in the game
 type CardState struct {
