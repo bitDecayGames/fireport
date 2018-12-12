@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game;
 using Model.State;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace AnimationEngine {
     public class AnimationEngineBehaviour : MonoBehaviour {
         private List<List<AnimationAction>> animations = null;
         private List<List<AnimationActionBehaviour>> behaviours = null;
+        private List<GamePieceBehaviour> gamePieces;
         private int currentGroup;
         private bool isRunningGroup;
         private bool isPaused;
@@ -17,7 +19,8 @@ namespace AnimationEngine {
             }
         }
 
-        public void Play(List<List<AnimationAction>> animations) {
+        public void Play(List<List<AnimationAction>> animations, List<GamePieceBehaviour> gamePieces) {
+            this.gamePieces = gamePieces;
             this.animations = animations;
             if (behaviours != null) {
                 behaviours.ForEach(group => {
@@ -26,7 +29,7 @@ namespace AnimationEngine {
                     });
                 });
                 behaviours.Clear();
-            }
+            } else behaviours = new List<List<AnimationActionBehaviour>>();
             
             if (this.animations != null && this.animations.Count > 0) {
                 this.animations.ForEach(group => {
@@ -34,8 +37,8 @@ namespace AnimationEngine {
                         var behaviourGroup = new List<AnimationActionBehaviour>();
                         behaviours.Add(behaviourGroup);
                         group.ForEach(a => {
-                            var animationAction = AnimationActionFactory.AddComponentByName(a.Name, GetGameObjectWithId(a.Owner)); 
-                            behaviourGroup.Add(animationAction);
+                            var animationAction = AnimationActionFactory.AddComponentByAnimationAction(a, GetGameObjectWithId(a.Owner)); 
+                            if (animationAction != null) behaviourGroup.Add(animationAction);
                         });
                     }
                 });
@@ -58,9 +61,10 @@ namespace AnimationEngine {
             return !behaviours[currentGroup].Exists(a => a.IsPlaying);
         }
 
-        private Transform GetGameObjectWithId(int id) {
-            // TODO: MW this probably needs to call some sort of game manager that is mapping the state to Unity objects
-            return transform;
+        private GamePieceBehaviour GetGameObjectWithId(int id) {
+            GamePieceBehaviour obj = null;
+            if (gamePieces != null) obj = gamePieces.Find(g => g.Id == id);
+            return obj;
         }
 
         public void Pause() {

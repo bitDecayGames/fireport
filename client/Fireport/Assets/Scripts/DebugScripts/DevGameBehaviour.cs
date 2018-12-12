@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Model.Message;
 using Model.State;
@@ -8,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utils;
 
-namespace Dev {
+namespace DebugScripts {
     public class DevGameBehaviour : MonoBehaviour, IDownStreamSubscriber {
         public const int MAX_CARD_SELECTIONS = 3;
         public const int CARDS_IN_HAND = 5;
