@@ -112,7 +112,6 @@ func applyCardsToState(cards []cards.Card, state *pogo.GameState, conditions []C
 			}
 		}
 		// here is where the actions are applied to the state to generate each next state
-		//TODO apply animations herer
 		animationGroup := []animations.AnimationAction{}
 		for _, act := range actionGroup {
 			var nxt, actErr = act.Apply(state)
