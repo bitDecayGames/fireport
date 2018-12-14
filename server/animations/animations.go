@@ -6,8 +6,8 @@ const (
 	MoveBackward           = 101
 	TurnClockwise90        = 102
 	TurnCounterClockwise90 = 103
-	BumpedInto             = 104
-	BumpInto               = 105
+	BeBumpedInto           = 104
+	DoBumpInto             = 105
 	FireCanon              = 301
 	HitByCanon             = 302
 )
@@ -39,14 +39,14 @@ func GetTurnCounterClockwise90(owner int) AnimationAction {
 	return AnimationAction{ID: int(TurnCounterClockwise90), Name: "TurnCounterClockwise90", Owner: owner}
 }
 
-//GetBumpedInto animation
-func GetBumpedInto(owner int) AnimationAction {
-	return AnimationAction{ID: int(BumpedInto), Name: "BumpedInto", Owner: owner}
+//GetBeBumpedInto animation
+func GetBeBumpedInto(owner int) AnimationAction {
+	return AnimationAction{ID: int(BeBumpedInto), Name: "BeBumpedInto", Owner: owner}
 }
 
-//GetBumpInto animation
-func GetBumpInto(owner int) AnimationAction {
-	return AnimationAction{ID: int(BumpInto), Name: "BumpInto", Owner: owner}
+//GetDoBumpInto animation
+func GetDoBumpInto(owner int) AnimationAction {
+	return AnimationAction{ID: int(DoBumpInto), Name: "DoBumpInto", Owner: owner}
 }
 
 //GetFireCanon animation

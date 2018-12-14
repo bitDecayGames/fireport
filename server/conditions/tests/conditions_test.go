@@ -147,8 +147,8 @@ func TestTwoPlayersSimpleSpaceCollide(t *testing.T) {
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
 	for _, animation := range nextState.Animations[0] {
-		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }
@@ -184,8 +184,8 @@ func TestTwoPlayersSimpleEdgeCollide(t *testing.T) {
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
 	for _, animation := range nextState.Animations[0] {
-		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }
@@ -235,8 +235,8 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 		}
 	}
 	for _, animation := range nextState.Animations[2] {
-		assert.Equal(t, animation.Name, animations.GetBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }

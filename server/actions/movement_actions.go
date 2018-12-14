@@ -16,7 +16,8 @@ type MoveForwardAction struct {
 // Apply apply this action
 func (a *MoveForwardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
+	nextState.AppendAnimation(animations.GetMoveForward(a.GetOwner()))
+	player := nextState.GetPlayer(a.GetOwner())
 	if player == nil {
 		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
 	}
@@ -44,11 +45,6 @@ func (a *MoveForwardAction) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *MoveForwardAction) GetAnimation() animations.AnimationAction {
-	return animations.GetMoveForward(a.GetOwner())
-}
-
 // MoveBackwardAction move this player backwards one space
 type MoveBackwardAction struct {
 	Owner int
@@ -57,9 +53,10 @@ type MoveBackwardAction struct {
 // Apply apply this action
 func (a *MoveBackwardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
+	nextState.AppendAnimation(animations.GetMoveBackward(a.GetOwner()))
+	player := nextState.GetPlayer(a.GetOwner())
 	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+		return nextState, fmt.Errorf("there is no player with id %v", a.GetOwner())
 	}
 	switch player.Facing {
 	case 0: // facing north going south
@@ -85,11 +82,6 @@ func (a *MoveBackwardAction) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *MoveBackwardAction) GetAnimation() animations.AnimationAction {
-	return animations.GetMoveBackward(a.GetOwner())
-}
-
 // TurnClockwise90Action rotate the Owner of this action by 90 degrees clockwise
 type TurnClockwise90Action struct {
 	Owner int
@@ -98,9 +90,10 @@ type TurnClockwise90Action struct {
 // Apply apply this action
 func (a *TurnClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
+	nextState.AppendAnimation(animations.GetTurnClockwise90(a.GetOwner()))
+	player := nextState.GetPlayer(a.GetOwner())
 	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+		return nextState, fmt.Errorf("there is no player with id %v", a.GetOwner())
 	}
 	player.Facing = player.Facing + 1
 	if player.Facing > 3 {
@@ -114,11 +107,6 @@ func (a *TurnClockwise90Action) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *TurnClockwise90Action) GetAnimation() animations.AnimationAction {
-	return animations.GetTurnClockwise90(a.GetOwner())
-}
-
 // TurnCounterClockwise90Action rotate the Owner of this action by 90 degrees counter-clockwise
 type TurnCounterClockwise90Action struct {
 	Owner int
@@ -127,9 +115,10 @@ type TurnCounterClockwise90Action struct {
 // Apply apply this action
 func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
+	nextState.AppendAnimation(animations.GetTurnCounterClockwise90(a.GetOwner()))
+	player := nextState.GetPlayer(a.GetOwner())
 	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+		return nextState, fmt.Errorf("there is no player with id %v", a.GetOwner())
 	}
 	fmt.Println("PLAYER WAS FACING: ", player.Facing)
 	player.Facing = player.Facing - 1
@@ -144,9 +133,4 @@ func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pog
 // GetOwner get the owner of this action
 func (a *TurnCounterClockwise90Action) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *TurnCounterClockwise90Action) GetAnimation() animations.AnimationAction {
-	return animations.GetTurnCounterClockwise90(a.GetOwner())
 }

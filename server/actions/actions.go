@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"github.com/bitdecaygames/fireport/server/animations"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -9,7 +8,6 @@ import (
 type Action interface {
 	Apply(currentState *pogo.GameState) (*pogo.GameState, error)
 	GetOwner() int
-	GetAnimation() animations.AnimationAction
 }
 
 // ApplyActions applies a list of actions to a given state

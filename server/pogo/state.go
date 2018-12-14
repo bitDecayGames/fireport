@@ -125,6 +125,20 @@ func (s *GameState) GetCardType(id int) CardType {
 	return Unknown
 }
 
+// AppendAnimation appends an animation to the len(Animations) -1 nested slice
+func (s *GameState) AppendAnimation(animation animations.AnimationAction) {
+	if len(s.Animations) == 0 {
+		s.AddEmptyAnimationSlice()
+	}
+	s.Animations[len(s.Animations)-1] = append(s.Animations[len(s.Animations)-1], animation)
+}
+
+// AddEmptyAnimationSlice appends an empty AnimationAction slice to Animations.
+// Used to designate the next AnimationAction group.
+func (s *GameState) AddEmptyAnimationSlice() {
+	s.Animations = append(s.Animations, []animations.AnimationAction{})
+}
+
 // PlayerState contains all of the information about a given player, their hand, their discard, everything
 type PlayerState struct {
 	ID       int         // unique id for this player in this game
