@@ -7,8 +7,7 @@ import (
 )
 
 func TestGameState_DeepCopy(t *testing.T) {
-	// var a = GetTestState()
-	var a = GetTestStateAnimationActions()
+	var a = GetTestState()
 	var b = a.DeepCopy()
 
 	assert.Equal(t, a.Turn, b.Turn)
@@ -50,4 +49,12 @@ func TestGameState_GetPlayer(t *testing.T) {
 	a.Facing = a.Facing + 1
 
 	assert.Equal(t, a.Facing, b.Facing)
+}
+
+func TestAddEmptyAnimationSlice(t *testing.T) {
+	var state = GetTestState()
+	var deepCopyState = state.DeepCopy()
+	deepCopyState.AddEmptyAnimationSlice()
+
+	assert.Equal(t, len(state.Animations) + 1, len(deepCopyState.Animations))
 }

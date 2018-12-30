@@ -231,7 +231,7 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 			assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
 			assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
 		} else {
-			assert.Equal(t, 1, 2, "Animations don't have correct owner")
+			assert.Fail(t, "Animations don't have correct owner")
 		}
 	}
 	for _, animation := range nextState.Animations[2] {
