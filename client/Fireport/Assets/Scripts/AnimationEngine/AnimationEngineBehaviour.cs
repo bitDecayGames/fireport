@@ -5,6 +5,10 @@ using Model.State;
 using UnityEngine;
 
 namespace AnimationEngine {
+    /// <summary>
+    /// This is the manager class for all of a game's animation sequences.  There should only be one of these
+    /// on the scene at a time.
+    /// </summary>
     public class AnimationEngineBehaviour : MonoBehaviour {
         private List<List<AnimationAction>> animations = null;
         private List<List<AnimationActionBehaviour>> behaviours = null;
@@ -19,6 +23,12 @@ namespace AnimationEngine {
             }
         }
 
+        /// <summary>
+        /// Given a list of lists of animation actions with a list of all of the game pieces create the animation behaviours
+        /// and run through each animation sequence.
+        /// </summary>
+        /// <param name="animations">the animation metadata</param>
+        /// <param name="gamePieces">all of the game pieces relevant to these animation actions</param>
         public void Play(List<List<AnimationAction>> animations, List<GamePieceBehaviour> gamePieces) {
             this.gamePieces = gamePieces;
             this.animations = animations;
@@ -49,7 +59,7 @@ namespace AnimationEngine {
 
         private void PlayNextGroup() {
             currentGroup++;
-            if (currentGroup < 0) throw new Exception("Current Group index out of bounds");
+            if (currentGroup < 0) throw new Exception("Current Group index cannot be less than 0: " + currentGroup);
             if (currentGroup < behaviours.Count) {
                 behaviours[currentGroup].ForEach(a => a.Play());
                 isRunningGroup = true;
@@ -67,6 +77,9 @@ namespace AnimationEngine {
             return obj;
         }
 
+        /// <summary>
+        /// Pause the currently running animation group
+        /// </summary>
         public void Pause() {
             if (!isPaused && currentGroup >= 0 && currentGroup < behaviours.Count) {
                 behaviours[currentGroup].ForEach(a => a.Pause());
@@ -74,6 +87,9 @@ namespace AnimationEngine {
             }
         }
 
+        /// <summary>
+        /// UnPause the currently running animation group
+        /// </summary>
         public void UnPause() {
             if (isPaused && currentGroup >= 0 && currentGroup < behaviours.Count) {
                 behaviours[currentGroup].ForEach(a => a.UnPause());
@@ -81,6 +97,11 @@ namespace AnimationEngine {
             }
         }
 
+        /// <summary>
+        /// Stops not just the current animation group, but the entire animation sequence.  There is no way
+        /// to resume from a stopped animation sequence.  If you intend to start the sequence back up again,
+        /// you should use the Pause and UnPause methods.
+        /// </summary>
         public void Stop() {
             if (currentGroup >= 0 && currentGroup < behaviours.Count) {
                 behaviours[currentGroup].ForEach(a => a.Stop());
