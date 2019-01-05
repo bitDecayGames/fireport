@@ -5,8 +5,6 @@
   tasks:
     - name: Load the fireport container tarball
       raw: docker load -i fireport-container.tar
-    - name: Prune unused images
-      raw: docker image prune -f
     - name: Restart the docker container
       docker_container:
         name: fireport
@@ -15,6 +13,8 @@
         recreate: yes
         ports:
           - "8080:8080"
+    - name: Prune unused images
+      raw: docker image prune -f
 
 
 
