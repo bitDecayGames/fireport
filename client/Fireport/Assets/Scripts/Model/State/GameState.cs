@@ -12,8 +12,20 @@ namespace Model.State {
         public List<PlayerState> Players;
         public int BoardWidth;
         public int BoardHeight;
+        /// <summary>
+        /// Board spaces are laid out like:
+        ///
+        /// 012
+        /// 345
+        /// 678
+        ///
+        /// So the top left of the board is the 0th index.  The bottom right is the last space.
+        /// </summary>
         public List<BoardSpace> BoardSpaces;
         public bool IsGameFinished;
+        /// <summary>
+        /// -1 -> no winner yet, x -> ID of winner
+        /// </summary>
         public int Winner;
 
         public override string ToString() {
