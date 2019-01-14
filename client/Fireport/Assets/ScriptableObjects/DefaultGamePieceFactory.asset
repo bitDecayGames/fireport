@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b0b701a69e411f9528c76284b064e0, type: 3}
+  m_Name: DefaultGamePieceFactory
+  m_EditorClassIdentifier: 
+  pieces:
+  - name: BoardSpace
+    prefab: {fileID: 114345499354394636, guid: 6ecd1bf9c7ea8441196b45172dbc4f6d, type: 2}
+  - name: Player
+    prefab: {fileID: 114688362787279882, guid: 5856d930116484223a79d8479f4a29d7, type: 2}
