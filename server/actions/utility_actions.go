@@ -2,7 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bitdecaygames/fireport/server/animations"
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -24,12 +23,6 @@ func (a *EmptyAction) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *EmptyAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for EmptyAction")
-	return animations.AnimationAction{}
-}
-
 // BumpDamageSelfAction damage myself because I bumped something solid
 type BumpDamageSelfAction struct {
 	Owner int
@@ -39,6 +32,7 @@ type BumpDamageSelfAction struct {
 // Apply apply this action
 func (a *BumpDamageSelfAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
+	nextState.AppendAnimation(animations.GetDoBumpInto(a.GetOwner()))
 	player := nextState.GetPlayer(a.Owner)
 	if player == nil {
 		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
@@ -50,11 +44,6 @@ func (a *BumpDamageSelfAction) Apply(currentState *pogo.GameState) (*pogo.GameSt
 // GetOwner get the owner of this action
 func (a *BumpDamageSelfAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *BumpDamageSelfAction) GetAnimation() animations.AnimationAction {
-	return animations.GetBumpedInto(a.GetOwner())
 }
 
 // WinGameAction marks the game as won by the owner oF this action
@@ -79,10 +68,4 @@ func (a *WinGameAction) Apply(currentState *pogo.GameState) (*pogo.GameState, er
 // GetOwner get the owner of this action
 func (a *WinGameAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *WinGameAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for WinGameAction")
-	return animations.AnimationAction{}
 }

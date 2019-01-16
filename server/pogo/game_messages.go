@@ -1,7 +1,5 @@
 package pogo
 
-import "github.com/bitdecaygames/fireport/server/animations"
-
 // GameStartMsg contains all information a client needs to start
 // playing in a game
 type GameStartMsg struct {
@@ -42,7 +40,6 @@ type TurnResultMsg struct {
 	GameID        string                       `json:"gameID"`
 	PreviousState GameState                    `json:"previousState"`
 	CurrentState  GameState                    `json:"currentState"`
-	Animations    []animations.AnimationAction `json:"animations"`
 }
 
 // TurnSubmissionMsg is a full turn of actions submitted by a player

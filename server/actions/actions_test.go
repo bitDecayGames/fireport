@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/bitdecaygames/fireport/server/animations"
 	"github.com/bitdecaygames/fireport/server/pogo"
 
 	"github.com/stretchr/testify/assert"
@@ -148,10 +149,17 @@ func TestShuffleDiscardAction(t *testing.T) {
 func TestTurnClockwise90Action(t *testing.T) {
 	var a = pogo.GetTestState()
 	var action = &TurnClockwise90Action{Owner: a.Players[0].ID}
+	a.AddEmptyAnimationSlice()
 
 	var b, err = action.Apply(a)
 	assert.NoError(t, err)
 	assert.Equal(t, a.Players[0].Facing+1, b.Players[0].Facing)
+
+	// Animation check
+	for _, animation := range b.Animations[len(b.Animations)-1] {
+		assert.Equal(t, animation.Name, animations.GetTurnClockwise90(b.Players[0].ID).Name)
+		assert.Equal(t, animation.Owner, animations.GetTurnClockwise90(b.Players[0].ID).Owner)
+	}
 }
 
 func TestTurnCounterClockwise90Action(t *testing.T) {
@@ -159,8 +167,15 @@ func TestTurnCounterClockwise90Action(t *testing.T) {
 	// set player facing to zero so we can test overflow handling
 	a.Players[0].Facing = 0
 	var action = &TurnCounterClockwise90Action{Owner: a.Players[0].ID}
+	a.AddEmptyAnimationSlice()
 
 	var b, err = action.Apply(a)
 	assert.NoError(t, err)
 	assert.Equal(t, 3, b.Players[0].Facing)
+
+	// Animation check
+	for _, animation := range b.Animations[len(b.Animations)-1] {
+		assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(b.Players[0].ID).Name)
+		assert.Equal(t, animation.Owner, animations.GetTurnCounterClockwise90(b.Players[0].ID).Owner)
+	}
 }

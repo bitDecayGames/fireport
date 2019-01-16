@@ -28,9 +28,10 @@ const (
 // Apply apply this action
 func (a *FireBasicAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	player := nextState.GetPlayer(a.Owner)
+	nextState.AppendAnimation(animations.GetFireCanon(a.GetOwner()))
+	player := nextState.GetPlayer(a.GetOwner())
 	if player == nil {
-		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)
+		return nextState, fmt.Errorf("there is no player with id %v", a.GetOwner())
 	}
 
 	return shoot(nextState, player)
@@ -39,11 +40,6 @@ func (a *FireBasicAction) Apply(currentState *pogo.GameState) (*pogo.GameState, 
 // GetOwner get the owner of this action
 func (a *FireBasicAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *FireBasicAction) GetAnimation() animations.AnimationAction {
-	return animations.GetFireCanon(a.GetOwner())
 }
 
 func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, error) {
@@ -60,6 +56,7 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 				if state.Players[k].Location == pos {
 					// YOU SUNK MY BATTLESHIP
 					state.Players[k].Health--
+					state.AppendAnimation(animations.GetHitByCanon(state.Players[k].ID))
 					return state, nil
 				}
 			}
@@ -74,6 +71,7 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 				if state.Players[k].Location == pos+i {
 					// YOU SUNK MY BATTLESHIP
 					state.Players[k].Health--
+					state.AppendAnimation(animations.GetHitByCanon(state.Players[k].ID))
 					return state, nil
 				}
 			}
@@ -86,6 +84,7 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 				if state.Players[k].Location == pos {
 					// YOU SUNK MY BATTLESHIP
 					state.Players[k].Health--
+					state.AppendAnimation(animations.GetHitByCanon(state.Players[k].ID))
 					return state, nil
 				}
 			}
@@ -99,6 +98,7 @@ func shoot(state *pogo.GameState, shooter *pogo.PlayerState) (*pogo.GameState, e
 				if state.Players[k].Location == pos-i {
 					// YOU SUNK MY BATTLESHIP
 					state.Players[k].Health--
+					state.AppendAnimation(animations.GetHitByCanon(state.Players[k].ID))
 					return state, nil
 				}
 			}

@@ -2,11 +2,9 @@ package actions
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
-	"github.com/bitdecaygames/fireport/server/animations"
 	"github.com/bitdecaygames/fireport/server/pogo"
 )
 
@@ -31,12 +29,6 @@ func (a *IncrementTurnAction) GetOwner() int {
 	return -1
 }
 
-// GetAnimation get the animation of this action
-func (a *IncrementTurnAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for IncrementTurnAction")
-	return animations.AnimationAction{}
-}
-
 // SyncLastUpdatedAction sets the Updated to the current epoch time
 type SyncLastUpdatedAction struct{}
 
@@ -50,12 +42,6 @@ func (a *SyncLastUpdatedAction) Apply(currentState *pogo.GameState) (*pogo.GameS
 // GetOwner get the owner of this action
 func (a *SyncLastUpdatedAction) GetOwner() int {
 	return -1
-}
-
-// GetAnimation get the animation of this action
-func (a *SyncLastUpdatedAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for SyncLastUpdatedAction")
-	return animations.AnimationAction{}
 }
 
 // DrawCardAction draw a card from a player's deck and put it in their hand
@@ -82,12 +68,6 @@ func (a *DrawCardAction) Apply(currentState *pogo.GameState) (*pogo.GameState, e
 // GetOwner get the owner of this action
 func (a *DrawCardAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *DrawCardAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for DrawCardAction")
-	return animations.AnimationAction{}
 }
 
 // DiscardCardAction move a card from the player's hand onto their discard
@@ -124,12 +104,6 @@ func (a *DiscardCardAction) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *DiscardCardAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for DiscardCardAction")
-	return animations.AnimationAction{}
-}
-
 // ResetDiscardPileAction put all of the cards from a player's discard onto the bottom of their deck
 type ResetDiscardPileAction struct {
 	Owner int
@@ -151,12 +125,6 @@ func (a *ResetDiscardPileAction) Apply(currentState *pogo.GameState) (*pogo.Game
 // GetOwner get the owner of this action
 func (a *ResetDiscardPileAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *ResetDiscardPileAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for ResetDiscardPileAction")
-	return animations.AnimationAction{}
 }
 
 func shuffle(cards []pogo.CardState, rng *rand.Rand) []pogo.CardState {
@@ -190,12 +158,6 @@ func (a *ShuffleDeckAction) GetOwner() int {
 	return a.Owner
 }
 
-// GetAnimation get the animation of this action
-func (a *ShuffleDeckAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for ShuffleDeckAction")
-	return animations.AnimationAction{}
-}
-
 // ShuffleDiscardAction randomly shuffle a player's discard
 type ShuffleDiscardAction struct {
 	Owner int
@@ -216,10 +178,4 @@ func (a *ShuffleDiscardAction) Apply(currentState *pogo.GameState) (*pogo.GameSt
 // GetOwner get the owner of this action
 func (a *ShuffleDiscardAction) GetOwner() int {
 	return a.Owner
-}
-
-// GetAnimation get the animation of this action
-func (a *ShuffleDiscardAction) GetAnimation() animations.AnimationAction {
-	log.Println("Get Animation not yet implemented for ShuffleDiscardAction")
-	return animations.AnimationAction{}
 }
