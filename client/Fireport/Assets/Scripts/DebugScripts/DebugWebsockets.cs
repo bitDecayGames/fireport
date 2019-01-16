@@ -2,7 +2,7 @@ using Network;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Dev {
+namespace DebugScripts {
     public class DebugWebsockets : MonoBehaviour, IDownStreamSubscriber {
         
         [HideInInspector] public string GAME_ID = "GAME";
@@ -19,7 +19,7 @@ namespace Dev {
         }
 
         public void Connect() {
-            Listener.StartListening(GAME_ID, PLAYER_NAME, () => { Debug.Log("Websocket connection successful"); });
+            Listener.StartListening(GAME_ID, PLAYER_NAME, () => { UnityEngine.Debug.Log("Websocket connection successful"); });
         }
 
         public void Disconnect() {
@@ -32,7 +32,7 @@ namespace Dev {
         
         
         public void handleDownStreamMessage(string messageType, string message) {
-            Debug.Log("(" + messageType + ") " + message);
+            UnityEngine.Debug.Log("(" + messageType + ") " + message);
         }
     }
 }
