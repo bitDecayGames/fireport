@@ -32,7 +32,7 @@ type BumpDamageSelfAction struct {
 // Apply apply this action
 func (a *BumpDamageSelfAction) Apply(currentState *pogo.GameState) (*pogo.GameState, error) {
 	nextState := currentState.DeepCopy()
-	nextState.AppendAnimation(animations.GetBeBumpedInto(a.GetOwner()))
+	nextState.AppendAnimation(animations.GetDoBumpInto(a.GetOwner()))
 	player := nextState.GetPlayer(a.Owner)
 	if player == nil {
 		return nextState, fmt.Errorf("there is no player with id %v", a.Owner)

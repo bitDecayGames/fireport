@@ -68,6 +68,7 @@ func TestTwoPlayersAreMoving(t *testing.T) {
 
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
 	for _, animation := range nextState.Animations[0] {
 		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
 		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
@@ -107,6 +108,7 @@ func TestTwoPlayersMoveButDoNotCollide(t *testing.T) {
 
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
 	for _, animation := range nextState.Animations[0] {
 		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
 		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
@@ -146,9 +148,10 @@ func TestTwoPlayersSimpleSpaceCollide(t *testing.T) {
 
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
 	for _, animation := range nextState.Animations[0] {
-		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }
@@ -183,9 +186,10 @@ func TestTwoPlayersSimpleEdgeCollide(t *testing.T) {
 
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 1)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
 	for _, animation := range nextState.Animations[0] {
-		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }
@@ -218,6 +222,9 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 
 	//animation tests
 	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	assert.Equal(t, len(nextState.Animations[1]), 2)
+	assert.Equal(t, len(nextState.Animations[2]), 2)
 	for _, animation := range nextState.Animations[0] {
 		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
 		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
@@ -235,8 +242,8 @@ func TestTwoPlayersTurnIntoEachOther(t *testing.T) {
 		}
 	}
 	for _, animation := range nextState.Animations[2] {
-		assert.Equal(t, animation.Name, animations.GetBeBumpedInto(1).Name)
-		assert.Equal(t, animation.ID, animations.GetBeBumpedInto(1).ID)
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
 		assert.Subset(t, []int{100, 200}, []int{animation.Owner})
 	}
 }
@@ -272,6 +279,39 @@ func TestTwoOutOfThreePlayersCollide(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[1].Facing)
 	assert.Equal(t, 1, nextState.Players[2].Location)
 	assert.Equal(t, 2, nextState.Players[2].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 3)
+	assert.Equal(t, len(nextState.Animations[1]), 2)
+	assert.Equal(t, len(nextState.Animations[2]), 2)
+	for _, animation := range nextState.Animations[0] {
+		if animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+			assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		} else if animation.Owner == 100 || animation.Owner == 300 {
+			assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+			assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+		} else {
+			assert.Fail(t, "Animations don't have correct owner")
+		}
+	}
+	for _, animation := range nextState.Animations[1] {
+		if animation.Owner == 100 || animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+			assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+		} else {
+			assert.Fail(t, "Animations don't have correct owner")
+		}
+	}
+	for _, animation := range nextState.Animations[2] {
+		if animation.Owner == 100 || animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+			assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		} else {
+			assert.Fail(t, "Animations don't have correct owner")
+		}
+	}
 }
 
 /*
@@ -305,6 +345,24 @@ func TestOneCollisionCausesAnother(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[1].Facing)
 	assert.Equal(t, 4, nextState.Players[2].Location)
 	assert.Equal(t, 1, nextState.Players[2].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 3)
+	assert.Equal(t, len(nextState.Animations[1]), 3)
+	assert.Equal(t, len(nextState.Animations[2]), 3)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -342,6 +400,24 @@ func TestTurningTanksCollide(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[2].Facing)
 	assert.Equal(t, 11, nextState.Players[3].Location)
 	assert.Equal(t, 2, nextState.Players[3].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 4)
+	assert.Equal(t, len(nextState.Animations[1]), 4)
+	assert.Equal(t, len(nextState.Animations[2]), 4)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
 }
 
 /*
@@ -373,6 +449,31 @@ func TestRotatingAndMovementPartI(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 13, nextState.Players[1].Location)
 	assert.Equal(t, 2, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	assert.Equal(t, len(nextState.Animations[1]), 2)
+	assert.Equal(t, len(nextState.Animations[2]), 2)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		if animation.Owner == 100 {
+			assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+			assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+		} else if animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+			assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+		} else {
+			assert.Fail(t, "Animations don't have correct owner")
+		}
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
 }
 
 /*
@@ -404,6 +505,31 @@ func TestRotatingAndMovementPartII(t *testing.T) {
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, 10, nextState.Players[1].Location)
 	assert.Equal(t, 2, nextState.Players[1].Facing)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	assert.Equal(t, len(nextState.Animations[1]), 2)
+	assert.Equal(t, len(nextState.Animations[2]), 2)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		if animation.Owner == 100 {
+			assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+			assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+		} else if animation.Owner == 200 {
+			assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+			assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+		} else {
+			assert.Fail(t, "Animations don't have correct owner")
+		}
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
 }
 
 /*
@@ -429,6 +555,19 @@ func TestCollisionWithTopSide(t *testing.T) {
 	*/
 	assert.Equal(t, 1, nextState.Players[0].Location)
 	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -454,6 +593,19 @@ func TestCollisionWithBottomSide(t *testing.T) {
 	*/
 	assert.Equal(t, 7, nextState.Players[0].Location)
 	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -479,6 +631,19 @@ func TestCollisionWithLeftSide(t *testing.T) {
 	*/
 	assert.Equal(t, 3, nextState.Players[0].Location)
 	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -504,6 +669,19 @@ func TestCollisionWithRightSide(t *testing.T) {
 	*/
 	assert.Equal(t, 5, nextState.Players[0].Location)
 	assert.Equal(t, gameState.Players[0].Health-1, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetMoveForward(1).Name)
+		assert.Equal(t, animation.ID, animations.GetMoveForward(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -530,6 +708,24 @@ func TestCollisionWithTopLeftCorner(t *testing.T) {
 	assert.Equal(t, 0, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	assert.Equal(t, len(nextState.Animations[2]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -556,6 +752,24 @@ func TestCollisionWithTopRightCorner(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
 	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	assert.Equal(t, len(nextState.Animations[2]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -582,6 +796,24 @@ func TestCollisionWithBottomRightCorner(t *testing.T) {
 	assert.Equal(t, 8, nextState.Players[0].Location)
 	assert.Equal(t, 1, nextState.Players[0].Facing)
 	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	assert.Equal(t, len(nextState.Animations[2]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnCounterClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnCounterClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -608,6 +840,24 @@ func TestCollisionWithBottomLeftCorner(t *testing.T) {
 	assert.Equal(t, 6, nextState.Players[0].Location)
 	assert.Equal(t, 3, nextState.Players[0].Facing)
 	assert.Equal(t, gameState.Players[0].Health-2, nextState.Players[0].Health)
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 3)
+	assert.Equal(t, len(nextState.Animations[0]), 1)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	assert.Equal(t, len(nextState.Animations[2]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetTurnClockwise90(1).Name)
+		assert.Equal(t, animation.ID, animations.GetTurnClockwise90(1).ID)
+	}
+	for _, animation := range nextState.Animations[2] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -647,6 +897,19 @@ func TestEdgeCollisionWithPlayersGoingSameDirectionPartI(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[1].Facing, "B is facing the wrong way")
 	assert.Equal(t, gameState.Players[1].Health-2, nextState.Players[1].Health, "B has the wrong health")
 	assert.NotEqual(t, nextState.Players[0].Location, nextState.Players[1].Location, "A and B are in the same location")
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	assert.Equal(t, len(nextState.Animations[1]), 2)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -686,6 +949,19 @@ func TestEdgeCollisionWithPlayersGoingSameDirectionPartII(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[1].Facing, "B is facing the wrong way")
 	assert.Equal(t, gameState.Players[1].Health-1, nextState.Players[1].Health, "B has the wrong health")
 	assert.NotEqual(t, nextState.Players[0].Location, nextState.Players[1].Location, "A and B are in the same location")
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 2)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	assert.Equal(t, len(nextState.Animations[1]), 1)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
+	for _, animation := range nextState.Animations[1] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
 
 /*
@@ -725,4 +1001,12 @@ func TestEdgeCollisionWithPlayersGoingSameDirectionPartIII(t *testing.T) {
 	assert.Equal(t, 2, nextState.Players[1].Facing, "B is facing the wrong way")
 	assert.Equal(t, gameState.Players[1].Health-1, nextState.Players[1].Health, "B has the wrong health")
 	assert.NotEqual(t, nextState.Players[0].Location, nextState.Players[1].Location, "A and B are in the same location")
+
+	//animation tests
+	assert.Equal(t, len(nextState.Animations), 1)
+	assert.Equal(t, len(nextState.Animations[0]), 2)
+	for _, animation := range nextState.Animations[0] {
+		assert.Equal(t, animation.Name, animations.GetDoBumpInto(1).Name)
+		assert.Equal(t, animation.ID, animations.GetDoBumpInto(1).ID)
+	}
 }
