@@ -466,6 +466,7 @@ GameObject:
   - component: {fileID: 871047788}
   - component: {fileID: 871047792}
   - component: {fileID: 871047791}
+  - component: {fileID: 871047793}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -557,6 +558,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LobbyIDInput: {fileID: 993329642}
   JoinLobbyButton: {fileID: 1105516328}
+  Api: {fileID: 871047793}
+  sceneChanger: {fileID: 871047791}
+  lobbyInfo: {fileID: 114473256081116832, guid: 34b0fd2267e9e1a4f9c9d3ce70ef2455,
+    type: 2}
+--- !u!114 &871047793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 871047787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d469acdc3abe445a84d06c5f3d24c64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &993329640
 GameObject:
   m_ObjectHideFlags: 0

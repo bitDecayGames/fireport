@@ -12,7 +12,7 @@ namespace Network {
             StartCoroutine(req.Post());
         }
         
-        public void JoinLobby(string code, string playerName, Action onSuccess) {
+        public void JoinLobby(string code, string playerName, Action<string> onSuccess) {
             var req = new RESTEasyRequest();
             var body = new LobbyJoinMessage();
             body.lobbyID = code;

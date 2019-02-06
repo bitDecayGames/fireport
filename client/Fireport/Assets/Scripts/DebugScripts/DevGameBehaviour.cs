@@ -70,7 +70,7 @@ namespace DebugScripts {
             if (PlayerNameInputField.text.Length > 0) {
                 if (GameCodeInputField.text.Length <= 0) GameCodeInputField.text = "GAME";
                 addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
-                Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, () => {
+                Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, (resp) => {
                     addToActivityStream("Joined lobby " + GameCodeInputField.text);
                     Listener.StartListening(GameCodeInputField.text, PlayerNameInputField.text,
                         () => { addToActivityStream("Made websocket connection"); });
