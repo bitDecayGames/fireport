@@ -10,6 +10,7 @@ namespace MainSceneScripts {
 	public class JoinLobbySceneBehaviour : MonoBehaviour {
 
 		public InputField LobbyIDInput;
+		public InputField PlayerNameInput;
 		public Button JoinLobbyButton;
 		public RestApi Api;
 		public GoToScene sceneChanger;
@@ -27,10 +28,9 @@ namespace MainSceneScripts {
 		}
 
 		private void JoinLobby() {
-			if (!string.IsNullOrEmpty(LobbyIDInput.text)) {
+			if (!string.IsNullOrEmpty(LobbyIDInput.text) && !string.IsNullOrEmpty(PlayerNameInput.text)) {
 				var pNum = Random.Range(1, 1000);
-				Api.JoinLobby(LobbyIDInput.text, "Player " + pNum.ToString(), (body) => {
-					// TODO: parse resp data and pass it to the scene
+				Api.JoinLobby(LobbyIDInput.text, PlayerNameInput.text, (body) => {
 					var lobby = Instantiate(lobbyInfo);
 					DontDestroyOnLoad(lobby.transform.gameObject);
 					lobby.name = LobbyInfoController.objectName;
