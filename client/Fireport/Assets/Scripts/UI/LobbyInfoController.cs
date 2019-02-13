@@ -20,4 +20,13 @@ public class LobbyInfoController : MonoBehaviour
 		}
 		return l.GetComponent<LobbyInfoController>();
 	}
+
+	public static void ClearLobbyObject()
+	{
+		GameObject l = GameObject.Find(objectName);
+		if (l != null)
+		{
+			Destroy(l);
+		}
+	}
 }

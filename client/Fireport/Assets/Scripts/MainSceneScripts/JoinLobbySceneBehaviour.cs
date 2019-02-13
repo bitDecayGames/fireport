@@ -18,6 +18,7 @@ namespace MainSceneScripts {
 		public LobbyInfoController lobbyInfo;
 		
 		void Start () {
+			LobbyInfoController.ClearLobbyObject();
 			LobbyIDInput.onValueChanged.AddListener(UpdateInput);
 			JoinLobbyButton.onClick.AddListener(JoinLobby);
 			JoinLobbyButton.interactable = false;
@@ -29,7 +30,6 @@ namespace MainSceneScripts {
 
 		private void JoinLobby() {
 			if (!string.IsNullOrEmpty(LobbyIDInput.text) && !string.IsNullOrEmpty(PlayerNameInput.text)) {
-				var pNum = Random.Range(1, 1000);
 				Api.JoinLobby(LobbyIDInput.text, PlayerNameInput.text, (body) => {
 					var lobby = Instantiate(lobbyInfo);
 					DontDestroyOnLoad(lobby.transform.gameObject);
