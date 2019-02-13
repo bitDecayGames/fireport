@@ -4,10 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Utils;
 
 namespace Game.UI {
     public class CardBehaviour : MonoBehaviour {
 
+        public Transform CardTransform;
         public Image CardImage;
         public TextMeshProUGUI OrderText;
         public TextMeshProUGUI TitleText;
@@ -17,15 +19,34 @@ namespace Game.UI {
         
         public CardState Card { get; private set; }
         public bool IsSelected { get; private set; }
+
+        private const float HEIGHT_SCALAR = 10.0f;
+
+        void Start() {
+            SetOrder(0, 0);
+        }
         
         public void SetCard(CardState card) {
             Card = card;
             
-            // TODO: Pick the card image based on the card.cardType
-            //CardImage.sprite = // pick a sprite here
-            
-            // TODO: Pick the TitleText and DetailsText based on card.cardType
-            TitleText.text = "Title";
+            // TODO: MW Pick the card image based on the card.cardType group
+            // Sprite sprite = null;
+            switch (CardTypeUtils.GroupFromCardType(card.CardType)) {
+                case CardTypeGroup.Unknown:
+                    break;
+                case CardTypeGroup.Movement:
+                    break;
+                case CardTypeGroup.Utility:
+                    break;
+                case CardTypeGroup.Attack:
+                    break;
+                default:
+                    break;
+            }
+            //CardImage.sprite = // set the sprite here
+
+            TitleText.text = CardTypeUtils.CardTypeName(card.CardType);
+            // TODO: MW Pick the DetailsText based on card.cardType
             DetailsText.text = "Details";
         }
 
@@ -33,10 +54,24 @@ namespace Game.UI {
         /// Sets the selected order of the card, with <= 0 being none
         /// </summary>
         /// <param name="orderNumber"></param>
-        public void SetOrder(int orderNumber) {
+        public void SetOrder(int orderNumber, int totalNumber) {
+            if (orderNumber < 0) orderNumber = 0;
             IsSelected = orderNumber > 0;
-            if (orderNumber > 0) OrderText.text = "" + orderNumber;
-            else OrderText.text = "";
+            if (orderNumber > 0) {
+                // TODO: MW convert this from 1, 2, 3 to 1st, 2nd, 3rd...
+                OrderText.text = "" + orderNumber;
+                SetHeight((totalNumber - orderNumber) * HEIGHT_SCALAR);
+            } else {
+                OrderText.text = "";
+                SetHeight(0);
+            }
+            
+        }
+
+        private void SetHeight(float amount) {
+            var pos = CardTransform.localPosition;
+            pos.y = amount;
+            CardTransform.localPosition = pos;
         }
 
         public void ClickedTraySlot() {
