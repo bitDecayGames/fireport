@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Boo.Lang.Runtime;
 using UnityEngine;
 using Model;
 using Model.Message;
@@ -16,8 +17,8 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 	private void Start()
 	{
 		Listener.Subscribe(this);
-		
-		updatePlayers(new string[]{"one", "two", "three"});
+		LobbyInfoController lobbyInfo = LobbyInfoController.GetLobbyObject();
+		updatePlayers(lobbyInfo.msg.players.ToArray());
 	}
 
 	public void handleDownStreamMessage(string messageType, string message)
