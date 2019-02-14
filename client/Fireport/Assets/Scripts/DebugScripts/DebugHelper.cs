@@ -8,8 +8,8 @@ namespace DebugScripts {
             gs.Turn = 3;
             gs.Winner = -1;
             gs.IsGameFinished = false;
-            gs.BoardWidth = 5;
-            gs.BoardHeight = 5;
+            gs.BoardWidth = 7;
+            gs.BoardHeight = 4;
             gs.BoardSpaces = new List<BoardSpace>();
             for (int i = 0; i < gs.BoardWidth * gs.BoardHeight; i++) {
                 var bs = new BoardSpace();

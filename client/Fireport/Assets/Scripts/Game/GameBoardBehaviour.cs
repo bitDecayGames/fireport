@@ -15,11 +15,10 @@ namespace Game {
             board.transform.parent = transform;
             board.transform.localPosition = new Vector3();
 
-            var xOffset = state.BoardWidth / 2f;
-            var yOffset = state.BoardHeight / 2f;
-            // TODO: MW figure out why it is not EXACTLY in the middle.  Possibly from sprites not drawing from middle?
-            for (int x = 0; x < state.BoardWidth; x++) {
-                for (int y = 0; y < state.BoardHeight; y++) {
+            var xOffset = state.BoardWidth / 2f - 0.5f;
+            var yOffset = state.BoardHeight / 2f - 0.5f;
+            for (int y = 0; y < state.BoardHeight; y++) {
+                for (int x = 0; x < state.BoardWidth; x++) {
                     var boardSpace = state.BoardSpaces[x + y * state.BoardWidth];
                     var boardSpaceBehaviour = Factory.Build("BoardSpace", board.transform);
                     boardSpaceBehaviour.Id = boardSpace.ID;
