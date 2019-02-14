@@ -8,7 +8,7 @@ namespace DebugScripts {
         private GameBoardBehaviour gameBoardBehaviour;
         
         void Start() {
-            gameBoardBehaviour = GetComponent<GameBoardBehaviour>();
+            gameBoardBehaviour = FindObjectOfType<GameBoardBehaviour>();
             if (gameBoardBehaviour == null) throw new Exception("Could not find GameBoardBehaviour on DebugGameBoardBehaviour object");
             
             gameBoardBehaviour.Populate(DebugHelper.DebugGameState());

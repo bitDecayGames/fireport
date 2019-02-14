@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d98564fb9b2b45118ced20f3cccd037c, type: 3}
-  m_Name: DefaultCardSpriteFactory
+  m_Name: DefaultSkinSpriteFactory
   m_EditorClassIdentifier: 
   sprites:
   - name: Movement
@@ -20,3 +20,17 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: d7572da7b3ae44926a2994f0dabfabf2, type: 3}
   - name: Unknown
     sprite: {fileID: 21300000, guid: 722853dc98faa437587d384b39aa3c47, type: 3}
+  - name: GreenTank
+    sprite: {fileID: 21300000, guid: ee73395b150de480b9b653d924df0cc2, type: 3}
+  - name: BlueTank
+    sprite: {fileID: 21300000, guid: f11bf5a165ddf41cdb234f54d0f0ea2a, type: 3}
+  - name: OrangeTank
+    sprite: {fileID: 21300000, guid: dc6a7013303a44c66979d291e543626c, type: 3}
+  - name: PurpleTank
+    sprite: {fileID: 21300000, guid: f22eb172d37014487a538974cb59ccdc, type: 3}
+  - name: RedTank
+    sprite: {fileID: 21300000, guid: e8d1234f3f8ba4df89f5c4db412caef1, type: 3}
+  - name: GrassTile
+    sprite: {fileID: 21300000, guid: 6f23c5c30dddd4b25bca3c0bc6bca2a4, type: 3}
+  - name: EmptyTile
+    sprite: {fileID: 21300000, guid: 118e15719fda34f6185cd02b34b09f9e, type: 3}

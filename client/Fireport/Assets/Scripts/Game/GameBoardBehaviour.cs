@@ -14,24 +14,25 @@ namespace Game {
             board = new GameObject("board");
             board.transform.parent = transform;
             board.transform.localPosition = new Vector3();
-            
+
+            var xOffset = state.BoardWidth / 2f;
+            var yOffset = state.BoardHeight / 2f;
+            // TODO: MW figure out why it is not EXACTLY in the middle.  Possibly from sprites not drawing from middle?
             for (int x = 0; x < state.BoardWidth; x++) {
                 for (int y = 0; y < state.BoardHeight; y++) {
                     var boardSpace = state.BoardSpaces[x + y * state.BoardWidth];
                     var boardSpaceBehaviour = Factory.Build("BoardSpace", board.transform);
                     boardSpaceBehaviour.Id = boardSpace.ID;
-                    boardSpaceBehaviour.transform.localPosition = new Vector3(x * GridSizeMultiplier, -y * GridSizeMultiplier, 0);
+                    boardSpaceBehaviour.transform.localPosition = new Vector3(x * GridSizeMultiplier - xOffset, -y * GridSizeMultiplier + yOffset, 0);
                 }
             }
             
             state.Players.ForEach(playerState => {
                 var playerBehaviour = Factory.Build("Player", board.transform);
                 playerBehaviour.Id = playerState.ID;
-                playerBehaviour.transform.localPosition = new Vector3(playerState.Location % state.BoardWidth * GridSizeMultiplier, playerState.Location / state.BoardWidth * -GridSizeMultiplier, 0);
+                playerBehaviour.transform.localPosition = new Vector3(playerState.Location % state.BoardWidth * GridSizeMultiplier - xOffset, playerState.Location / state.BoardWidth * -GridSizeMultiplier + yOffset, 0);
                 playerBehaviour.transform.localRotation = facingToRotation(playerState.Facing);
-            });
-            
-            // TODO: MW set the position of the camera to center on the middle? Or maybe on the current player?
+            });            
         }
 
         private Quaternion facingToRotation(int facing) {
