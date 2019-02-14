@@ -69,7 +69,7 @@ namespace Game.UI {
 		}
 
 		public void ToggleShow() {
-			// TODO: MW do something with the button here
+			// TODO: MW do something visually with the button here
 			if (Slider.IsShown) {
 				Slider.Hide();
 				ClearSelectedCards();

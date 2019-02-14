@@ -11,7 +11,6 @@ namespace DebugScripts {
         public InputField GameCodeInputField;
         public InputField PlayerNameInputField;
         public InputField MessageInputField;
-        public WebSocketListener Listener;
 
         void Start() {
             GameCodeInputField.text = GAME_ID;
@@ -19,20 +18,20 @@ namespace DebugScripts {
         }
 
         public void Connect() {
-            Listener.StartListening(GAME_ID, PLAYER_NAME, () => { UnityEngine.Debug.Log("Websocket connection successful"); });
+            WebSocketListener.Instance().StartListening(GAME_ID, PLAYER_NAME, () => { UnityEngine.Debug.Log("Websocket connection successful"); });
         }
 
         public void Disconnect() {
-            Listener.StopListening();
+            WebSocketListener.Instance().StopListening();
         }
 
         public void Send() {
-            Listener.Send(MessageInputField.text);
+            WebSocketListener.Instance().Send(MessageInputField.text);
         }
         
         
         public void handleDownStreamMessage(string messageType, string message) {
-            UnityEngine.Debug.Log("(" + messageType + ") " + message);
+            Debug.Log("(" + messageType + ") " + message);
         }
     }
 }

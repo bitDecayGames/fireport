@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Model.Message;
+﻿using Model.Message;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -10,11 +8,10 @@ public class GameInfoController : MonoBehaviour, IDownStreamSubscriber
 {
 
 	public TextMeshProUGUI gameTypeLabel;
-	public WebSocketListener Listener;
 
 	private void Start()
 	{
-		Listener.Subscribe(this);
+		WebSocketListener.Instance().Subscribe(this);
 		
 	}
 

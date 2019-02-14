@@ -1,23 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Boo.Lang.Runtime;
-using UnityEngine;
-using Model;
-using Model.Message;
+﻿using Model.Message;
 using Network;
-using TMPro;
+using UnityEngine;
 using Utils;
-using WebSocketSharp;
 
 public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 {
 	public PlayerRowController playerRowPrefab;
-	public WebSocketListener Listener;
 
 	private void Start()
 	{
-		Listener.Subscribe(this);
-		LobbyInfoController lobbyInfo = LobbyInfoController.GetLobbyObject();
+		WebSocketListener.Instance().Subscribe(this);
+		LobbyInfoController lobbyInfo = LobbyInfoController.Instance();
 		updatePlayers(lobbyInfo.msg.players.ToArray());
 	}
 
@@ -42,6 +35,6 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 
 	private void OnDestroy()
 	{
-		Listener.CancelSubscription(this);
+		WebSocketListener.Instance().CancelSubscription(this);
 	}
 }

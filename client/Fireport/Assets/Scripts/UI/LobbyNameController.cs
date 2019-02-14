@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Boo.Lang.Runtime;
-using Model.Message;
+﻿using Model.Message;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -9,12 +6,10 @@ using Utils;
 
 public class LobbyNameController : MonoBehaviour, IDownStreamSubscriber
 {
-	public WebSocketListener Listener;
-
 	private void Start()
 	{
-		Listener.Subscribe(this);
-		LobbyInfoController lobby = LobbyInfoController.GetLobbyObject();
+		WebSocketListener.Instance().Subscribe(this);
+		LobbyInfoController lobby = LobbyInfoController.Instance();
 		updateLobbyName(lobby.msg.id);
 	}
 

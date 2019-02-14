@@ -13,7 +13,6 @@ namespace DebugScripts {
         public const int CARDS_IN_HAND = 5;
 
         public RestApi Api;
-        public WebSocketListener Listener;
 
         public InputField GameCodeInputField;
         public InputField PlayerNameInputField;
@@ -35,7 +34,7 @@ namespace DebugScripts {
         private PlayerState currentPlayer;
 
         private void Start() {
-            Listener.Subscribe(this);
+            WebSocketListener.Instance().Subscribe(this);
 
             cards.AddRange(CardGroup.GetComponentsInChildren<Text>());
             cardButtons.AddRange(CardGroup.GetComponentsInChildren<Button>());
@@ -72,7 +71,7 @@ namespace DebugScripts {
                 addToActivityStream("Attempt to join lobby " + GameCodeInputField.text);
                 Api.JoinLobby(GameCodeInputField.text, PlayerNameInputField.text, (resp) => {
                     addToActivityStream("Joined lobby " + GameCodeInputField.text);
-                    Listener.StartListening(GameCodeInputField.text, PlayerNameInputField.text,
+                    WebSocketListener.Instance().StartListening(GameCodeInputField.text, PlayerNameInputField.text,
                         () => { addToActivityStream("Made websocket connection"); });
                     GameCodeInputField.interactable = false;
                     PlayerNameInputField.interactable = false;
@@ -121,7 +120,7 @@ namespace DebugScripts {
         }
 
         private void OnDestroy() {
-            Listener.StopListening();
+            WebSocketListener.Instance().StopListening();
         }
 
         public void handleDownStreamMessage(string messageType, string message) {

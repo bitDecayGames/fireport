@@ -7,6 +7,15 @@ using Utils;
 namespace Network {
     public class WebSocketListener : MonoBehaviour {
 
+        private static WebSocketListener instance = null;
+        public static WebSocketListener Instance() {
+            if (instance == null) {
+                var go = new GameObject("WebSocketListener");
+                instance = go.AddComponent<WebSocketListener>();
+            }
+
+            return instance;
+        }
         private static WebSocket webSocket;
         private static bool started;
         private List<IDownStreamSubscriber> subscribers = new List<IDownStreamSubscriber>();
@@ -44,6 +53,14 @@ namespace Network {
 
         public void Subscribe(IDownStreamSubscriber subscriber) {
             subscribers.Add(subscriber);
+        }
+        
+        /// <summary>
+        /// Alias for CancelSubscription
+        /// </summary>
+        /// <param name="subscriber"></param>
+        public void Unsubscribe(IDownStreamSubscriber subscriber) {
+            CancelSubscription(subscriber);
         }
 
         public void CancelSubscription(IDownStreamSubscriber subscriber) {

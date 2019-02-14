@@ -1,32 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Boo.Lang.Runtime;
-using Model.Message;
+﻿using Model.Message;
 using UnityEngine;
-using UnityEngine.Networking;
-
 
 public class LobbyInfoController : MonoBehaviour
 {
 	public static string objectName = "LobbyInfo";
-	public LobbyMessage msg;
+	private static LobbyInfoController instance = null;
 
-	public static LobbyInfoController GetLobbyObject()
-	{
-		GameObject l = GameObject.Find(objectName);
-		if (l == null)
-		{
-			throw new RuntimeException("No lobby info to work with");
+	public static LobbyInfoController Instance() {
+		if (instance == null) {
+			var go = new GameObject(objectName);
+			instance = go.AddComponent<LobbyInfoController>();
 		}
-		return l.GetComponent<LobbyInfoController>();
+
+		return instance;
 	}
 
-	public static void ClearLobbyObject()
-	{
-		GameObject l = GameObject.Find(objectName);
-		if (l != null)
-		{
-			Destroy(l);
-		}
+	public string playerName;
+	public int playerId;
+	
+	public LobbyMessage msg;
+
+	public static void ClearLobbyObject() {
+		if (instance != null) Destroy(instance.gameObject);
 	}
 }
