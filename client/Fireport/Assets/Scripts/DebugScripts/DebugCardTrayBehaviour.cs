@@ -12,7 +12,7 @@ namespace DebugScripts {
             cardTray = FindObjectOfType<CardTrayBehaviour>();
             
             List<CardState> cardStates = new List<CardState>();
-            cardStates.Add(new CardState(0, (int) CardType.TurnRight));
+            cardStates.Add(new CardState(0, (int) CardType.Unknown));
             cardStates.Add(new CardState(1, (int) CardType.TurnLeft));
             cardStates.Add(new CardState(2, (int) CardType.Rotate180));
             cardStates.Add(new CardState(3, (int) CardType.MoveForwardTwo));

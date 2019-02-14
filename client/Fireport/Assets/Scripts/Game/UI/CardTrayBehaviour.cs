@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Model.State;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils;
 
 namespace Game.UI {
 	public class CardTrayBehaviour : MonoBehaviour {
 
 		public CardBehaviour CardTemplate;
+		public SpriteFactory Skinner;
 		public CardTrayBehaviourEvent OnSelected = new CardTrayBehaviourEvent();
 
 		private List<CardBehaviour> cards = new List<CardBehaviour>();
@@ -21,6 +23,7 @@ namespace Game.UI {
 			ClearCards();
 			cardStates.ForEach(cs => {
 				var card = Instantiate(CardTemplate, CardTemplate.transform.parent);
+				card.gameObject.SetActive(true);
 				cards.Add(card);
 				card.SetCard(cs);
 			});

@@ -275,6 +275,7 @@ MonoBehaviour:
   OrderText: {fileID: 114761145068252120}
   TitleText: {fileID: 114886889090504466}
   DetailsText: {fileID: 114923440239398256}
+  Skinner: {fileID: 11400000, guid: 8001e488fcf6649bcb823f23b60c22ce, type: 2}
   OnSelected:
     m_PersistentCalls:
       m_Calls:
@@ -468,6 +469,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CardTemplate: {fileID: 114490608976195172}
+  Skinner: {fileID: 0}
+  OnSelected:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Game.UI.CardTrayBehaviour+CardTrayBehaviourEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114886889090504466
 MonoBehaviour:
   m_ObjectHideFlags: 1

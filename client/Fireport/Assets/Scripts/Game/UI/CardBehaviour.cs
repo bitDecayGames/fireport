@@ -14,9 +14,9 @@ namespace Game.UI {
         public TextMeshProUGUI OrderText;
         public TextMeshProUGUI TitleText;
         public TextMeshProUGUI DetailsText;
+        public SpriteFactory Skinner;
 
         public CardBehaviourEvent OnSelected = new CardBehaviourEvent();
-        
         public CardState Card { get; private set; }
         public bool IsSelected { get; private set; }
 
@@ -30,20 +30,26 @@ namespace Game.UI {
             Card = card;
             
             // TODO: MW Pick the card image based on the card.cardType group
-            // Sprite sprite = null;
+            Sprite sprite = null;
             switch (CardTypeUtils.GroupFromCardType(card.CardType)) {
                 case CardTypeGroup.Unknown:
+                    sprite = Skinner.Get("Unknown").sprite;
                     break;
                 case CardTypeGroup.Movement:
+                    sprite = Skinner.Get("Movement").sprite;
                     break;
                 case CardTypeGroup.Utility:
+                    sprite = Skinner.Get("Utility").sprite;
                     break;
                 case CardTypeGroup.Attack:
+                    sprite = Skinner.Get("Attack").sprite;
                     break;
                 default:
+                    sprite = Skinner.Get("Unknown").sprite;
                     break;
             }
-            //CardImage.sprite = // set the sprite here
+
+            CardImage.sprite = sprite;
 
             TitleText.text = CardTypeUtils.CardTypeName(card.CardType);
             // TODO: MW Pick the DetailsText based on card.cardType
