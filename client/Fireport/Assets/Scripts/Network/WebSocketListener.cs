@@ -85,7 +85,13 @@ namespace Network {
                 string msg = webSocket.RecvString();
                 if (msg != null) {
                     var json = JsonUtility.FromJson<MessageType>(msg); // grab the messageType string for future classification
-                    subscribers.ForEach(s => s.handleDownStreamMessage(json.msgType, msg));
+                    subscribers.ForEach(s => {
+                        try {
+                            s.handleDownStreamMessage(json.msgType, msg);
+                        } catch (Exception e) {
+                            Debug.LogError("Error while sending message to subscriber: " + e + "\n" + e.StackTrace);
+                        }
+                    });
                 }
 
                 if (webSocket.error != null) {

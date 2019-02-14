@@ -31,11 +31,9 @@ public class CreateLobbyHandler : MonoBehaviour
 		if (!string.IsNullOrEmpty(PlayerNameInputField.text)) {
 			Api.CreateLobby((createRespBody) => {
 				Api.JoinLobby(createRespBody, PlayerNameInputField.text, (body) => {
-					var lobby = Instantiate(lobbyInfo);
-					DontDestroyOnLoad(lobby.transform.gameObject);
-					lobby.name = LobbyInfoController.objectName;
-					var lobbyMessage = JsonUtility.FromJson<LobbyMessage>(body);
-					lobby.msg = lobbyMessage;
+					lobbyInfo = LobbyInfoController.Instance();
+					lobbyInfo.msg = JsonUtility.FromJson<LobbyMessage>(body);
+					lobbyInfo.playerName = PlayerNameInputField.text;
 					sceneChanger.Go("LobbyScene");
 				});
 			});

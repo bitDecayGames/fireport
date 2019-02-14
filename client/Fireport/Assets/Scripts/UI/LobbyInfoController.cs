@@ -15,6 +15,10 @@ public class LobbyInfoController : MonoBehaviour
 		return instance;
 	}
 
+	void Start() {
+		DontDestroyOnLoad(gameObject);
+	}
+
 	public string playerName;
 	public int playerId;
 	
