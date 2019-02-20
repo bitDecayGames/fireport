@@ -514,7 +514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a3462ad69f4b74ebeb712ca9868135, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Listener: {fileID: 0}
 --- !u!1 &787042071
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,7 +643,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameTypeLabel: {fileID: 0}
-  Listener: {fileID: 0}
 --- !u!1 &871047787
 GameObject:
   m_ObjectHideFlags: 0
@@ -656,6 +654,8 @@ GameObject:
   - component: {fileID: 871047789}
   - component: {fileID: 871047788}
   - component: {fileID: 871047791}
+  - component: {fileID: 871047792}
+  - component: {fileID: 871047793}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -732,6 +732,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45f04f82364d42929159f2383832755f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &871047792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 871047787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d469acdc3abe445a84d06c5f3d24c64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &871047793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 871047787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 382d91abc5c34899b2f5d0ba1aada39d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1033572953
@@ -1091,7 +1113,7 @@ Prefab:
     - target: {fileID: 114816660448734812, guid: 47fbda1d8be856442a093e57f74c76bb,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114816660448734812, guid: 47fbda1d8be856442a093e57f74c76bb,
         type: 2}
@@ -1102,11 +1124,11 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1408945796}
+      objectReference: {fileID: 871047793}
     - target: {fileID: 114816660448734812, guid: 47fbda1d8be856442a093e57f74c76bb,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Go
+      value: StartGame
       objectReference: {fileID: 0}
     - target: {fileID: 114816660448734812, guid: 47fbda1d8be856442a093e57f74c76bb,
         type: 2}
@@ -1417,7 +1439,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000034521723, y: -0.000003374777}
+  m_AnchoredPosition: {x: -0.000034521723, y: -0.000012668831}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1724056948
@@ -1433,7 +1455,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerRowPrefab: {fileID: 114957474348000136, guid: ed6f29d3deba20f4da028db7fea32d6e,
     type: 2}
-  Listener: {fileID: 0}
 --- !u!114 &1724056949
 MonoBehaviour:
   m_ObjectHideFlags: 0

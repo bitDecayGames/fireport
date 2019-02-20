@@ -6,6 +6,8 @@ using Utils;
 public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 {
 	public PlayerRowController playerRowPrefab;
+	private RestApi Api;
+	private GoToScene Goto;
 
 	private void Start()
 	{
@@ -16,6 +18,8 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		{
 			Debug.Log("I'm listening now");
 		});
+		Api = FindObjectOfType<RestApi>();
+		Goto = FindObjectOfType<GoToScene>();
 	}
 
 	public void handleDownStreamMessage(string messageType, string message)
