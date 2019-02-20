@@ -18,11 +18,12 @@ namespace MainSceneScripts {
 		public LobbyInfoController lobbyInfo;
 		
 		void Start () {
+			WebSocketListener.Instance();
+			LobbyInfoController.Instance();
 			LobbyInfoController.ClearLobbyObject();
 			LobbyIDInput.onValueChanged.AddListener(UpdateInput);
 			JoinLobbyButton.onClick.AddListener(JoinLobby);
 			JoinLobbyButton.interactable = false;
-			LobbyInfoController.Instance();
 		}
 
 		private void UpdateInput(string input) {
