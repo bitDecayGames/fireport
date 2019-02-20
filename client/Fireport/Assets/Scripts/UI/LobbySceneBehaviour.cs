@@ -17,5 +17,12 @@ namespace MainSceneScripts {
                 Goto.Go("GameScene");
             });
         }
+
+        public void ReadyUp() {
+            var lobbyInfo = LobbyInfoController.Instance();
+            Api.ReadyUp(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
+                Debug.Log("I'm ready!");
+            });
+        }
     }
 }
