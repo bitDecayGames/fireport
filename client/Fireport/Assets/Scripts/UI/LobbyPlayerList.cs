@@ -12,19 +12,29 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		WebSocketListener.Instance().Subscribe(this);
 		LobbyInfoController lobbyInfo = LobbyInfoController.Instance();
 		updatePlayers(lobbyInfo.msg.players.ToArray());
+		WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () =>
+		{
+			Debug.Log("I'm listening now");
+		});
 	}
 
 	public void handleDownStreamMessage(string messageType, string message)
 	{
+		Debug.Log("Got downstream message");
 		if (messageType == MsgTypes.LOBBY)
 		{
 			var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
 			updatePlayers(lobbyMsg.players.ToArray());
+		} else {
+			Debug.Log("Got unhandled message: " + messageType);
 		}
 	}
 
 	public void updatePlayers(string[] playerNames)
 	{
+		foreach (Transform child in transform) {
+			Destroy(child.gameObject);
+		}
 		foreach (var player in playerNames)
 		{
 			var rowItem = Instantiate(playerRowPrefab, transform);
