@@ -30,7 +30,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     private Action onAnimationFinish;
 
     void Start() {
-        Api = GetComponent<RestApi>();
+        Api = FindObjectOfType<RestApi>();
         
         WebSocketListener.Instance().Subscribe(this);
 
@@ -56,7 +56,8 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     public void OnCardSelections(List<CardBehaviour> selections) {
         if (selections.Count >= MAX_CARD_SELECTIONS) { // TODO: MW change this to be on click of a submit button
             CardTray.SetCards(new List<CardState>());
-            Api.SubmitTurn(lobbyInfo.msg.id,
+            Api.SubmitTurn(
+                lobbyInfo.msg.id,
                 currentTurn,
                 lobbyInfo.playerName,
                 lobbyInfo.playerId,
