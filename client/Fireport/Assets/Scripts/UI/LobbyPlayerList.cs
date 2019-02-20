@@ -30,6 +30,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 			Debug.Log("Ready status: " + lobbyMsg.readyStatus);
 			updatePlayers(lobbyMsg.players.ToArray(), lobbyMsg.readyStatus);
 		} else if (messageType == MsgTypes.GAME_START) {
+			LobbyInfoController.Instance().gameStartMessage = message;
 			Goto.Go("GameScene");	
 		}else {
 			Debug.Log("Got unhandled message: " + messageType);

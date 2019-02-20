@@ -23,6 +23,7 @@ public class LobbyInfoController : MonoBehaviour
 	public int playerId;
 	
 	public LobbyMessage msg;
+	public string gameStartMessage;
 
 	public static void ClearLobbyObject() {
 		if (instance != null) {
