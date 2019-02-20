@@ -68,7 +68,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         switch (messageType) {
             case MsgTypes.TURN_RESULT:
                 var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
-                applyAnimations(turnResultMsg.animations, turnResultMsg.previousState, turnResultMsg.currentState, () => {
+                applyAnimations(turnResultMsg.previousState, turnResultMsg.currentState, () => {
                     nextState(turnResultMsg.currentState);
                 });
                 break;
@@ -78,13 +78,13 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         }
     }
 
-    private void applyAnimations(List<List<AnimationAction>> animations, GameState previous, GameState next, Action onAnimationFinish) {
+    private void applyAnimations(GameState previous, GameState next, Action onAnimationFinish) {
         this.onAnimationFinish = onAnimationFinish;
         
         var gamePieces = new List<GamePieceBehaviour>();
-        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>());
+        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>()); // TODO: MW this is highly ineffective
         
-        AnimationEngine.Play(animations, gamePieces);
+        AnimationEngine.Play(next.Animations, gamePieces);
     }
 
     private void onAnimationsComplete() {
