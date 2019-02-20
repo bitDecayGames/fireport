@@ -15,8 +15,6 @@ namespace MainSceneScripts {
 		public RestApi Api;
 		public GoToScene sceneChanger;
 
-		public LobbyInfoController lobbyInfo;
-		
 		void Start () {
 			WebSocketListener.Instance();
 			LobbyInfoController.Instance();
@@ -37,7 +35,7 @@ namespace MainSceneScripts {
 					lobby.name = LobbyInfoController.objectName;
 					var lobbyMessage = JsonUtility.FromJson<LobbyMessage>(body);
 					lobby.msg = lobbyMessage;
-					lobbyInfo.playerName = PlayerNameInput.text;
+					lobby.playerName = PlayerNameInput.text;
 					sceneChanger.Go("LobbyScene");
 				});
 			}
