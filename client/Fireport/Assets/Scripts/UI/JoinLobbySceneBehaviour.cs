@@ -37,6 +37,7 @@ namespace MainSceneScripts {
 					lobby.name = LobbyInfoController.objectName;
 					var lobbyMessage = JsonUtility.FromJson<LobbyMessage>(body);
 					lobby.msg = lobbyMessage;
+					lobbyInfo.playerName = PlayerNameInput.text;
 					sceneChanger.Go("LobbyScene");
 				});
 			}
