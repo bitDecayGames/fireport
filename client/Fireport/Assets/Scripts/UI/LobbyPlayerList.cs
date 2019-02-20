@@ -44,7 +44,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		{
 			var rowItem = Instantiate(playerRowPrefab, transform);
 			rowItem.label.text = player;
-			if (readyStatus.ContainsKey(player) && readyStatus[player]) rowItem.Readied();
+			if (readyStatus != null && readyStatus.ContainsKey(player) && readyStatus[player]) rowItem.Readied();
 			// TODO: Put ready image there, too.
 		}
 	}
