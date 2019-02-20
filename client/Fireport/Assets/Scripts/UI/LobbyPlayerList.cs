@@ -6,7 +6,6 @@ using Utils;
 public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 {
 	public PlayerRowController playerRowPrefab;
-	private RestApi Api;
 	private GoToScene Goto;
 
 	private void Start()
@@ -18,7 +17,6 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		{
 			Debug.Log("I'm listening now");
 		});
-		Api = FindObjectOfType<RestApi>();
 		Goto = FindObjectOfType<GoToScene>();
 	}
 
@@ -29,7 +27,9 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		{
 			var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
 			updatePlayers(lobbyMsg.players.ToArray());
-		} else {
+		} else if (messageType == MsgTypes.GAME_START) {
+			Goto.Go("GameScene");	
+		}else {
 			Debug.Log("Got unhandled message: " + messageType);
 		}
 	}
