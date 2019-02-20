@@ -25,6 +25,10 @@ public class LobbyInfoController : MonoBehaviour
 	public LobbyMessage msg;
 
 	public static void ClearLobbyObject() {
-		if (instance != null) Destroy(instance.gameObject);
+		if (instance != null) {
+			instance.msg = null;
+			instance.playerId = 0;
+			instance.playerName = null;
+		}
 	}
 }
