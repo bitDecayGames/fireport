@@ -72,6 +72,10 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
                     nextState(turnResultMsg.currentState);
                 });
                 break;
+            case MsgTypes.GAME_START:
+                var gameStartMessage = JsonUtility.FromJson<GameStartMessage>(message);
+                nextState(gameStartMessage.gameState);
+                break;
             default:
                 addToActivityStream("Message unhandled: " + messageType);
                 break;
