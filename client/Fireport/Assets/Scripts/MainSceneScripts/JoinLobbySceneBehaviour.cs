@@ -22,6 +22,7 @@ namespace MainSceneScripts {
 			LobbyIDInput.onValueChanged.AddListener(UpdateInput);
 			JoinLobbyButton.onClick.AddListener(JoinLobby);
 			JoinLobbyButton.interactable = false;
+			LobbyInfoController.Instance();
 		}
 
 		private void UpdateInput(string input) {
@@ -31,8 +32,7 @@ namespace MainSceneScripts {
 		private void JoinLobby() {
 			if (!string.IsNullOrEmpty(LobbyIDInput.text) && !string.IsNullOrEmpty(PlayerNameInput.text)) {
 				Api.JoinLobby(LobbyIDInput.text, PlayerNameInput.text, (body) => {
-					var lobby = Instantiate(lobbyInfo);
-					DontDestroyOnLoad(lobby.transform.gameObject);
+					var lobby = LobbyInfoController.Instance();
 					lobby.name = LobbyInfoController.objectName;
 					var lobbyMessage = JsonUtility.FromJson<LobbyMessage>(body);
 					lobby.msg = lobbyMessage;
