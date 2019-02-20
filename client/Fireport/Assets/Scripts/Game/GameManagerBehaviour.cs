@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AnimationEngine;
 using Game;
 using Game.UI;
 using Model.Message;
@@ -16,6 +17,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     public TextMeshProUGUI ActivityText;
     public TextMeshProUGUI PlayerInfoText;
 
+    private AnimationEngineBehaviour AnimationEngine;
     private RestApi Api;
     private CardTrayBehaviour CardTray;
     private GameBoardBehaviour Board;
@@ -24,6 +26,8 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     private int currentTurn = 0;
     private GameState currentState;
     private PlayerState currentPlayer;
+
+    private Action onAnimationFinish;
 
     void Start() {
         Api = GetComponent<RestApi>();
@@ -36,6 +40,9 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         CardTray.OnSelected.AddListener(OnCardSelections);
         
         Board = FindObjectOfType<GameBoardBehaviour>();
+
+        AnimationEngine = FindObjectOfType<AnimationEngineBehaviour>();
+        AnimationEngine.OnComplete.AddListener(onAnimationsComplete);
     }
 
     private void OnDestroy() {
@@ -71,11 +78,20 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         }
     }
 
-    private void applyAnimations(List<AnimationAction> animations, GameState previous, GameState next, Action onAnimationFinish) {
-        // TODO: MW do something with these animations
-        animations.ForEach(a => addToActivityStream("Action: " + a.Name));
-        // TODO: MW call this when all animations finish
-        onAnimationFinish();
+    private void applyAnimations(List<List<AnimationAction>> animations, GameState previous, GameState next, Action onAnimationFinish) {
+        this.onAnimationFinish = onAnimationFinish;
+        
+        var gamePieces = new List<GamePieceBehaviour>();
+        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>());
+        
+        AnimationEngine.Play(animations, gamePieces);
+    }
+
+    private void onAnimationsComplete() {
+        if (onAnimationFinish != null) {
+            onAnimationFinish();
+            onAnimationFinish = null;
+        }
     }
 
     private void nextState(GameState next) {
