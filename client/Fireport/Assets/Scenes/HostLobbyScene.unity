@@ -162,10 +162,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 1562669844}
     m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnLeft: {fileID: 1562669844}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
@@ -689,8 +689,6 @@ MonoBehaviour:
   CreateLobbyButton: {fileID: 1202492}
   Api: {fileID: 871047794}
   sceneChanger: {fileID: 871047793}
-  lobbyInfo: {fileID: 114473256081116832, guid: 34b0fd2267e9e1a4f9c9d3ce70ef2455,
-    type: 2}
 --- !u!114 &871047793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1043,11 +1041,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 1843882881}
+    m_SelectOnDown: {fileID: 1202492}
+    m_SelectOnLeft: {fileID: 1843882881}
+    m_SelectOnRight: {fileID: 1202492}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1214,11 +1212,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnDown: {fileID: 1562669844}
     m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
+    m_SelectOnRight: {fileID: 1562669844}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}

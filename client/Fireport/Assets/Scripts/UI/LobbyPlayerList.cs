@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Model.Message;
 using Network;
 using UnityEngine;
@@ -27,7 +28,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		if (messageType == MsgTypes.LOBBY)
 		{
 			var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
-			Debug.Log("Ready status: " + lobbyMsg.readyStatus);
+			lobbyMsg.readyStatus = parserReadyStatus(message);
 			updatePlayers(lobbyMsg.players.ToArray(), lobbyMsg.readyStatus);
 		} else if (messageType == MsgTypes.GAME_START) {
 			LobbyInfoController.Instance().gameStartMessage = message;
@@ -35,6 +36,23 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		}else {
 			Debug.Log("Got unhandled message: " + messageType);
 		}
+	}
+
+	private Dictionary<string, bool> parserReadyStatus(string message) {
+		var msg = Json.Deserialize(message) as Dictionary<string, object>;
+		if (msg != null) {
+			var readyStatus = msg["readyStatus"] as Dictionary<string, object>;
+			var ready = new Dictionary<string, bool>();
+			if (readyStatus != null) {
+				foreach (var key in readyStatus.Keys) {
+					var value = readyStatus[key];
+					if (value is bool) ready[key] = (bool) readyStatus[key];
+				}
+
+				return ready;
+			}
+		}
+		return null;
 	}
 
 	public void updatePlayers(string[] playerNames, Dictionary<string, bool> readyStatus)

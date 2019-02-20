@@ -57,7 +57,7 @@ namespace AnimationEngine {
                 });
                 currentGroup = -1;
                 PlayNextGroup();
-            }
+            } else OnComplete.Invoke();
         }
 
         private void PlayNextGroup() {
