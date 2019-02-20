@@ -7,7 +7,7 @@ public class LobbyInfoController : MonoBehaviour
 	private static LobbyInfoController instance = null;
 
 	public static LobbyInfoController Instance() {
-		if (instance == null) {
+		if (!instance) {
 			var go = new GameObject(objectName);
 			instance = go.AddComponent<LobbyInfoController>();
 		}

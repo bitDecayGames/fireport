@@ -21,6 +21,7 @@ public class CreateLobbyHandler : MonoBehaviour
 		PlayerNameInputField.onValueChanged.AddListener(UpdateInput);
 		CreateLobbyButton.onClick.AddListener(CreateLobby);
 		CreateLobbyButton.interactable = false;
+		LobbyInfoController.Instance(); // this makes sure the LIC gets DontDestroyOnLoad
 	}
 
 	private void UpdateInput(string input) {
