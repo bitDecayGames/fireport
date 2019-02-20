@@ -20,4 +20,8 @@ public class PlayerRowController : MonoBehaviour
 	void Update () {
 		
 	}
+
+	public void Readied() {
+		image.color = Color.green;
+	}
 }

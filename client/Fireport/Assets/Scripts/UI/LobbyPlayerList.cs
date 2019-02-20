@@ -1,4 +1,5 @@
-﻿using Model.Message;
+﻿using System.Collections.Generic;
+using Model.Message;
 using Network;
 using UnityEngine;
 using Utils;
@@ -26,7 +27,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		if (messageType == MsgTypes.LOBBY)
 		{
 			var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
-			updatePlayers(lobbyMsg.players.ToArray());
+			updatePlayers(lobbyMsg.players.ToArray(), lobbyMsg.readyStatus);
 		} else if (messageType == MsgTypes.GAME_START) {
 			Goto.Go("GameScene");	
 		}else {
@@ -34,7 +35,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		}
 	}
 
-	public void updatePlayers(string[] playerNames)
+	public void updatePlayers(string[] playerNames, Dictionary<string, bool> readyStatus)
 	{
 		foreach (Transform child in transform) {
 			Destroy(child.gameObject);
@@ -43,6 +44,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 		{
 			var rowItem = Instantiate(playerRowPrefab, transform);
 			rowItem.label.text = player;
+			if (readyStatus.ContainsKey(player) && readyStatus[player]) rowItem.Readied();
 			// TODO: Put ready image there, too.
 		}
 	}
