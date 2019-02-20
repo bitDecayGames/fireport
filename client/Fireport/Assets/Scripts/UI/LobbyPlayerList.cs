@@ -13,7 +13,7 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 	{
 		WebSocketListener.Instance().Subscribe(this);
 		LobbyInfoController lobbyInfo = LobbyInfoController.Instance();
-		updatePlayers(lobbyInfo.msg.players.ToArray());
+		updatePlayers(lobbyInfo.msg.players.ToArray(), lobbyInfo.msg.readyStatus);
 		WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () =>
 		{
 			Debug.Log("I'm listening now");
