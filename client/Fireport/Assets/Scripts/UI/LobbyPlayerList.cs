@@ -23,10 +23,11 @@ public class LobbyPlayerList : MonoBehaviour, IDownStreamSubscriber
 
 	public void handleDownStreamMessage(string messageType, string message)
 	{
-		Debug.Log("Got downstream message");
+		Debug.Log("Got downstream message: \n" + message);
 		if (messageType == MsgTypes.LOBBY)
 		{
 			var lobbyMsg = JsonUtility.FromJson<LobbyMessage>(message);
+			Debug.Log("Ready status: " + lobbyMsg.readyStatus);
 			updatePlayers(lobbyMsg.players.ToArray(), lobbyMsg.readyStatus);
 		} else if (messageType == MsgTypes.GAME_START) {
 			Goto.Go("GameScene");	

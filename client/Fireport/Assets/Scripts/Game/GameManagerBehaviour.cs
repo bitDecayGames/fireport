@@ -35,7 +35,10 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         WebSocketListener.Instance().Subscribe(this);
 
         lobbyInfo = LobbyInfoController.Instance();
-        
+        WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
+            Debug.Log("I'm listening...");
+        });
+
         CardTray = FindObjectOfType<CardTrayBehaviour>();
         CardTray.OnSelected.AddListener(OnCardSelections);
         
