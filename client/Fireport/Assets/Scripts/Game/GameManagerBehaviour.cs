@@ -56,6 +56,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     public void OnCardSelections(List<CardBehaviour> selections) {
         if (selections.Count >= MAX_CARD_SELECTIONS) { // TODO: MW change this to be on click of a submit button
             CardTray.SetCards(new List<CardState>());
+            CardTray.Hide();
             Api.SubmitTurn(
                 lobbyInfo.msg.id,
                 currentTurn,

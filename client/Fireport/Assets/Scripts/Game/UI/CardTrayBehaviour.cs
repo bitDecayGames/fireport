@@ -43,6 +43,8 @@ namespace Game.UI {
 		public void ClearCards() {
 			cards.ForEach(c => Destroy(c.gameObject));
 			cards.Clear();
+			selectedCards.Clear();
+			OnSelected.Invoke(selectedCards);
 		}
 
 		public void CardSelected(CardBehaviour card) {
@@ -75,6 +77,17 @@ namespace Game.UI {
 				ClearSelectedCards();
 			}
 			else Slider.Show();
+		}
+
+		public void Hide() {
+			if (Slider.IsShown) {
+				Slider.Hide();
+				ClearSelectedCards();
+			}
+		}
+
+		public void Show() {
+			Slider.Show();
 		}
 	
 		[Serializable]
