@@ -1,3 +1,4 @@
+using AI;
 using Network;
 using UnityEngine;
 using Utils;
@@ -23,6 +24,12 @@ namespace MainSceneScripts {
             Api.ReadyUp(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
                 Debug.Log("I'm ready!");
             });
+        }
+
+        public void AddDumbAi() {
+            GameObject go = new GameObject();
+            var dumbAi = go.AddComponent<DumbAI>();
+            dumbAi.Initialize();
         }
     }
 }
