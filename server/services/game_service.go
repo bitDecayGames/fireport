@@ -21,6 +21,7 @@ type GameService interface {
 	CreateGame(lobby Lobby) *GameInstance
 	SubmitTurn(submit pogo.TurnSubmissionMsg) error
 	GetCurrentTurn(gameID string) (int, error)
+	GetCurrentState(gameID string) (*pogo.GameState, error)
 	SubmitSimpleTestTurn(gameID string, playerName string, playerID int, cards []int) error
 }
 
@@ -103,6 +104,18 @@ func (g *GameServiceImpl) GetCurrentTurn(gameID string) (int, error) {
 	defer game.Lock.Unlock()
 
 	return game.CurrentTurn, nil
+}
+
+// GetCurrentState returns the current state of an active game, or an error
+// if not game is found with the given ID
+func (g *GameServiceImpl) GetCurrentState(gameID string) (*pogo.GameState, error) {
+	game, err := g.lockActiveGame(gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer game.Lock.Unlock()
+
+	return &game.State, nil
 }
 
 // SubmitTurn will accept client input and step the game once all players have a submission
