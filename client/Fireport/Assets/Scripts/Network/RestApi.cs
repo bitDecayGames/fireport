@@ -55,15 +55,21 @@ namespace Network {
             StartCoroutine(req.Put());
         }
 
-        public void GetCurrentTurn(string gameId, Action onSuccess) {
+        public void GetCurrentTurn(string gameId, Action<CurrentTurnMessage> onSuccess) {
             var req = new RESTEasyRequest();
-            req.Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
+            req.Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn").OnSuccess((resp, status) => {
+                var msg = JsonUtility.FromJson<CurrentTurnMessage>(resp);
+                onSuccess(msg);
+            }).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Get());
         }
 
-        public void GetGameState(string gameId, int turn, string playerName, int playerId, Action onSuccess) {
+        public void GetGameState(string gameId, Action<CurrentStateMessage> onSuccess) {
             var req = new RESTEasyRequest();
-            req.Body(JsonUtility.ToJson("{}")).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + playerName).OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
+            req.Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/state").OnSuccess((resp, status) => {
+                var msg = JsonUtility.FromJson<CurrentStateMessage>(resp);
+                onSuccess(msg);
+            }).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Get());
         }
 
