@@ -51,6 +51,7 @@ namespace Network {
                 input.cardID = cardIds[i];
                 body.inputs.Add(input);
             }
+            Debug.Log(string.Format("Card submissions: {0}", body));
             req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/game/" + gameId + "/turn/" + playerName).OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
