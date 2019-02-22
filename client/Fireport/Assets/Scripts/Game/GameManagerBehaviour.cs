@@ -73,7 +73,8 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
 
         switch (messageType) {
             case MsgTypes.TURN_RESULT:
-                var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
+                var turnResultMsg = TurnResultMessage.FromJson(message);
+                Debug.Log("Animations: " + turnResultMsg.currentState.Animations);
                 applyAnimations(turnResultMsg.previousState, turnResultMsg.currentState, () => {
                     nextState(turnResultMsg.currentState);
                 });
@@ -92,7 +93,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         this.onAnimationFinish = onAnimationFinish;
         
         var gamePieces = new List<GamePieceBehaviour>();
-        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>()); // TODO: MW this is highly ineffective
+        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>()); // TODO: MW this is highly inefficient
         
         AnimationEngine.Play(next.Animations, gamePieces);
     }
@@ -110,7 +111,6 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         Board.Populate(currentState); // TODO: MW I'm guessing we will run into problems by just continually rebuilding the board each key frame.  I imagine we will need to do some smart reloading/updating instead of just replacing.
         currentPlayer = currentState.Players.Find(p => p.Name == lobbyInfo.playerName);
         lobbyInfo.playerId = currentPlayer.ID;
-        Debug.Log(string.Format("Cards in Hand: {0} Deck: {1} Discard: {2}", currentPlayer.Hand.Count, currentPlayer.Deck.Count, currentPlayer.Discard.Count));
         Debug.Log("Got current player: " + JsonUtility.ToJson(currentPlayer));
         
         if (currentState.IsGameFinished) addToActivityStream("Game Over! A winner is: " + currentState.Winner);

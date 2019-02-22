@@ -38,7 +38,7 @@ namespace AnimationEngine {
                         break;
                     default:
                         // TODO: MW maybe we want to throw here? but I suspect not for stability's sake
-                        Debug.LogError("Failed to find an animation behaviour factory method for animation: " + animationAction.Name);
+                        Debug.LogWarning("Failed to find an animation behaviour factory method for animation: " + animationAction.Name);
                         behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
                         break;
                 }
