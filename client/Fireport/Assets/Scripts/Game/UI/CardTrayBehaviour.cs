@@ -73,10 +73,8 @@ namespace Game.UI {
 		public void ToggleShow() {
 			// TODO: MW do something visually with the button here
 			if (Slider.IsShown) {
-				Slider.Hide();
-				ClearSelectedCards();
-			}
-			else Slider.Show();
+				Hide();
+			} else Show();
 		}
 
 		public void Hide() {
@@ -87,7 +85,7 @@ namespace Game.UI {
 		}
 
 		public void Show() {
-			Slider.Show();
+			if (cards != null && cards.Count > 0) Slider.Show();
 		}
 
 		private void SendSelectedCards() {

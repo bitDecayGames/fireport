@@ -115,6 +115,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         
         if (currentState.IsGameFinished) addToActivityStream("Game Over! A winner is: " + currentState.Winner);
         CardTray.SetCards(currentPlayer.Hand);
+        CardTray.Show();
         playerStateToInfoText();
     }
 

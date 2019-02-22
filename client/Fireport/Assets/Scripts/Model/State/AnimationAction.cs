@@ -29,7 +29,7 @@ namespace Model.State {
             if (data.ContainsKey("Name")) a.Name = (string) data["Name"];
             if (data.ContainsKey("Owner")) a.Owner = (int) (long) data["Owner"];
             if (data.ContainsKey("Time")) a.Time = (float) (double) data["Time"];
-            else a.Time = 1f;
+            else a.Time = 0.25f;
             return a;
         }
     }
