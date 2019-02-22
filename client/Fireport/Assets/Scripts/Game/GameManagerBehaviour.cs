@@ -43,7 +43,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         AnimationEngine.OnComplete.AddListener(onAnimationsComplete);
         
         lobbyInfo = LobbyInfoController.Instance();
-        WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
+        if (lobbyInfo != null && lobbyInfo.msg != null) WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
             Debug.Log("I'm listening...");
             if (lobbyInfo.gameStartMessage != null) handleDownStreamMessage(MsgTypes.GAME_START, lobbyInfo.gameStartMessage);
         });
