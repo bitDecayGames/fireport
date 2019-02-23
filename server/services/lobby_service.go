@@ -107,7 +107,12 @@ func (l *LobbyServiceImpl) LeaveLobby(lobbyID string, msg pogo.LobbyLeaveMsg) (L
 		return Lobby{}, fmt.Errorf("lobby '%v' does not have player '%v'", lobbyID, msg.PlayerID)
 	}
 
+	conn, ok := lobby.ActiveConnections[msg.PlayerID]
+	if ok {
+		conn.Close()
+	}
 	delete(lobby.ActiveConnections, msg.PlayerID)
+
 	lobby.Players = append(lobby.Players[0:playerNum], lobby.Players[playerNum+1:]...)
 	return *lobby, nil
 }

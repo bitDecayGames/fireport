@@ -121,14 +121,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, TestPlayer1)
 	t.Logf("Path: %v", path)
-
-	u := url.URL{Scheme: "ws", Host: fmt.Sprintf(`localhost:%v`, port), Path: path}
-
-	t.Logf("Connecting to: %v", u)
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	if err != nil {
-		t.Fatalf("dial: %v", err)
-	}
+	c := getWebsocketConnection(t, port, path)
 	defer c.Close()
 
 	go func() {
@@ -226,6 +219,20 @@ func TestLeavingLobby(t *testing.T) {
 	}
 	assert.Equal(t, playerName, lobbies[lobbyID].Players[0])
 
+	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, playerName)
+	t.Logf("Path: %v", path)
+	c := getWebsocketConnection(t, port, path)
+
+	badLeaveMsg := pogo.LobbyLeaveMsg{
+		PlayerID: "nobody",
+	}
+	resp, err := put(port, leaveEndpoint, badLeaveMsg)
+	if !assert.NotNil(t, err) {
+		t.Fatal("Expected error not to be nil")
+	}
+
+	assert.Contains(t, string(resp), fmt.Sprintf("lobby '%v' does not have player 'nobody'", lobbyID))
+
 	// Leave our lobby
 	leaveMsg := pogo.LobbyLeaveMsg{
 		PlayerID: playerName,
@@ -237,19 +244,21 @@ func TestLeavingLobby(t *testing.T) {
 	}
 
 	lobbies = svcs.Lobby.GetLobbiesSnapshot()
-	if !assert.Len(t, lobbies[lobbyID].Players, 0) {
-		t.Fatal("expected 0 players in game lobby")
+	if !assert.Len(t, lobbies, 0) {
+		t.Fatal("expected lobby to be closed automatically")
 	}
 
-	//_, err = put(port, LobbyRoute+"/join", joinMsg)
-	//if !assert.Nil(t, err) {
-	//	t.Fatal(err)
-	//}
+	_, _, err = c.ReadMessage()
+	assert.NotNil(t, err)
+}
 
-	resp, err := put(port, leaveEndpoint, leaveMsg)
-	if !assert.NotNil(t, err) {
-		t.Fatal("Expected error not to be nil")
+func getWebsocketConnection(t *testing.T, port int, path string) *websocket.Conn {
+	u := url.URL{Scheme: "ws", Host: fmt.Sprintf(`localhost:%v`, port), Path: path}
+
+	t.Logf("Connecting to: %v", u)
+	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	if err != nil {
+		t.Fatalf("dial: %v", err)
 	}
-
-	assert.Contains(t, string(resp), fmt.Sprintf("lobby '%v' does not have player '%v'", lobbyID, playerName))
+	return c
 }
