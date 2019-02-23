@@ -215,6 +215,7 @@ func (l *LobbyServiceImpl) Close(lobbyID string) (Lobby, bool) {
 		return Lobby{}, false
 	}
 
+	fmt.Println("Closing lobby: ", lobbyID)
 	delete(l.activeLobbies, lobbyID)
 	return *lobby, true
 }

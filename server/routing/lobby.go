@@ -109,6 +109,7 @@ func (lr *LobbyRoutes) lobbyLeaveHandler(w http.ResponseWriter, r *http.Request)
 	if len(lobby.Players) == 0 {
 		// close empty lobbies
 		lr.Services.Lobby.Close(lobbyID)
+		return
 	}
 
 	PublishMessage(msg, lobby)
