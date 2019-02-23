@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using AnimationEngine;
 using Game;
 using Game.UI;
 using Model.Message;
@@ -16,6 +17,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     public TextMeshProUGUI ActivityText;
     public TextMeshProUGUI PlayerInfoText;
 
+    private AnimationEngineBehaviour AnimationEngine;
     private RestApi Api;
     private CardTrayBehaviour CardTray;
     private GameBoardBehaviour Board;
@@ -25,17 +27,26 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     private GameState currentState;
     private PlayerState currentPlayer;
 
+    private Action onAnimationFinish;
+
     void Start() {
-        Api = GetComponent<RestApi>();
+        Api = FindObjectOfType<RestApi>();
         
         WebSocketListener.Instance().Subscribe(this);
 
-        lobbyInfo = LobbyInfoController.Instance();
-        
         CardTray = FindObjectOfType<CardTrayBehaviour>();
         CardTray.OnSelected.AddListener(OnCardSelections);
         
         Board = FindObjectOfType<GameBoardBehaviour>();
+
+        AnimationEngine = FindObjectOfType<AnimationEngineBehaviour>();
+        AnimationEngine.OnComplete.AddListener(onAnimationsComplete);
+        
+        lobbyInfo = LobbyInfoController.Instance();
+        if (lobbyInfo != null && lobbyInfo.msg != null) WebSocketListener.Instance().StartListening(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
+            Debug.Log("I'm listening...");
+            if (lobbyInfo.gameStartMessage != null) handleDownStreamMessage(MsgTypes.GAME_START, lobbyInfo.gameStartMessage);
+        });
     }
 
     private void OnDestroy() {
@@ -45,7 +56,9 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
     public void OnCardSelections(List<CardBehaviour> selections) {
         if (selections.Count >= MAX_CARD_SELECTIONS) { // TODO: MW change this to be on click of a submit button
             CardTray.SetCards(new List<CardState>());
-            Api.SubmitTurn(lobbyInfo.msg.id,
+            CardTray.Hide();
+            Api.SubmitTurn(
+                lobbyInfo.msg.id,
                 currentTurn,
                 lobbyInfo.playerName,
                 lobbyInfo.playerId,
@@ -60,10 +73,15 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
 
         switch (messageType) {
             case MsgTypes.TURN_RESULT:
-                var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
-                applyAnimations(turnResultMsg.animations, turnResultMsg.previousState, turnResultMsg.currentState, () => {
+                var turnResultMsg = TurnResultMessage.FromJson(message);
+                Debug.Log("Animations: " + turnResultMsg.currentState.Animations);
+                applyAnimations(turnResultMsg.previousState, turnResultMsg.currentState, () => {
                     nextState(turnResultMsg.currentState);
                 });
+                break;
+            case MsgTypes.GAME_START:
+                var gameStartMessage = JsonUtility.FromJson<GameStartMessage>(message);
+                nextState(gameStartMessage.gameState);
                 break;
             default:
                 addToActivityStream("Message unhandled: " + messageType);
@@ -71,11 +89,20 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         }
     }
 
-    private void applyAnimations(List<AnimationAction> animations, GameState previous, GameState next, Action onAnimationFinish) {
-        // TODO: MW do something with these animations
-        animations.ForEach(a => addToActivityStream("Action: " + a.Name));
-        // TODO: MW call this when all animations finish
-        onAnimationFinish();
+    private void applyAnimations(GameState previous, GameState next, Action onAnimationFinish) {
+        this.onAnimationFinish = onAnimationFinish;
+        
+        var gamePieces = new List<GamePieceBehaviour>();
+        gamePieces.AddRange(FindObjectsOfType<GamePieceBehaviour>()); // TODO: MW this is highly inefficient
+        
+        AnimationEngine.Play(next.Animations, gamePieces);
+    }
+
+    private void onAnimationsComplete() {
+        if (onAnimationFinish != null) {
+            onAnimationFinish();
+            onAnimationFinish = null;
+        }
     }
 
     private void nextState(GameState next) {
@@ -84,11 +111,11 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         Board.Populate(currentState); // TODO: MW I'm guessing we will run into problems by just continually rebuilding the board each key frame.  I imagine we will need to do some smart reloading/updating instead of just replacing.
         currentPlayer = currentState.Players.Find(p => p.Name == lobbyInfo.playerName);
         lobbyInfo.playerId = currentPlayer.ID;
-        Debug.Log(string.Format("Cards in Hand: {0} Deck: {1} Discard: {2}", currentPlayer.Hand.Count, currentPlayer.Deck.Count, currentPlayer.Discard.Count));
         Debug.Log("Got current player: " + JsonUtility.ToJson(currentPlayer));
         
         if (currentState.IsGameFinished) addToActivityStream("Game Over! A winner is: " + currentState.Winner);
         CardTray.SetCards(currentPlayer.Hand);
+        CardTray.Show();
         playerStateToInfoText();
     }
 

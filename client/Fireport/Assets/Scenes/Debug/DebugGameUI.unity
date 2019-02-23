@@ -486,16 +486,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114923440239398256, guid: 7274b3b7187df48b68d6da4d67214bc6,
-        type: 2}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114923440239398256, guid: 7274b3b7187df48b68d6da4d67214bc6,
-        type: 2}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 114886889090504466, guid: 7274b3b7187df48b68d6da4d67214bc6,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -515,6 +505,21 @@ Prefab:
         type: 2}
       propertyPath: m_isInputParsingRequired
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114923440239398256, guid: 7274b3b7187df48b68d6da4d67214bc6,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114923440239398256, guid: 7274b3b7187df48b68d6da4d67214bc6,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114442546448888918, guid: 7274b3b7187df48b68d6da4d67214bc6,
+        type: 2}
+      propertyPath: m_Color.a
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224872435633250040, guid: 7274b3b7187df48b68d6da4d67214bc6,
         type: 2}
@@ -579,6 +584,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d04ef124fde94e72a4072dc70289ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ActivityText: {fileID: 0}
+  PlayerInfoText: {fileID: 0}
 --- !u!114 &1887004117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,7 +641,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_TargetDisplay: 0
 --- !u!224 &1887004120
 RectTransform:

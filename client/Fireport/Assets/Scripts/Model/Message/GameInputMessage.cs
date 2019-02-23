@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Model.Message {
     [Serializable]
@@ -7,5 +8,9 @@ namespace Model.Message {
         public int owner;
         public int order;
         public int swap;
+
+        public override string ToString() {
+            return JsonUtility.ToJson(this);
+        }
     }
 }

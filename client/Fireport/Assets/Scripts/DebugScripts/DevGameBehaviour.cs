@@ -139,7 +139,7 @@ namespace DebugScripts {
                     break;
                 case MsgTypes.TURN_RESULT:
                     var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
-                    turnResultMsg.animations.ForEach(a => addToActivityStream("Action: " + a.Name));
+                    turnResultMsg.currentState.Animations.ForEach(aL => aL.ForEach(a => addToActivityStream("Action: " + a.Name)));
                     nextState(turnResultMsg.currentState);
                     break;
                 default:

@@ -80,7 +80,7 @@ type UpdatedMustAlwaysMoveForwardRule struct{}
 // Apply apply this rule
 func (r *UpdatedMustAlwaysMoveForwardRule) Apply(a *pogo.GameState, b *pogo.GameState) error {
 	if a.Updated >= b.Updated {
-		return fmt.Errorf("updated date much change for each new game state")
+		return fmt.Errorf("updated date must change for each new game state")
 	}
 	return nil
 }

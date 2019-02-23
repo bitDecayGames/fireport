@@ -43,6 +43,8 @@ namespace Game.UI {
 		public void ClearCards() {
 			cards.ForEach(c => Destroy(c.gameObject));
 			cards.Clear();
+			selectedCards.Clear();
+			SendSelectedCards();
 		}
 
 		public void CardSelected(CardBehaviour card) {
@@ -58,23 +60,38 @@ namespace Game.UI {
 					selectedCards[i].SetOrder(i + 1, cards.Count);
 				}
 
-				OnSelected.Invoke(selectedCards);
+				SendSelectedCards();
 			}
 		}
 
 		public void ClearSelectedCards() {
 			selectedCards.ForEach(c => c.SetOrder(0, cards.Count));
 			selectedCards.Clear();
-			OnSelected.Invoke(selectedCards);
+			SendSelectedCards();
 		}
 
 		public void ToggleShow() {
 			// TODO: MW do something visually with the button here
 			if (Slider.IsShown) {
+				Hide();
+			} else Show();
+		}
+
+		public void Hide() {
+			if (Slider.IsShown) {
 				Slider.Hide();
 				ClearSelectedCards();
 			}
-			else Slider.Show();
+		}
+
+		public void Show() {
+			if (cards != null && cards.Count > 0) Slider.Show();
+		}
+
+		private void SendSelectedCards() {
+			var tmp = new List<CardBehaviour>();
+			tmp.AddRange(selectedCards);
+			OnSelected.Invoke(tmp);
 		}
 	
 		[Serializable]

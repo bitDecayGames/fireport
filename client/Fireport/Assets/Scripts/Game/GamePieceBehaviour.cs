@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace Game {
@@ -8,5 +9,21 @@ namespace Game {
     /// </summary>
     public class GamePieceBehaviour : MonoBehaviour {
         public int Id;
+
+        private bool debug = true;
+
+        void Start() {
+            if (debug) {
+                var go = new GameObject("GamePieceIdDebugLabel");
+                var t = go.transform;
+                t.parent = transform;
+                t.localPosition = new Vector3();
+                var tmp = go.AddComponent<TextMeshPro>();
+                tmp.text = "" + Id;
+                tmp.fontSize = 4;
+                tmp.alignment = TextAlignmentOptions.Center;
+                tmp.sortingOrder = GetComponentInChildren<Renderer>().sortingOrder + 1;
+            }
+        }
     }
 }

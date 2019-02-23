@@ -37,9 +37,9 @@ type GameErrorMsg struct {
 type TurnResultMsg struct {
 	TypedMsg
 
-	GameID        string                       `json:"gameID"`
-	PreviousState GameState                    `json:"previousState"`
-	CurrentState  GameState                    `json:"currentState"`
+	GameID        string    `json:"gameID"`
+	PreviousState GameState `json:"previousState"`
+	CurrentState  GameState `json:"currentState"`
 }
 
 // TurnSubmissionMsg is a full turn of actions submitted by a player
@@ -75,4 +75,12 @@ type CurrentTurnMsg struct {
 
 	GameID      string `json:"gameID"`
 	CurrentTurn int    `json:"currentTurn"`
+}
+
+// CurrentStateMsg contains information of what state a game is at
+type CurrentStateMsg struct {
+	TypedMsg
+
+	GameID       string    `json:"gameID"`
+	CurrentState GameState `json:"currentState"`
 }

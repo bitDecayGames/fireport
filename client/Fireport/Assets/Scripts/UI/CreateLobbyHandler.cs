@@ -14,9 +14,10 @@ public class CreateLobbyHandler : MonoBehaviour
 	public RestApi Api;
 	public GoToScene sceneChanger;
 
-	public LobbyInfoController lobbyInfo;
-
 	void Start () {
+		WebSocketListener.Instance();
+		LobbyInfoController.Instance();
+		
 		LobbyInfoController.ClearLobbyObject();
 		PlayerNameInputField.onValueChanged.AddListener(UpdateInput);
 		CreateLobbyButton.onClick.AddListener(CreateLobby);
@@ -31,7 +32,7 @@ public class CreateLobbyHandler : MonoBehaviour
 		if (!string.IsNullOrEmpty(PlayerNameInputField.text)) {
 			Api.CreateLobby((createRespBody) => {
 				Api.JoinLobby(createRespBody, PlayerNameInputField.text, (body) => {
-					lobbyInfo = LobbyInfoController.Instance();
+					var lobbyInfo = LobbyInfoController.Instance();
 					lobbyInfo.msg = JsonUtility.FromJson<LobbyMessage>(body);
 					lobbyInfo.playerName = PlayerNameInputField.text;
 					sceneChanger.Go("LobbyScene");
