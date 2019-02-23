@@ -7,7 +7,7 @@ public class LobbyInfoController : MonoBehaviour
 	private static LobbyInfoController instance = null;
 
 	public static LobbyInfoController Instance() {
-		if (instance == null) {
+		if (!instance) {
 			var go = new GameObject(objectName);
 			instance = go.AddComponent<LobbyInfoController>();
 		}
@@ -23,8 +23,13 @@ public class LobbyInfoController : MonoBehaviour
 	public int playerId;
 	
 	public LobbyMessage msg;
+	public string gameStartMessage;
 
 	public static void ClearLobbyObject() {
-		if (instance != null) Destroy(instance.gameObject);
+		if (instance != null) {
+			instance.msg = null;
+			instance.playerId = 0;
+			instance.playerName = null;
+		}
 	}
 }

@@ -24,7 +24,7 @@ type GameRoutes struct {
 func (gr *GameRoutes) AddRoutes(r *mux.Router) {
 	r.HandleFunc(gameRoute+"/{gameID}/turn", gr.getCurrentTurnHandler).Methods("GET")
 	r.HandleFunc(gameRoute+"/{gameID}/turn/{playerName}", gr.submitCardsHandler).Methods("PUT")
-	r.HandleFunc(gameRoute+"/{gameID}/turn/{playerName}", gr.getGameStateHandler).Methods("GET")
+	r.HandleFunc(gameRoute+"/{gameID}/turn/state", gr.getGameStateHandler).Methods("GET")
 }
 
 // submitCardsHandler handles a player request to submit cards for the given turn
@@ -72,5 +72,26 @@ func (gr *GameRoutes) getCurrentTurnHandler(w http.ResponseWriter, r *http.Reque
 
 // getGameStateHandler returns the current state of the game for the requested turn
 func (gr *GameRoutes) getGameStateHandler(w http.ResponseWriter, r *http.Request) {
-	panic("Not yet implemented")
+	vars := mux.Vars(r)
+	gameID := vars["gameID"]
+	//submissionTurn := vars["turn"]
+
+	state, err := gr.Services.Game.GetCurrentState(gameID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	msg := pogo.CurrentStateMsg{
+		GameID:       gameID,
+		CurrentState: *state,
+	}
+
+	bytes, err := json.Marshal(msg)
+	if err != nil {
+		http.Error(w, "failed to marshal response", http.StatusNotFound)
+		return
+	}
+
+	w.Write(bytes)
 }

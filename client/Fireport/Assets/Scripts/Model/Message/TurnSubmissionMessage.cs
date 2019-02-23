@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Network;
+using UnityEngine;
 
 namespace Model.Message {
     [System.Serializable]
@@ -6,5 +8,9 @@ namespace Model.Message {
         public string gameID;
         public string playerID;
         public List<GameInputMessage> inputs = new List<GameInputMessage>();
+
+        public override string ToString() {
+            return JsonUtility.ToJson(this);
+        }
     }
 }

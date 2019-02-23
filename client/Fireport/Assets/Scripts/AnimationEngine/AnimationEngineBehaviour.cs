@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game;
 using Model.State;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AnimationEngine {
     /// <summary>
@@ -16,6 +17,8 @@ namespace AnimationEngine {
         private int currentGroup;
         private bool isRunningGroup;
         private bool isPaused;
+
+        public UnityEvent OnComplete = new UnityEvent();
 
         void Update() {
             if (isRunningGroup && IsCurrentGroupFinished()) {
@@ -54,7 +57,7 @@ namespace AnimationEngine {
                 });
                 currentGroup = -1;
                 PlayNextGroup();
-            }
+            } else OnComplete.Invoke();
         }
 
         private void PlayNextGroup() {
@@ -63,7 +66,10 @@ namespace AnimationEngine {
             if (currentGroup < behaviours.Count) {
                 behaviours[currentGroup].ForEach(a => a.Play());
                 isRunningGroup = true;
-            } else isRunningGroup = false;
+            } else {
+                isRunningGroup = false;
+                OnComplete.Invoke();
+            }
         }
 
         private bool IsCurrentGroupFinished() {
@@ -107,6 +113,7 @@ namespace AnimationEngine {
                 behaviours[currentGroup].ForEach(a => a.Stop());
                 isPaused = false;
                 isRunningGroup = false;
+                OnComplete.Invoke();
             }
         }
     }

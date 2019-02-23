@@ -120,12 +120,10 @@ func (a *TurnCounterClockwise90Action) Apply(currentState *pogo.GameState) (*pog
 	if player == nil {
 		return nextState, fmt.Errorf("there is no player with id %v", a.GetOwner())
 	}
-	fmt.Println("PLAYER WAS FACING: ", player.Facing)
 	player.Facing = player.Facing - 1
 	if player.Facing < 0 {
 		player.Facing = 3
 	}
-	fmt.Println("PLAYER NOW FACING: ", player.Facing)
 
 	return nextState, nil
 }

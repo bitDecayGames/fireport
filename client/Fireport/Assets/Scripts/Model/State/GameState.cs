@@ -12,6 +12,7 @@ namespace Model.State {
         public List<PlayerState> Players;
         public int BoardWidth;
         public int BoardHeight;
+        public List<List<AnimationAction>> Animations;
         /// <summary>
         /// Board spaces are laid out like:
         ///
