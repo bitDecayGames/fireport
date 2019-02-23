@@ -196,3 +196,60 @@ func TestBadLobbyRequest(t *testing.T) {
 	}
 	assert.Contains(t, string(resp), "no lobby found with ID 'no-such-lobby'")
 }
+
+func TestLeavingLobby(t *testing.T) {
+	port, svcs := startTestServer()
+
+	// Create our lobby
+	lobbyIDBytes, err := post(port, LobbyRoute, []byte{})
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbyID := string(lobbyIDBytes)
+	playerName := "playerJuan"
+	leaveEndpoint := fmt.Sprintf("%v/%v/leave", LobbyRoute, lobbyID)
+
+	joinMsg := pogo.LobbyJoinMsg{
+		LobbyID:  lobbyID,
+		PlayerID: playerName,
+	}
+
+	_, err = put(port, LobbyRoute+"/join", joinMsg)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies := svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
+		t.Fatal("expected 1 players in game lobby")
+	}
+	assert.Equal(t, playerName, lobbies[lobbyID].Players[0])
+
+	// Leave our lobby
+	leaveMsg := pogo.LobbyLeaveMsg{
+		PlayerID: playerName,
+	}
+
+	_, err = put(port, leaveEndpoint, leaveMsg)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies[lobbyID].Players, 0) {
+		t.Fatal("expected 0 players in game lobby")
+	}
+
+	//_, err = put(port, LobbyRoute+"/join", joinMsg)
+	//if !assert.Nil(t, err) {
+	//	t.Fatal(err)
+	//}
+
+	resp, err := put(port, leaveEndpoint, leaveMsg)
+	if !assert.NotNil(t, err) {
+		t.Fatal("Expected error not to be nil")
+	}
+
+	assert.Contains(t, string(resp), fmt.Sprintf("lobby '%v' does not have player '%v'", lobbyID, playerName))
+}

@@ -13,6 +13,13 @@ type LobbyJoinMsg struct {
 	PlayerID string `json:"playerID"`
 }
 
+// LobbyLeaveMsg is a client message for a player to join a lobby
+type LobbyLeaveMsg struct {
+	TypedMsg
+	
+	PlayerID string `json:"playerID"`
+}
+
 // LobbyMsg contains a snapshot of a server lobby for a client
 type LobbyMsg struct {
 	TypedMsg
