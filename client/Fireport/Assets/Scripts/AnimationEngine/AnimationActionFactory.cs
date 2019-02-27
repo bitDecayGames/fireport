@@ -33,6 +33,9 @@ namespace AnimationEngine {
                     case "TurnCounterClockwise90":
                         behaviour = gamePiece.gameObject.AddComponent<RotateCounterClockwiseAnimationBehaviour>();
                         break;
+                    case "DoBumpInto":
+                        behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
+                        break;
                     case "Default":
                         behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
                         break;
