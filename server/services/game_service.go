@@ -226,11 +226,13 @@ func createInitialGameState(lobby Lobby, seedValue int64) pogo.GameState {
 		BoardHeight: 6, // TODO: MW magic number alert
 	}
 
+	gameState.BoardSpaces = createBoard(&gameState)
+	nums := getRandomPlayerSpaces(gameState.RNG, len(lobby.Players), len(gameState.BoardSpaces))
+
 	for i, player := range lobby.Players {
-		playerStates = append(playerStates, createInitialPlayerState(player, i, &gameState))
+		playerStates = append(playerStates, createInitialPlayerState(player, nums[i], &gameState))
 	}
 
-	gameState.BoardSpaces = createBoard(&gameState)
 	gameState.Players = playerStates
 
 	// TODO: MW maybe this shouldn't go here? Like maybe it should go one up from this method
@@ -240,6 +242,28 @@ func createInitialGameState(lobby Lobby, seedValue int64) pogo.GameState {
 	}
 
 	return *finalState
+}
+
+func getRandomPlayerSpaces(rand *rand.Rand, num, numRange int) []int {
+	if numRange < num {
+		panic("cannot have more players than tile spaces")
+	}
+	nums := make([]int, 0)
+	valid := true
+	for len(nums) < num {
+		pick := rand.Intn(numRange)
+
+		for _, i := range nums {
+			if i == pick {
+				valid = false
+			}
+		}
+		
+		if valid {
+			nums = append(nums, pick)
+		}
+	}
+	return nums
 }
 
 // createInitialCards returns a slice of CardStates for the initial discard pile, can probably be refactored to pull a list of playable/implimented cards
