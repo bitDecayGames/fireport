@@ -26,6 +26,16 @@ namespace MainSceneScripts {
             });
         }
 
+        public void Leave()
+        {
+            WebSocketListener.Instance().StopListening();
+            var lobbyInfo = LobbyInfoController.Instance();
+            Api.LeaveLobby(lobbyInfo.msg.id, lobbyInfo.playerName, () => {
+                Debug.Log("I left the lobby");
+                Goto.Go("MainMenuScene");
+            });
+        }
+
         public void AddDumbAi() {
             GameObject go = new GameObject();
             var dumbAi = go.AddComponent<DumbAI>();

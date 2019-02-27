@@ -14,6 +14,7 @@ type LobbyModFunc = func(*Lobby)
 type LobbyService interface {
 	CreateLobby() *Lobby
 	JoinLobby(pogo.LobbyJoinMsg) (Lobby, error)
+	LeaveLobby(string, pogo.LobbyLeaveMsg) (Lobby, error)
 	ReadyPlayer(string, pogo.PlayerReadyMsg) (Lobby, error)
 	RegisterConnection(string, string, PlayerConnection) error
 	IsReady(string) (bool, bool)
@@ -81,6 +82,38 @@ func (l *LobbyServiceImpl) JoinLobby(msg pogo.LobbyJoinMsg) (Lobby, error) {
 
 	lobby.Players = append(lobby.Players, msg.PlayerID)
 	lobby.PlayerReady[msg.PlayerID] = false
+	return *lobby, nil
+}
+
+// LeaveLobby will remove the player to the lobby, if it exists, or an error
+func (l *LobbyServiceImpl) LeaveLobby(lobbyID string, msg pogo.LobbyLeaveMsg) (Lobby, error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	lobby, ok := l.activeLobbies[lobbyID]
+	if !ok {
+		return Lobby{}, fmt.Errorf("no lobby found with ID '%v'", lobbyID)
+	}
+
+	playerNum := -1
+	for i, p := range lobby.Players {
+		if p == msg.PlayerID {
+			playerNum = i
+			break
+		}
+	}
+
+	if playerNum == -1 {
+		return Lobby{}, fmt.Errorf("lobby '%v' does not have player '%v'", lobbyID, msg.PlayerID)
+	}
+
+	conn, ok := lobby.ActiveConnections[msg.PlayerID]
+	if ok {
+		conn.Close()
+	}
+	delete(lobby.ActiveConnections, msg.PlayerID)
+
+	lobby.Players = append(lobby.Players[0:playerNum], lobby.Players[playerNum+1:]...)
 	return *lobby, nil
 }
 
@@ -182,6 +215,7 @@ func (l *LobbyServiceImpl) Close(lobbyID string) (Lobby, bool) {
 		return Lobby{}, false
 	}
 
+	fmt.Println("Closing lobby: ", lobbyID)
 	delete(l.activeLobbies, lobbyID)
 	return *lobby, true
 }

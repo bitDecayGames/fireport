@@ -20,6 +20,14 @@ namespace Network {
             req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/join").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
             StartCoroutine(req.Put());
         }
+        
+        public void LeaveLobby(string code, string playerName, Action onSuccess) {
+            var req = new RESTEasyRequest();
+            var body = new LobbyLeaveMessage();
+            body.playerID = playerName;
+            req.Body(JsonUtility.ToJson(body)).Url(State.HTTP_HOST + "/api/v1/lobby/"+code+"/leave").OnSuccess(onSuccess).OnFailure((s, i) => handleFailure(req, s, i));
+            StartCoroutine(req.Put());
+        }
 
         public void ReadyUp(string code, string playerName, Action onSuccess) {
             var req = new RESTEasyRequest();

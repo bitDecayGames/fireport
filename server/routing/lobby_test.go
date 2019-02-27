@@ -121,14 +121,7 @@ func TestLobbyAPI(t *testing.T) {
 
 	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, TestPlayer1)
 	t.Logf("Path: %v", path)
-
-	u := url.URL{Scheme: "ws", Host: fmt.Sprintf(`localhost:%v`, port), Path: path}
-
-	t.Logf("Connecting to: %v", u)
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	if err != nil {
-		t.Fatalf("dial: %v", err)
-	}
+	c := getWebsocketConnection(t, port, path)
 	defer c.Close()
 
 	go func() {
@@ -195,4 +188,77 @@ func TestBadLobbyRequest(t *testing.T) {
 		t.Fatal("Expected bad lobby join to fail")
 	}
 	assert.Contains(t, string(resp), "no lobby found with ID 'no-such-lobby'")
+}
+
+func TestLeavingLobby(t *testing.T) {
+	port, svcs := startTestServer()
+
+	// Create our lobby
+	lobbyIDBytes, err := post(port, LobbyRoute, []byte{})
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbyID := string(lobbyIDBytes)
+	playerName := "playerJuan"
+	leaveEndpoint := fmt.Sprintf("%v/%v/leave", LobbyRoute, lobbyID)
+
+	joinMsg := pogo.LobbyJoinMsg{
+		LobbyID:  lobbyID,
+		PlayerID: playerName,
+	}
+
+	_, err = put(port, LobbyRoute+"/join", joinMsg)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies := svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies[lobbyID].Players, 1) {
+		t.Fatal("expected 1 players in game lobby")
+	}
+	assert.Equal(t, playerName, lobbies[lobbyID].Players[0])
+
+	path := fmt.Sprintf("%v/%v/%v", pubsubRoute, lobbyID, playerName)
+	t.Logf("Path: %v", path)
+	c := getWebsocketConnection(t, port, path)
+
+	badLeaveMsg := pogo.LobbyLeaveMsg{
+		PlayerID: "nobody",
+	}
+	resp, err := put(port, leaveEndpoint, badLeaveMsg)
+	if !assert.NotNil(t, err) {
+		t.Fatal("Expected error not to be nil")
+	}
+
+	assert.Contains(t, string(resp), fmt.Sprintf("lobby '%v' does not have player 'nobody'", lobbyID))
+
+	// Leave our lobby
+	leaveMsg := pogo.LobbyLeaveMsg{
+		PlayerID: playerName,
+	}
+
+	_, err = put(port, leaveEndpoint, leaveMsg)
+	if !assert.Nil(t, err) {
+		t.Fatal(err)
+	}
+
+	lobbies = svcs.Lobby.GetLobbiesSnapshot()
+	if !assert.Len(t, lobbies, 0) {
+		t.Fatal("expected lobby to be closed automatically")
+	}
+
+	_, _, err = c.ReadMessage()
+	assert.NotNil(t, err)
+}
+
+func getWebsocketConnection(t *testing.T, port int, path string) *websocket.Conn {
+	u := url.URL{Scheme: "ws", Host: fmt.Sprintf(`localhost:%v`, port), Path: path}
+
+	t.Logf("Connecting to: %v", u)
+	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+	if err != nil {
+		t.Fatalf("dial: %v", err)
+	}
+	return c
 }
