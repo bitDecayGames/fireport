@@ -41,13 +41,13 @@ namespace Game {
                     rot = 0;
                     break;
                 case 1:
-                    rot = 90;
+                    rot = 270;
                     break;
                 case 2:
                     rot = 180;
                     break;
                 case 3:
-                    rot = 270;
+                    rot = 90;
                     break;
             }
 

@@ -27,10 +27,10 @@ namespace AnimationEngine {
                     case "MoveBackward":
                         behaviour = gamePiece.gameObject.AddComponent<MoveBackwardAnimationBehaviour>();
                         break;
-                    case "RotateClockwise":
+                    case "TurnClockwise90":
                         behaviour = gamePiece.gameObject.AddComponent<RotateClockwiseAnimationBehaviour>();
                         break;
-                    case "RotateCounterClockwise":
+                    case "TurnCounterClockwise90":
                         behaviour = gamePiece.gameObject.AddComponent<RotateCounterClockwiseAnimationBehaviour>();
                         break;
                     case "Default":

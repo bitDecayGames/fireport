@@ -33,6 +33,7 @@ namespace AnimationEngine {
         /// <param name="animations">the animation metadata</param>
         /// <param name="gamePieces">all of the game pieces relevant to these animation actions</param>
         public void Play(List<List<AnimationAction>> animations, List<GamePieceBehaviour> gamePieces) {
+            
             this.gamePieces = gamePieces;
             this.animations = animations;
             if (behaviours != null) {

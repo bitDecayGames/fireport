@@ -23,7 +23,7 @@ namespace DebugScripts {
             });
             animations.Add(new List<AnimationAction>{
                 new AnimationAction(0, "MoveForward", 1, 1),
-                new AnimationAction(0, "RotateClockwise", 0, 1),
+                new AnimationAction(0, "TurnClockwise90", 0, 1),
                 new AnimationAction(0, "MoveBackward", 2, 1),
             });
             animations.Add(new List<AnimationAction>{
@@ -31,7 +31,7 @@ namespace DebugScripts {
             });
             animations.Add(new List<AnimationAction>{
                 new AnimationAction(0, "MoveForward", 2, 2),
-                new AnimationAction(0, "RotateCounterClockwise", 1, 1),
+                new AnimationAction(0, "TurnCounterClockwise90", 1, 1),
                 new AnimationAction(0, "MoveForward", 0, 2),
             });
 
