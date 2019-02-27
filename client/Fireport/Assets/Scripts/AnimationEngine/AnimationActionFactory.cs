@@ -36,6 +36,9 @@ namespace AnimationEngine {
                     case "DoBumpInto":
                         behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
                         break;
+                    case "HitByCanon":
+                        behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
+                        break;
                     case "Default":
                         behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
                         break;
