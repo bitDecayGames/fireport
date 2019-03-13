@@ -117,7 +117,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         CardTray.SetCards(currentPlayer.Hand);
         CardTray.Show();
         playerStateToInfoText();
-        nextState(next);
+        checkForGameEnd(next);
     }
 
     private void addToActivityStream(string message) {
