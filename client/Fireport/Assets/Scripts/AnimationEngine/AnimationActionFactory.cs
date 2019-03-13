@@ -39,6 +39,9 @@ namespace AnimationEngine {
                     case "HitByCanon":
                         behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
                         break;
+                    case "FireCanon":
+                        behaviour = gamePiece.gameObject.AddComponent<FireCannonAnimationBehavior>();
+                        break;
                     case "Default":
                         behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
                         break;
