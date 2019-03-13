@@ -117,10 +117,20 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         CardTray.SetCards(currentPlayer.Hand);
         CardTray.Show();
         playerStateToInfoText();
+        checkForGameEnd(next);
     }
 
     private void addToActivityStream(string message) {
         ActivityText.text = " - " + message + "\n" + ActivityText.text;
+    }
+
+    private void checkForGameEnd(GameState next)
+    {
+        if (next.Winner != 0)
+        {
+            // TODO: Does this trigger at the right time?
+            SceneNavigation.LoadScene("GameOverScene");
+        }
     }
 
     private void playerStateToInfoText() {

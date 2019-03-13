@@ -141,6 +141,7 @@ namespace DebugScripts {
                     var turnResultMsg = JsonUtility.FromJson<TurnResultMessage>(message);
                     turnResultMsg.currentState.Animations.ForEach(aL => aL.ForEach(a => addToActivityStream("Action: " + a.Name)));
                     nextState(turnResultMsg.currentState);
+                    checkForGameEnd(turnResultMsg.currentState);
                     break;
                 default:
                     addToActivityStream("Message unhandled: " + messageType);
@@ -158,6 +159,15 @@ namespace DebugScripts {
             gameStateToInfoText();
             playerStateToInfoText();
             cardStatesToButtonText();
+        }
+
+        private void checkForGameEnd(GameState next)
+        {
+            if (next.Winner != 0)
+            {
+                // TODO: Does this trigger at the right time?
+                SceneNavigation.LoadScene("GameOverScene");
+            }
         }
 
         private void addToActivityStream(string message) {
