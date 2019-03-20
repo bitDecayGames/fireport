@@ -52,7 +52,7 @@ namespace AnimationEngine {
                         behaviours.Add(behaviourGroup);
                         group.ForEach(a => {
                             var animationAction = AnimationActionFactory.AddComponentByAnimationAction(a, GetGameObjectWithId(a.Owner)); 
-                            if (animationAction != null) behaviourGroup.Add(animationAction);
+                            if (animationAction != null) behaviourGroup.AddRange(animationAction);
                         });
                     }
                 });

@@ -29,6 +29,9 @@ namespace Game {
             state.Players.ForEach(playerState => {
                 var playerBehaviour = Factory.Build("Player", board.transform);
                 playerBehaviour.Id = playerState.ID;
+                var health = playerBehaviour.gameObject.GetComponentInChildren<HealthBar>();
+                if(health != null)                
+                    health.setHealth(playerState.Health);                
                 playerBehaviour.transform.localPosition = new Vector3(playerState.Location % state.BoardWidth * GridSizeMultiplier - xOffset, playerState.Location / state.BoardWidth * -GridSizeMultiplier + yOffset, 0);
                 playerBehaviour.transform.localRotation = facingToRotation(playerState.Facing);
             });            

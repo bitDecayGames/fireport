@@ -1,6 +1,7 @@
 using AnimationEngine.Animations;
 using Game;
 using Model.State;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace AnimationEngine {
@@ -16,46 +17,51 @@ namespace AnimationEngine {
         /// <param name="animationAction">the animation action metadata</param>
         /// <param name="gamePiece">the game piece to apply this new animation action behaviour to</param>
         /// <returns>the newly created animation action behaviour component</returns>
-        public static AnimationActionBehaviour AddComponentByAnimationAction(AnimationAction animationAction, GamePieceBehaviour gamePiece) {
-            AnimationActionBehaviour behaviour = null;
+        public static List<AnimationActionBehaviour> AddComponentByAnimationAction(AnimationAction animationAction, GamePieceBehaviour gamePiece) {
+            List<AnimationActionBehaviour> behaviours = new List<AnimationActionBehaviour>();
             if (gamePiece != null && animationAction != null) {
                 switch (animationAction.Name) {
                     // TODO: MW these names are just placeholders, use what ever is in the actual server code
                     case "MoveForward":
-                        behaviour = gamePiece.gameObject.AddComponent<MoveForwardAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<MoveForwardAnimationBehaviour>());
                         break;
                     case "MoveBackward":
-                        behaviour = gamePiece.gameObject.AddComponent<MoveBackwardAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<MoveBackwardAnimationBehaviour>());
                         break;
                     case "TurnClockwise90":
-                        behaviour = gamePiece.gameObject.AddComponent<RotateClockwiseAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<RotateClockwiseAnimationBehaviour>());
                         break;
                     case "TurnCounterClockwise90":
-                        behaviour = gamePiece.gameObject.AddComponent<RotateCounterClockwiseAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<RotateCounterClockwiseAnimationBehaviour>());
                         break;
                     case "DoBumpInto":
-                        behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>());
+                        behaviours.Add(gamePiece.gameObject.AddComponent<DecrementHealthBarBehaviour>());
                         break;
                     case "HitByCanon":
-                        behaviour = gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<TurnRedAnimationBehaviour>());
+                        behaviours.Add(gamePiece.gameObject.AddComponent<DecrementHealthBarBehaviour>());
                         break;
                     case "FireCanon":
-                        behaviour = gamePiece.gameObject.AddComponent<FireCannonAnimationBehavior>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<FireCannonAnimationBehavior>());
                         break;
                     case "Default":
-                        behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>());
                         break;
                     default:
                         // TODO: MW maybe we want to throw here? but I suspect not for stability's sake
                         Debug.LogWarning("Failed to find an animation behaviour factory method for animation: " + animationAction.Name);
-                        behaviour = gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>();
+                        behaviours.Add(gamePiece.gameObject.AddComponent<DefaultAnimationBehaviour>());
                         break;
                 }
 
-                if (behaviour != null) behaviour.TotalTime = animationAction.Time;
+                foreach (AnimationActionBehaviour behaviour in behaviours)
+                {
+                    behaviour.TotalTime = animationAction.Time;
+                }
             }
 
-            return behaviour;
+            return behaviours;
         }
     }
 }
