@@ -14,7 +14,8 @@ namespace Utils {
         RotateLeft = 111,
         Rotate180 = 112,
         TurnRight = 120,
-        TurnLeft = 121
+        TurnLeft = 121,
+        Fire = 300
     }
 
     public enum CardTypeGroup {
