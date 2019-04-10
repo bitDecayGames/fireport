@@ -129,6 +129,7 @@ public class GameManagerBehaviour : MonoBehaviour, IDownStreamSubscriber {
         if (next.Winner != 0)
         {
             // TODO: Does this trigger at the right time?
+            WinnerRememberer.Winner = next.Winner;
             SceneNavigation.LoadScene("GameOverScene");
         }
     }
