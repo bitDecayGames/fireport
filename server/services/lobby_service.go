@@ -2,6 +2,8 @@ package services
 
 import (
 	"fmt"
+	"github.com/satori/go.uuid"
+	"strings"
 	"sync"
 
 	"github.com/bitdecaygames/fireport/server/pogo"
@@ -59,8 +61,7 @@ func (l *LobbyServiceImpl) CreateLobby() *Lobby {
 	defer l.mutex.Unlock()
 
 	newLobby := &Lobby{
-		//ID:                uuid.NewV4().String(), // TODO: MW uncomment this
-		ID:                "GAME", // TODO: MW for dev play testing only
+		ID:                strings.ToUpper(uuid.NewV4().String()[:4]), // grab first 4 characters of string
 		PlayerReady:       make(map[string]bool),
 		ActiveConnections: make(map[string]PlayerConnection),
 	}
